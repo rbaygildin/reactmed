@@ -3,6 +3,13 @@ from django.conf.urls import url
 from apps.rest.views import *
 
 urlpatterns = (
+    # Create account
+    url(r'^account$', SignupView.as_view()),
+
+    # Users
+    url(r'^users$', UserListView.as_view()),
+    url(r'^user/(?P<pk>\d+)$', UserView.as_view()),
+
     # Areas
     url(r'^areas$', MedAreaListView.as_view()),
     url(r'^area/(?P<pk>\d+)$', MedAreaView.as_view()),
