@@ -119,6 +119,15 @@ class Nurse(MedicalEmployee):
         db_table = 'nurse'
 
 
+class BaseMedType(AbstractModel):
+    name = models.CharField(max_length=200)
+    description = models.CharField(max_length=255, blank=True, null=True)
+    parent = models.ForeignKey('core.MedArea', blank=True, null=True)
+
+    class Meta:
+        db_table = 'med_area'
+
+
 class MedArea(AbstractModel):
     name = models.CharField(max_length=200)
     description = models.CharField(max_length=255, blank=True, null=True)
