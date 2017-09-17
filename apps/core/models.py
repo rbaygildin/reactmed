@@ -137,7 +137,7 @@ class MedTest(AbstractModel):
         db_table = 'med_test'
 
 
-class Indicator(AbstractModel):
+class Ind(AbstractModel):
     name = models.CharField(max_length=200)
     description = models.CharField(max_length=255, blank=True, null=True)
     med_test = models.ForeignKey('core.MedTest')
@@ -146,50 +146,40 @@ class Indicator(AbstractModel):
         abstract = True
 
 
-class RealIndicator(Indicator):
+class RealInd(Ind):
     min_norm = models.FloatField(blank=True, null=True)
     max_norm = models.FloatField(blank=True, null=True)
 
     class Meta:
-        db_table = 'real_indicator'
+        db_table = 'real_ind'
 
     def save(self, *args, **kwargs):
         if self.min_norm > self.max_norm:
             raise ValidationError("Min norm must be less than max norm")
-        super(RealIndicator, self).save()
+        super(RealInd, self).save()
 
 
-class IntIndicator(Indicator):
+class IntInd(Ind):
     min_norm = models.IntegerField(blank=True, null=True)
     max_norm = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        db_table = 'int_indicator'
+        db_table = 'int_ind'
 
     def save(self, *args, **kwargs):
         if self.min_norm > self.max_norm:
             raise ValidationError("Min norm must be less than max norm")
-        super(IntIndicator, self).save()
+        super(IntInd, self).save()
 
 
-class TextIndicator(Indicator):
-    class Meta:
-        db_table = 'text_indicator'
-
-
-class EnumIndicator(Indicator):
-    values = ArrayField(models.CharField(max_length=255))
+class TextInd(Ind):
+    values = ArrayField(models.CharField(max_length=255), null=True, blank=True)
 
     class Meta:
-        db_table = 'enum_indicator'
-
-    def save(self, *args, **kwargs):
-        if len(self.values) == 0:
-            raise ValidationError("Indicator must have values")
-        super(EnumIndicator, self).save()
+        db_table = 'text_ind'
 
 
-class TestRecord(AbstractModel):
+class TestRec(AbstractModel):
     name = models.CharField(max_length=200)
     description = models.CharField(max_length=255, blank=True, null=True)
     real_indicators = JSONField(blank=True, null=True)
@@ -200,14 +190,14 @@ class TestRecord(AbstractModel):
     patient = models.ForeignKey('core.Patient', on_delete=models.CASCADE)
 
     class Meta:
-        db_table = 'test_record'
+        db_table = 'test_rec'
 
 
 class Attachment(AbstractModel):
     name = models.CharField(max_length=200)
     description = models.CharField(max_length=255, blank=True, null=True)
     content = models.BinaryField()
-    test_record = models.ForeignKey('core.TestRecord')
+    test_record = models.ForeignKey('core.TestRec')
 
     class Meta:
         db_table = 'attachment'
