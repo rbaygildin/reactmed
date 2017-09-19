@@ -3,5 +3,6 @@ from apps.index.views import *
 
 urlpatterns = [
     url(r'^$', index_page, name='index'),
-    url(r'^about$', about_page, name='about')
+    url(r'^about$', about_page, name='about'),
+    url(r'^login$', login_view, name='login')
 ]
