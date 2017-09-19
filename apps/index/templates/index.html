@@ -1,0 +1,172 @@
+{% load staticfiles %}
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Добро пожаловать!</title>
+        <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}"/>
+        <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap-theme.min.css' %}"/>
+        <style>
+            .carousel-caption {
+                display: inline-block;
+                vertical-align: middle;
+                text-align: center;
+                background-color: rgba(0, 0, 0, 0.5);
+            }
+
+            .nav-tabs {
+                margin-bottom: 15px;
+            }
+
+            code {
+                font-size: 80%;
+            }
+
+            .marketing h2 {
+                font-weight: normal;
+            }
+
+            .marketing .span4 p {
+                margin-left: 10px;
+                margin-right: 10px;
+            }
+
+            body {
+                padding-bottom: 40px;
+                color: #5a5a5a;
+                min-width: 100%;
+                width: auto !important;
+            }
+        </style>
+    </head>
+    <body style="padding-top: 50px;">
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="container">
+                <div class="navbar-header">
+                    <div class="navbar-brand">ReactMed</div>
+                </div>
+                <ul class="nav navbar-nav">
+                    <li><a href="/">Главная</a></li>
+                    <li><a href="{% url 'index:about' %}">О сайте</a></li>
+                    <li><a href="">Юридическая информация</a></li>
+                    <li><a href="">Помощь</a></li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#" data-toggle="modal" data-target="#login-modal">Войти</a></li>
+                </ul>
+            </div>
+        </nav>
+        <div class="container">
+            <div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-hidden="true">
+                <div class="modal-dialog modal-md">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title" id="myModalLabel">Вход в систему ReactMed</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <div style="padding-right: 30px; padding-left: 5px">
+                                    <ul class="nav nav-tabs">
+                                        <li class="active"><a href="#login" data-toggle="tab">Войти</a></li>
+                                    </ul>
+                                    <div class="tab-content">
+                                        <div class="tab-pane active" id="login">
+                                            <form id="login-form" role="form" class="form-horizontal" method="post">
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label">Логин</label>
+                                                    <div class="col-sm-10">
+                                                        <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="glyphicon glyphicon-user"></i>
+                                                    </span>
+                                                            <input class="form-control" placeholder="Логин"
+                                                                   name="username"/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="col-sm-2 control-label">Пароль</label>
+                                                    <div class="col-sm-10">
+                                                        <div class="input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="glyphicon glyphicon-lock"></i>
+                                                    </span>
+                                                            <input type="password" class="form-control"
+                                                                   id="exampleInputPassword1" placeholder="Пароль"
+                                                                   name="password"/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row pull-right">
+                                                    <button id="login-btn" type="button" class="btn btn-primary btn-sm">
+                                                        Войти
+                                                    </button>
+                                                    <button id="sign-up-btn" type="button"
+                                                            class="btn btn-primary btn-sm">Регистрация
+                                                    </button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <header id="slideShow" class="carousel slide">
+            <ol class="carousel-indicators" style="margin-top: 10px;">
+                <li data-target="#slideShow" data-slide-to="0" class="active"></li>
+                <li data-target="#slideShow" data-slide-to="1"></li>
+                <li data-target="#slideshow" data-slide-ti="2"></li>
+            </ol>
+            <div class="carousel-inner">
+                <div class="item active">
+                    <img src="{% static 'img/healthcare-banner.jpg' %}" style="height: 500px; width: 1440px;"/>
+                    <div class="carousel-caption">
+                        <h2>
+                            ReactMed - сервис для работы с медицинскими картами пациентов
+                            и статистической обработки медицинских данных для постановки диагноза и проведения
+                            исследований
+                            <br/>
+                        </h2>
+                        <a class="btn btn-lg btn-primary" href="#" data-toggle="modal" data-target="#login-modal"
+                           role="button">Войти</a>
+                    </div>
+                </div>
+                <div class="item">
+                    <img src="{% static 'img/slider-img.jpg' %}" style="height: 500px; width: 1440px;"/>
+                    <div class="carousel-caption">
+                        <h2>
+                            Контролируйте поток пациентов, отслеживайте динамику их здоровья, составляйте отчеты с
+                            возможностью прикрепления к анализам
+                            необходимый контент
+                        </h2>
+                    </div>
+                </div>
+                <div class="item">
+                    <img src="{% static 'img/slider4.jpg' %}" style="height: 500px; width: 1440px;"/>
+                    <div class="carousel-caption">
+                        <h2>
+                            Коммуницируйте с другими врачами, следите за статистическими сводками и своевременно
+                            диагностируйте
+                            заболевания
+                        </h2>
+                    </div>
+                </div>
+            </div>
+            <a class="left carousel-control" href="#slideShow" data-slide="prev">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+            </a>
+            <a class="right carousel-control" href="#slideShow" data-slide="next">
+                <span class="glyphicon glyphicon-chevron-right"></span>
+            </a>
+        </header>
+        <script type="text/javascript" src="{% static 'jquery/jquery.js' %}"></script>
+        <script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+        <script type="text/javascript">
+            $("#slideShow").carousel({interval: 5000});
+        </script>
+    </body>
+</html>
