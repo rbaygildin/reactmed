@@ -5,6 +5,8 @@ from apps.rest.models import Signup
 
 
 class SignupSerializer(Serializer):
+    def is_valid(self, raise_exception=False):
+        return True
 
     def create(self, validated_data):
         return Signup(**validated_data)
@@ -27,16 +29,15 @@ class UserSerializer(ModelSerializer):
         ordering = ('name', 'surname', 'patronymic',)
 
 
+class PatientSerializer(ModelSerializer):
+    class Meta:
+        model = Patient
+        fields = ('gender', 'birthday', 'rh', 'blood_group')
+
+
 class MedAreaSerializer(ModelSerializer):
     class Meta:
         model = MedArea
-        fields = ('id', 'name', 'description')
-        ordering = ('name',)
-
-
-class MedTestSerializer(ModelSerializer):
-    class Meta:
-        model = MedTest
         fields = ('id', 'name', 'description')
         ordering = ('name',)
 
@@ -56,9 +57,38 @@ class IntIndSerializer(ModelSerializer):
 
 
 class TextIndSerializer(ModelSerializer):
-    text_ind = ListField(child=CharField())
+    values = ListField(child=CharField())
 
     class Meta:
         model = TextInd
         fields = ('id', 'name', 'description', 'values')
         ordering = ('name',)
+
+
+class MedTestSerializer(ModelSerializer):
+    real_inds = SerializerMethodField('_get_real_inds')
+    int_inds = SerializerMethodField('_get_int_inds')
+    text_inds = SerializerMethodField('_get_text_inds')
+
+    class Meta:
+        model = MedTest
+        fields = ('id', 'name', 'description', 'real_inds', 'int_inds', 'text_inds')
+        ordering = ('name',)
+
+    def _get_real_inds(self, obj):
+        serializer = RealIndSerializer(obj.real_inds.all(), many=True)
+        return serializer.data
+
+    def _get_int_inds(self, obj):
+        serializer = RealIndSerializer(obj.int_inds.all(), many=True)
+        return serializer.data
+
+    def _get_text_inds(self, obj):
+        serializer = RealIndSerializer(obj.text_inds.all(), many=True)
+        return serializer.data
+
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get('name', instance.name)
+        instance.view_name = validated_data.get('view_name', instance.view_name)
+        instance.description = validated_data.get('description', instance.description)
+        return instance

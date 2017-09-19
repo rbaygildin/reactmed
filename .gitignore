@@ -147,3 +147,4 @@ pyvenv.cfg
 pip-selfcheck.json
 
 .idea
+node_modules

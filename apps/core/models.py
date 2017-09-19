@@ -120,42 +120,30 @@ class Nurse(MedicalEmployee):
 
 
 class BaseMedType(AbstractModel):
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=200, unique=True)
+    view_name = models.CharField(max_length=200)
     description = models.CharField(max_length=255, blank=True, null=True)
+
+    class Meta:
+        abstract = True
+
+
+class MedArea(BaseMedType):
     parent = models.ForeignKey('core.MedArea', blank=True, null=True)
 
     class Meta:
         db_table = 'med_area'
 
 
-class MedArea(AbstractModel):
-    name = models.CharField(max_length=200)
-    description = models.CharField(max_length=255, blank=True, null=True)
-    parent = models.ForeignKey('core.MedArea', blank=True, null=True)
-
-    class Meta:
-        db_table = 'med_area'
-
-
-class MedTest(AbstractModel):
-    name = models.CharField(max_length=200)
-    description = models.CharField(max_length=255, blank=True, null=True)
+class MedTest(BaseMedType):
     med_area = models.ForeignKey('core.MedArea')
 
     class Meta:
         db_table = 'med_test'
 
 
-class Ind(AbstractModel):
-    name = models.CharField(max_length=200)
-    description = models.CharField(max_length=255, blank=True, null=True)
-    med_test = models.ForeignKey('core.MedTest')
-
-    class Meta:
-        abstract = True
-
-
-class RealInd(Ind):
+class RealInd(BaseMedType):
+    med_test = models.ForeignKey('core.MedTest', related_name='real_inds')
     min_norm = models.FloatField(blank=True, null=True)
     max_norm = models.FloatField(blank=True, null=True)
 
@@ -168,7 +156,8 @@ class RealInd(Ind):
         super(RealInd, self).save()
 
 
-class IntInd(Ind):
+class IntInd(BaseMedType):
+    med_test = models.ForeignKey('core.MedTest', related_name='int_inds')
     min_norm = models.IntegerField(blank=True, null=True)
     max_norm = models.IntegerField(blank=True, null=True)
 
@@ -181,7 +170,8 @@ class IntInd(Ind):
         super(IntInd, self).save()
 
 
-class TextInd(Ind):
+class TextInd(BaseMedType):
+    med_test = models.ForeignKey('core.MedTest', related_name='text_inds')
     values = ArrayField(models.CharField(max_length=255), null=True, blank=True)
 
     class Meta:
