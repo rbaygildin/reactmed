@@ -1,5 +1,4 @@
 {% load staticfiles %}
-{% load staticfiles %}
 <html>
     <head>
         <title>Регистрация</title>
@@ -14,12 +13,12 @@
                         <div class="navbar-brand">ReactMed</div>
                     </div>
                     <ul class="nav navbar-nav">
-                        <li><a href="{% url 'index:index' %}">Главная</a></li>
+                        <li><a href="{% url 'main:index' %}">Главная</a></li>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
                                aria-haspopup="true" aria-expanded="false">Сайт <span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <li><a href="{% url 'index:about' %}">О сайте</a></li>
+                                <li><a href="{% url 'main:about' %}">О сайте</a></li>
                                 <li><a href="">Помощь</a></li>
                             </ul>
                         </li>

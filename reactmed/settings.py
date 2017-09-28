@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'apps.core',
     'apps.rest',
-    'apps.index',
+    'apps.main',
     'apps.users',
     'apps.patients'
 ]
@@ -58,7 +58,7 @@ ROOT_URLCONF = 'reactmed.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR,  'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

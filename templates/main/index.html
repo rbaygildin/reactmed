@@ -46,7 +46,7 @@
                 </div>
                 <ul class="nav navbar-nav">
                     <li><a href="/">Главная</a></li>
-                    <li><a href="{% url 'index:about' %}">О сайте</a></li>
+                    <li><a href="{% url 'main:about' %}">О сайте</a></li>
                     <li><a href="">Юридическая информация</a></li>
                     <li><a href="">Помощь</a></li>
                 </ul>
@@ -71,7 +71,7 @@
                                     </ul>
                                     <div class="tab-content">
                                         <div class="tab-pane active" id="login">
-                                            <form id="login-form" action="{% url 'index:login' %}" class="form-horizontal" method="post">
+                                            <form id="login-form" action="{% url 'main:login' %}" class="form-horizontal" method="post">
                                                 {% csrf_token %}
                                                 <div class="form-group">
                                                     <label class="col-sm-2 control-label">Логин</label>

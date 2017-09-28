@@ -4,11 +4,11 @@ from django.urls import reverse
 
 
 def index_view(request):
-    return render(request, 'index.html', {})
+    return render(request, 'main/index.html', {})
 
 
 def about_view(request):
-    return render(request, 'about.html', {})
+    return render(request, 'main/about.html', {})
 
 
 def login_view(request):
@@ -20,4 +20,4 @@ def login_view(request):
             if user.is_active:
                 login(request=request, user=user)
                 return redirect(reverse('patients:list'))
-    return redirect(reverse('index:index'))
+    return redirect(reverse('main:index'))
