@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
+from apps.core.models import Patient
 from apps.patients.forms import PatientForm
 
 User = get_user_model()
@@ -17,14 +18,17 @@ def list_action(request):
 @login_required
 def create_action(request):
     if request.method == 'POST':
-        form = PatientForm(request.POST)
+        form = PatientForm(request)
         if form.is_valid():
-            pass
+            form.save()
         return redirect(reverse('patients:list'))
     else:
         return render(request, 'patients/create.html', {})
 
 
 @login_required
-def show_action(request):
-    return render(request, 'patients/show.html', {})
+def show_action(request, patient_id):
+    patient = Patient.objects.get(pk=patient_id)
+    return render(request, 'patients/show.html', {
+        'patient': patient
+    })

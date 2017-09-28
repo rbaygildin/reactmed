@@ -21,11 +21,15 @@
         <tbody id="patients-table-body">
             {% for patient in patients %}
                 <tr>
-                    <td>ОМС № {{ patient.omi_card.number }}</td>
+                    <td>
+                        <a href="{% url 'patients:show' patient_id=patient.id %}">
+                            ОМС № {{ patient.omi_card.number }}
+                        </a>
+                    </td>
                     <td>{{ patient.surname }}</td>
                     <td>{{ patient.name }}</td>
                     <td>{{ patient.gender }}</td>
-                    <td>{{ patient.birthday }}</td>
+                    <td>{{ patient.age }}</td>
                 </tr>
             {% endfor %}
         </tbody>

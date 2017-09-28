@@ -18,6 +18,7 @@
   "homepage": "https://github.com/reactmed/reactmed#readme",
   "dependencies": {
     "bootstrap": "^3.3.7",
+    "bootstrap-datetimepicker-npm": "^4.17.37-npm",
     "jquery": "^3.2.1"
   }
 }
