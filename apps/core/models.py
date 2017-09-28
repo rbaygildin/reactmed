@@ -6,6 +6,7 @@ from django.db import models
 from django.utils import timezone
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
+from datetime import date, timedelta
 
 from apps.core.managers import UserManager
 
@@ -109,16 +110,22 @@ class OmiCard(AbstractModel):
 
 
 class Patient(AbstractModel):
-    name = models.CharField(max_length=50, verbose_name='Name')
-    surname = models.CharField(max_length=50, verbose_name='Surname')
-    patronymic = models.CharField(max_length=50, blank=True, null=True, verbose_name='Patronymic')
-    gender = models.CharField(max_length=20, choices=GENDER)
-    # blood_group = models.CharField(max_length=20, choices=BLOOD_GROUP, blank=True, null=True)
-    # rh_factor = models.CharField(max_length=20, choices=RH_FACTOR, blank=True, null=True)
-    # is_disabled = models.BooleanField(default=False)
+    name = models.CharField(verbose_name=_('Name'), max_length=50)
+    surname = models.CharField(verbose_name=_('Surname'), max_length=50)
+    patronymic = models.CharField(verbose_name=_('Patronymic'), max_length=50, blank=True, null=True)
+    gender = models.CharField(verbose_name=_('Gender'), max_length=20, choices=GENDER)
+    birthday = models.DateField(verbose_name=_('Birthday'))
+    blood_group = models.CharField(verbose_name=_('Blood Group'), max_length=20, choices=BLOOD_GROUP, blank=True, null=True)
+    rh_factor = models.CharField(verbose_name=_('RH Factor'), max_length=20, choices=RH_FACTOR, blank=True, null=True)
+    is_disabled = models.BooleanField(verbose_name=_('Disabled'), default=False)
+    omi_card = models.CharField(verbose_name=_('OMI Card'), max_length=16, blank=True, null=True)
     # omi_card = models.OneToOneField('core.OmiCard', blank=True, null=True)
     # passport = models.OneToOneField('core.Passport', blank=True, null=True)
     doctor = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='patients', on_delete=models.CASCADE)
+
+    @property
+    def age(self):
+        return (date.today() - self.birthday) // timedelta(days=365.2425)
 
     class Meta:
         db_table = 'patient'
