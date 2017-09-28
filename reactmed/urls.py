@@ -21,5 +21,6 @@ urlpatterns = [
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^api/', include('apps.rest.urls', namespace='api')),
     url(r'', include('apps.index.urls', namespace='index')),
-    url(r'^accounts/', include('apps.accounts.urls', namespace='accounts'))
+    url(r'^users/', include('apps.users.urls', namespace='users')),
+    url(r'^patients/', include('apps.patients.urls', namespace='patients'))
 ]

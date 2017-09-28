@@ -1,0 +1,33 @@
+{% extends 'base_menu.html' %}
+{% load staticfiles %}
+{% block content %}
+    <div class="row">
+        <div class="col-sm-6">
+            <button class="btn btn-success" onclick="">Добавить пациента</button>
+            <button class="btn btn-success" onclick="">Загрузить банк пациентов</button>
+        </div>
+    </div>
+    <br/>
+    <table id="patients-table" class="table table-bordered" cellpadding="0" style="width: 100%; ">
+        <thead>
+            <tr>
+                <th>ОМС</th>
+                <th>Фамилия</th>
+                <th>Имя</th>
+                <th>Пол</th>
+                <th>Возраст</th>
+            </tr>
+        </thead>
+        <tbody id="patients-table-body">
+            {% for patient in patients %}
+                <tr>
+                    <td>ОМС № {{ patient.omi_card.number }}</td>
+                    <td>{{ patient.surname }}</td>
+                    <td>{{ patient.name }}</td>
+                    <td>{{ patient.gender }}</td>
+                    <td>{{ patient.birthday }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

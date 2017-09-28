@@ -1,8 +1,13 @@
-from django.conf import settings
-from django.contrib.auth.models import AbstractUser, UserManager
+from django.contrib.auth.base_user import AbstractBaseUser
+from django.contrib.auth.models import PermissionsMixin
 from django.contrib.postgres.fields import *
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.utils import timezone
+from django.utils.translation import ugettext_lazy as _
+from django.conf import settings
+
+from apps.core.managers import UserManager
 
 GENDER = (
     ('MALE', 'мужской'),
@@ -29,6 +34,32 @@ class AbstractModel(models.Model):
         abstract = True
 
 
+class User(AbstractBaseUser, PermissionsMixin):
+    email = models.CharField(verbose_name=_('Email'), max_length=30, unique=True)
+    name = models.CharField(verbose_name=_('Name'), max_length=30)
+    surname = models.CharField(verbose_name=_('Surname'), max_length=30)
+    patronymic = models.CharField(verbose_name=_('Patronymic'), max_length=30, blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(_('Is Staff'), default=False)
+    date_joined = models.DateTimeField(default=timezone.now())
+
+    objects = UserManager()
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+
+    class Meta:
+        db_table = 'user'
+        verbose_name = _('User')
+        verbose_name_plural = _('Users')
+
+    def get_short_name(self):
+        return '%s %s' % (self.name, self.surname)
+
+    def get_full_name(self):
+        return '%s' % self.name
+
+
 class Address(AbstractModel):
     post_code = models.CharField(max_length=30, verbose_name='Post code')
     country = models.CharField(max_length=100, verbose_name='Country')
@@ -38,6 +69,8 @@ class Address(AbstractModel):
 
     class Meta:
         db_table = 'address'
+        verbose_name = _('Address')
+        verbose_name_plural = _('Addresses')
 
 
 class OmiCard(AbstractModel):
@@ -47,82 +80,78 @@ class OmiCard(AbstractModel):
 
     class Meta:
         db_table = 'omi_card'
+        verbose_name = _('OMI Card')
+        verbose_name_plural = _('OMI Cards')
 
 
-class Passport(AbstractModel):
-    series = models.CharField(max_length=4, verbose_name='Series')
-    number = models.CharField(max_length=6, verbose_name='Number')
-    issue_date = models.DateField(verbose_name='Issue date')
-    authority_code = models.CharField(max_length=30, verbose_name='Authority Code')
-    authority = models.CharField(max_length=100, verbose_name='Authority')
-    issue_place = models.CharField(max_length=150, verbose_name='Issue Place')
-
-    class Meta:
-        db_table = 'passport'
-
-
-class Hospital(AbstractModel):
-    name = models.CharField(max_length=70, verbose_name='Hospital Name')
-    address = models.OneToOneField('core.Address')
-
-    class Meta:
-        db_table = 'hospital'
+# class Passport(AbstractModel):
+#     series = models.CharField(max_length=4, verbose_name='Series')
+#     number = models.CharField(max_length=6, verbose_name='Number')
+#     issue_date = models.DateField(verbose_name='Issue date')
+#     authority_code = models.CharField(max_length=30, verbose_name='Authority Code')
+#     authority = models.CharField(max_length=100, verbose_name='Authority')
+#     issue_place = models.CharField(max_length=150, verbose_name='Issue Place')
+#
+#     class Meta:
+#         db_table = 'passport'
+#         verbose_name = _('Passport')
+#         verbose_name_plural = _('Passports')
 
 
-class User(AbstractModel):
-    id = models.AutoField(primary_key=True)
-    name = models.CharField(max_length=50, verbose_name='Name')
-    surname = models.CharField(max_length=50, verbose_name='Surname')
-    patronymic = models.CharField(max_length=50, blank=True, null=True, verbose_name='Patronymic')
-    username = models.CharField(max_length=30, verbose_name='Username', unique=True)
-    password = models.CharField(max_length=16, verbose_name='Password')
-    phone = ArrayField(models.CharField(max_length=30), blank=True, null=True, verbose_name='Phone')
-    email = ArrayField(models.EmailField(max_length=30), blank=True, null=True, verbose_name='Email')
-    creation_ts = models.DateTimeField(verbose_name='Creation datetime')
-
-    is_active = models.BooleanField(default=True)
-    is_admin = models.BooleanField(default=False)
-    objects = UserManager()
-
-    class Meta:
-        db_table = 'user'
+# class Hospital(AbstractModel):
+#     name = models.CharField(max_length=70, verbose_name='Hospital Name')
+#     address = models.OneToOneField('core.Address')
+#
+#     class Meta:
+#         db_table = 'hospital'
+#         verbose_name = _('Hospital')
+#         verbose_name_plural = _('Hospitals')
 
 
 class Patient(AbstractModel):
-    user_account = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    name = models.CharField(max_length=50, verbose_name='Name')
+    surname = models.CharField(max_length=50, verbose_name='Surname')
+    patronymic = models.CharField(max_length=50, blank=True, null=True, verbose_name='Patronymic')
     gender = models.CharField(max_length=20, choices=GENDER)
-    blood_group = models.CharField(max_length=20, choices=BLOOD_GROUP, blank=True, null=True)
-    rh_factor = models.CharField(max_length=20, choices=RH_FACTOR, blank=True, null=True)
-    is_disabled = models.BooleanField(default=False)
-    omi_card = models.OneToOneField('core.OmiCard', blank=True, null=True)
-    passport = models.OneToOneField('core.Passport', blank=True, null=True)
+    # blood_group = models.CharField(max_length=20, choices=BLOOD_GROUP, blank=True, null=True)
+    # rh_factor = models.CharField(max_length=20, choices=RH_FACTOR, blank=True, null=True)
+    # is_disabled = models.BooleanField(default=False)
+    # omi_card = models.OneToOneField('core.OmiCard', blank=True, null=True)
+    # passport = models.OneToOneField('core.Passport', blank=True, null=True)
+    doctor = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='patients', on_delete=models.CASCADE)
 
     class Meta:
         db_table = 'patient'
+        verbose_name = _('Patient')
+        verbose_name_plural = _('Patients')
 
 
-class MedicalEmployee(AbstractModel):
-    user_account = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    hospital = models.ManyToManyField('core.Hospital')
-
-    class Meta:
-        abstract = True
-
-
-class Doctor(MedicalEmployee):
-    class Meta:
-        db_table = 'doctor'
-
-
-class Nurse(MedicalEmployee):
-    class Meta:
-        db_table = 'nurse'
+#
+# class MedicalEmployee(AbstractModel):
+#     user_account = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+#     hospital = models.ManyToManyField('core.Hospital')
+#
+#     class Meta:
+#         abstract = True
+#
+#
+# class Doctor(MedicalEmployee):
+#     class Meta:
+#         db_table = 'doctor'
+#
+#
+# class Nurse(MedicalEmployee):
+#     class Meta:
+#         db_table = 'nurse'
 
 
 class BaseMedType(AbstractModel):
     name = models.CharField(max_length=200, unique=True)
     view_name = models.CharField(max_length=200)
     description = models.CharField(max_length=255, blank=True, null=True)
+
+    def __str__(self):
+        return self.view_name
 
     class Meta:
         abstract = True
@@ -133,6 +162,8 @@ class MedArea(BaseMedType):
 
     class Meta:
         db_table = 'med_area'
+        verbose_name = _('Medical Area')
+        verbose_name_plural = _('Medical Areas')
 
 
 class MedTest(BaseMedType):
@@ -140,15 +171,20 @@ class MedTest(BaseMedType):
 
     class Meta:
         db_table = 'med_test'
+        verbose_name = _('Medical Test')
+        verbose_name_plural = _('Medical Tests')
 
 
 class RealInd(BaseMedType):
     med_test = models.ForeignKey('core.MedTest', related_name='real_inds')
     min_norm = models.FloatField(blank=True, null=True)
     max_norm = models.FloatField(blank=True, null=True)
+    unit = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
         db_table = 'real_ind'
+        verbose_name = _('Real Indicator')
+        verbose_name_plural = _('Real Indicators')
 
     def save(self, *args, **kwargs):
         if self.min_norm > self.max_norm:
@@ -160,9 +196,12 @@ class IntInd(BaseMedType):
     med_test = models.ForeignKey('core.MedTest', related_name='int_inds')
     min_norm = models.IntegerField(blank=True, null=True)
     max_norm = models.IntegerField(blank=True, null=True)
+    unit = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
         db_table = 'int_ind'
+        verbose_name = _('Integer Indicator')
+        verbose_name_plural = _('Integer Indicators')
 
     def save(self, *args, **kwargs):
         if self.min_norm > self.max_norm:
@@ -176,6 +215,8 @@ class TextInd(BaseMedType):
 
     class Meta:
         db_table = 'text_ind'
+        verbose_name = _('Text Indicator')
+        verbose_name_plural = _('Text Indicators')
 
 
 class TestRec(AbstractModel):
@@ -190,6 +231,8 @@ class TestRec(AbstractModel):
 
     class Meta:
         db_table = 'test_rec'
+        verbose_name = _('Test Record')
+        verbose_name_plural = _('Test Records')
 
 
 class Attachment(AbstractModel):
@@ -200,6 +243,18 @@ class Attachment(AbstractModel):
 
     class Meta:
         db_table = 'attachment'
+        verbose_name = _('Attachment')
+        verbose_name_plural = _('Attachments')
+
+
+# class Appointment(AbstractModel):
+#     appointment_date = models.DateTimeField()
+#     info = models.DateTimeField()
+#     patient = models.ForeignKey('core.Patient')
+#     doctor = models.ForeignKey('core.Doctor')
+#
+#     class Meta:
+#         db_table = 'appointment'
 
 
 class Treatment(AbstractModel):
@@ -211,6 +266,8 @@ class Treatment(AbstractModel):
 
     class Meta:
         db_table = 'treatment'
+        verbose_name = _('Treatment')
+        verbose_name_plural = _('Treatments')
 
 
 class Medication(AbstractModel):
@@ -222,6 +279,8 @@ class Medication(AbstractModel):
 
     class Meta:
         db_table = 'medication'
+        verbose_name = _('Medication')
+        verbose_name_plural = _('Medications')
 
 
 class Diagnosis(AbstractModel):
@@ -231,3 +290,5 @@ class Diagnosis(AbstractModel):
 
     class Meta:
         db_table = 'diagnosis'
+        verbose_name = _('Diagnosis')
+        verbose_name_plural = _('Diagnosis')

@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'apps.core',
     'apps.rest',
     'apps.index',
-    'apps.accounts'
+    'apps.users',
+    'apps.patients'
 ]
 
 MIDDLEWARE = [
@@ -116,10 +117,11 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = 'UTC'
+# LANGUAGE_CODE = 'ru-RU'
 
 USE_I18N = True
+
+TIME_ZONE = 'UTC'
 
 USE_L10N = True
 
@@ -143,3 +145,5 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.JSONRenderer',
     ),
 }
+
+AUTH_USER_MODEL = 'core.User'
