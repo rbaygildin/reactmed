@@ -10,48 +10,58 @@
             <input type="file" class="text-right center-block well well-sm"/>
         </div>
         <div class="col-sm-6 col-md-8 col-sx-12">
-            <form class="form-horizontal">
+            <form action="{% url 'patients:update' %}" class="form-horizontal" method="post">
                 {% csrf_token %}
+                <input id="id_patient_id" name="patient_id" type="hidden" style="display: none" value="{{ patient.id }}">
                 <div class="form-group row">
-                    <label class="col-sm-2 form-control-label">Имя: </label>
+                    <label for="id_name" class="col-sm-2 form-control-label">Имя: </label>
                     <div class="col-sm-10">
-                        <input class="form-control" value="{{ patient.name }}" name="name"/>
+                        <input id="id_name" class="form-control" value="{{ patient.name }}" name="name"/>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-sm-2 form-control-label">Фамилия: </label>
+                    <label for="id_surname" class="col-sm-2 form-control-label">Фамилия: </label>
                     <div class="col-sm-10">
-                        <input class="form-control" value="{{ patient.surname }}" name="surname"/>
+                        <input id="id_surname" class="form-control" value="{{ patient.surname }}" name="surname"/>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-sm-2 form-control-label">Отчество: </label>
+                    <label for="id_patronymic" class="col-sm-2 form-control-label">Отчество: </label>
                     <div class="col-sm-10">
-                        <input class="form-control" value="{{ patient.patronymic }}" name="patronymic"/>
+                        <input id="id_patronymic" class="form-control" value="{{ patient.patronymic }}" name="patronymic"/>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-sm-2 form-control-label">Пол: </label>
+                    <label for="id_gender" class="col-sm-2 form-control-label">Пол: </label>
                     <div class="col-sm-10">
-                        <input class="form-control" value="{{ patient.gender }}" name="gender"/>
+                        <input id="id_gender" class="form-control" value="{{ patient.gender }}" name="gender">
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-sm-2 form-control-label">Дата рождения: </label>
+                    <label for="id_birthday" class="col-sm-2 form-control-label">Дата рождения: </label>
                     <div class="col-sm-10">
-                        <input class="form-control" value="{{ patient.birthday }}" name="birthday"/>
+                        <input id="id_birthday" type="date" class="form-control" value="{{ patient.birthday|date:'Y-m-d' }}" name="birthday"/>
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label class="col-sm-2 form-control-label">ОМС: </label>
+                    <label for="id_omi_card" class="col-sm-2 form-control-label">ОМС: </label>
                     <div class="col-sm-10">
-                        <input class="form-control" value="{{ patient.omi_card }}" name="omi_card"/>
+                        <input id="id_omi_card" class="form-control" value="{{ patient.omi_card }}" name="omi_card"/>
                     </div>
                 </div>
                 <div class="row pull-right">
                     <button class="btn btn-success">Обновить</button>
+                    <button class="btn btn-danger" type="button" onclick="deletePatient();">Удалить</button>
                 </div>
             </form>
         </div>
     </div>
+    <script>
+        function deletePatient() {
+            $.post('{% url 'patients:delete' patient_id=patient.id %}', {'csrfmiddlewaretoken': '{{ csrf_token }}'})
+                .done(function () {
+                    window.location = "{% url 'patients:list' %}";
+                });
+        }
+    </script>
 {% endblock %}
