@@ -23,7 +23,7 @@
                 <tr>
                     <td>
                         <a href="{% url 'patients:show' patient_id=patient.id %}">
-                            ОМС № {{ patient.omi_card.number }}
+                            № {{ patient.omi_card }}
                         </a>
                     </td>
                     <td>{{ patient.surname }}</td>
