@@ -1,48 +1,104 @@
 {% extends 'core/base_menu.html' %}
 {% load staticfiles %}
+{% block header %}
+    <style>
+        body {
+            padding-top: 90px;
+        }
+
+        .form-group.required .form-control-label:after {
+            content: "*";
+            color: red;
+        }
+    </style>
+{% endblock %}
 {% block content %}
-    <h1 class="page-header">Регистрация</h1>
     <form class="form-horizontal" method="post">
         {% csrf_token %}
-        <div class="form-group row">
-            <label for="id_name" class="col-sm-2 form-control-label">Имя: </label>
-            <div class="col-sm-10">
-                <input id="id_name" name="name" class="form-control" style="background-color: #ffffff"/>
+        <fieldset>
+            <legend>ФИО</legend>
+            <div class="form-group row required">
+                <label for="id_name" class="col-sm-2 form-control-label">Имя: </label>
+                <div class="col-sm-4">
+                    <input id="id_name" name="name" class="form-control" style="background-color: #ffffff"/>
+                </div>
+                <label for="id_surname" class="col-sm-2 form-control-label">Фамилия: </label>
+                <div class="col-md-4">
+                    <input id="id_surname" name="surname" class="form-control" style="background-color: #ffffff"/>
+                </div>
             </div>
-        </div>
-        <div class="form-group row">
-            <label for="id_surname" class="col-sm-2 form-control-label">Фамилия: </label>
-            <div class="col-sm-10">
-                <input id="id_surname" name="surname" class="form-control" style="background-color: #ffffff"/>
+            <div class="form-group row required">
+                <label for="id_patronymic" class="col-sm-2 form-control-label">Отчество: </label>
+                <div class="col-md-4">
+                    <input id="id_patronymic" name="patronymic" class="form-control" style="background-color: #ffffff"/>
+                </div>
             </div>
-        </div>
-        <div class="form-group row">
-            <label for="id_patronymic" class="col-sm-2 form-control-label">Отчество: </label>
-            <div class="col-sm-10">
-                <input id="id_patronymic" name="patronymic" class="form-control" style="background-color: #ffffff"/>
+        </fieldset>
+        <fieldset>
+            <legend>Основные сведения о пациенте</legend>
+            <div class="form-group row required">
+                <label for="id_gender" class="col-sm-2 form-control-label">Пол: </label>
+                <div class="col-sm-4">
+                    <select id="id_gender" class="form-control" name="gender">
+                        <option value="MALE">мужской</option>
+                        <option value="FEMALE">женский</option>
+                    </select>
+                </div>
+                <label for="id_birthday" class="col-sm-2 form-control-label">Дата рождения: </label>
+                <div class="col-sm-4">
+                    <input id="id_birthday" type="date" name="birthday" class="form-control"
+                           style="background-color: #ffffff"/>
+                </div>
             </div>
-        </div>
-        <div class="form-group row">
-            <label for="id_gender" class="col-sm-2 form-control-label">Пол: </label>
-            <div class="col-sm-10">
-                <select id="id_gender" class="form-control" name="gender">
-                    <option value="MALE">мужской</option>
-                    <option value="FEMALE">женский</option>
-                </select>
+            <div class="form-group row">
+                <label for="id_address" class="col-sm-2 form-control-label">Адрес проживания: </label>
+                <div class="col-sm-4">
+                    <textarea id="id_address" name="address" class="form-control"></textarea>
+                </div>
+                <label for="id_occupation" class="col-sm-2 form-control-label">Род деятельности: </label>
+                <div class="col-sm-4">
+                    <input id="id_occupation" name="occupation" class="form-control" style="background-color: #ffffff"/>
+                </div>
             </div>
-        </div>
-        <div class="form-group row">
-            <label for="id_birthday" class="col-sm-2 form-control-label">Дата рождения: </label>
-            <div class="col-sm-10">
-                <input id="id_birthday" type="date" name="birthday" class="form-control" style="background-color: #ffffff"/>
+        </fieldset>
+        <fieldset>
+            <legend>Медицинские данные</legend>
+            <div class="form-group row required">
+                <label for="id_omi_card" class="col-sm-2 form-control-label">ОМС: </label>
+                <div class="col-sm-4">
+                    <input id="id_omi_card" name="omi_card" class="form-control" style="background-color: #ffffff"/>
+                </div>
             </div>
-        </div>
-        <div class="form-group row">
-            <label for="id_omi_card" class="col-sm-2 form-control-label">ОМС: </label>
-            <div class="col-sm-10">
-                <input id="id_omi_card" name="omi_card" class="form-control" style="background-color: #ffffff"/>
+            <div class="form-group row">
+                <label for="id_disabled" class="col-sm-2 form-control-label">Инвалидность: </label>
+                <div class="col-sm-2">
+                    <select id="id_disabled" name="is_disabled" class="form-control" style="background-color: #ffffff">
+                        <option value="False">Не имеется</option>
+                        <option value="True">Имеется</option>
+                    </select>
+                </div>
             </div>
-        </div>
+            <div class="form-group row">
+                <label for="id_blood_group" class="col-sm-2 form-control-label">Группа крови: </label>
+                <div class="col-sm-2">
+                    <select id="id_blood_group" name="blood_group" class="form-control">
+                        <option value="I">I</option>
+                        <option value="II">II</option>
+                        <option value="III">III</option>
+                        <option value="IV">IV</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="id_rh_factor" class="col-sm-2 form-control-label">Резус-фактор: </label>
+                <div class="col-sm-2">
+                    <select id="id_rh_factor" name="rh_factor" class="form-control">
+                        <option value="POSITIVE">положительный</option>
+                        <option value="NEGATIVE">отрицательный</option>
+                    </select>
+                </div>
+            </div>
+        </fieldset>
         <div class="row pull-right">
             <button class="btn btn-success">Создать медкарту пациента</button>
         </div>

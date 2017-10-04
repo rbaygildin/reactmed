@@ -1,35 +1,47 @@
 {% extends 'core/base_menu.html' %}
 {% load staticfiles %}
+{% block header %}
+    <style>
+        body{
+            padding-top: 80px;
+        }
+    </style>
+{% endblock %}
 {% block content %}
     <div class="row">
         <div class="col-sm-6">
-            <button class="btn btn-success" onclick="window.location='{% url 'patients:create' %}'">Добавить пациента</button>
+            <button class="btn btn-success" onclick="window.location='{% url 'patients:create' %}'">Добавить пациента
+            </button>
             <button class="btn btn-success" onclick="">Загрузить банк пациентов</button>
         </div>
     </div>
     <br/>
-    <table id="patients-table" class="table table-bordered" cellpadding="0" style="width: 100%; ">
+    <table id="patients-table" class="table table-responsive" cellpadding="0" style="width: 100%; ">
         <thead>
             <tr>
                 <th>ОМС</th>
-                <th>Фамилия</th>
-                <th>Имя</th>
+                <th>ФИО</th>
                 <th>Пол</th>
                 <th>Возраст</th>
+                <th></th>
+                <th></th>
             </tr>
         </thead>
         <tbody id="patients-table-body">
             {% for patient in patients %}
                 <tr>
                     <td>
-                        <a href="{% url 'patients:show' patient_id=patient.id %}">
-                            № {{ patient.omi_card }}
-                        </a>
+                        № {{ patient.omi_card }}
                     </td>
-                    <td>{{ patient.surname }}</td>
-                    <td>{{ patient.name }}</td>
+                    <td>{{ patient.surname }} {{ patient.name }} {{ patient.patronymic|default_if_none:"" }}</td>
                     <td>{{ patient.gender }}</td>
                     <td>{{ patient.age }}</td>
+                    <td>
+                        <a href="{% url 'patients:show' patient_id=patient.id %}">Открыть</a>
+                    </td>
+                    <td>
+                        <a href="{% url 'patients:delete' patient_id=patient.id %}">Удалить</a>
+                    </td>
                 </tr>
             {% endfor %}
         </tbody>

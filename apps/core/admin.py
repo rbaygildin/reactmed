@@ -30,16 +30,16 @@ class CustomUserAdmin(UserAdmin):
 
 @admin.register(MedArea)
 class MedAreaAdmin(admin.ModelAdmin):
-    list_display = ('view_name', 'description')
-    ordering = ('view_name', )
-    search_fields = ('view_name', )
+    list_display = ('name', 'description')
+    ordering = ('name', )
+    search_fields = ('name', )
 
 
 @admin.register(MedTest)
 class MedTestAdmin(admin.ModelAdmin):
-    list_display = ('view_name', 'description', '_view_med_area')
-    ordering = ('view_name', )
-    search_fields = ('view_name', )
+    list_display = ('name', 'description', '_view_med_area')
+    ordering = ('name', )
+    search_fields = ('name', )
     inlines = (RealIndInline, IntIndInline, TextIndInline)
 
     def _view_med_area(self, med_test):
@@ -50,24 +50,24 @@ class MedTestAdmin(admin.ModelAdmin):
 
 @admin.register(RealInd)
 class RealIndAdmin(admin.ModelAdmin):
-    list_display = ('view_name', 'description', 'min_norm', 'max_norm')
-    ordering = ('view_name',)
-    search_fields = ('view_name',)
+    list_display = ('name', 'description', 'min_norm', 'max_norm')
+    ordering = ('name',)
+    search_fields = ('name',)
 
 
 @admin.register(IntInd)
 class IntIndAdmin(admin.ModelAdmin):
-    list_display = ('view_name', 'description', 'min_norm', 'max_norm')
-    ordering = ('view_name',)
-    search_fields = ('view_name',)
+    list_display = ('name', 'description', 'min_norm', 'max_norm')
+    ordering = ('name',)
+    search_fields = ('name',)
 
 
 @admin.register(TextInd)
 class TextIndAdmin(admin.ModelAdmin):
-    list_display = ('view_name', 'description', '_view_values', '_view_med_test')
-    ordering = ('view_name',)
-    search_fields = ('view_name',)
-    list_filter = ('med_test__view_name', )
+    list_display = ('name', 'description', '_view_values', '_view_med_test')
+    ordering = ('name',)
+    search_fields = ('name',)
+    list_filter = ('med_test__name', )
 
     def _view_values(self, ind):
         return ', '.join(ind.values)

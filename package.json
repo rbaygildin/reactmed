@@ -17,8 +17,13 @@
   },
   "homepage": "https://github.com/reactmed/reactmed#readme",
   "dependencies": {
+    "bootbox": "^4.4.0",
     "bootstrap": "^3.3.7",
+    "bootstrap-3-typeahead": "^4.0.2",
+    "bootstrap-datepicker": "^1.7.1",
     "bootstrap-datetimepicker-npm": "^4.17.37-npm",
-    "jquery": "^3.2.1"
+    "form-serializer": "^2.5.0",
+    "jquery": "^3.2.1",
+    "typeahead": "^0.2.2"
   }
 }

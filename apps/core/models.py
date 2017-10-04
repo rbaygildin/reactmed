@@ -11,20 +11,20 @@ from datetime import date, timedelta
 from apps.core.managers import UserManager
 
 GENDER = (
-    ('MALE', 'мужской'),
-    ('FEMALE', 'женский')
+    ('Мужской', 'мужской'),
+    ('Женский', 'женский')
 )
 
 BLOOD_GROUP = (
-    ('I', 'первая'),
-    ('II', 'вторая'),
-    ('III', 'третья'),
-    ('IV', 'четвертая')
+    ('I', 'I'),
+    ('II', 'II'),
+    ('III', 'III'),
+    ('IV', 'IV')
 )
 
 RH_FACTOR = (
-    ('positive', 'Rh+'),
-    ('negative', 'Rh-')
+    ('Rh+', 'Rh+'),
+    ('Rh-', 'Rh-')
 )
 
 
@@ -119,8 +119,8 @@ class Patient(AbstractModel):
     rh_factor = models.CharField(verbose_name=_('RH Factor'), max_length=20, choices=RH_FACTOR, blank=True, null=True)
     is_disabled = models.BooleanField(verbose_name=_('Disabled'), default=False)
     omi_card = models.CharField(verbose_name=_('OMI Card'), max_length=16, blank=True, null=True)
-    # omi_card = models.OneToOneField('core.OmiCard', blank=True, null=True)
-    # passport = models.OneToOneField('core.Passport', blank=True, null=True)
+    address = models.CharField(verbose_name=_('Address'), max_length=255, blank=True, null=True)
+    occupation = models.CharField(verbose_name=_('Occupation'), max_length=100, blank=True, null=True)
     doctor = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='patients', on_delete=models.CASCADE)
 
     @property
@@ -153,12 +153,11 @@ class Patient(AbstractModel):
 
 
 class BaseMedType(AbstractModel):
-    name = models.CharField(max_length=200, unique=True)
-    view_name = models.CharField(max_length=200)
+    name = models.CharField(max_length=200)
     description = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
-        return self.view_name
+        return self.name
 
     class Meta:
         abstract = True
@@ -229,12 +228,13 @@ class TextInd(BaseMedType):
 class TestRec(AbstractModel):
     name = models.CharField(max_length=200)
     description = models.CharField(max_length=255, blank=True, null=True)
-    real_indicators = JSONField(blank=True, null=True)
-    int_indicators = JSONField(blank=True, null=True)
-    text_indicators = JSONField(blank=True, null=True)
+    real_inds = JSONField(blank=True, null=True)
+    int_inds = JSONField(blank=True, null=True)
+    text_inds = JSONField(blank=True, null=True)
+    summary = models.CharField(max_length=100, blank=True, null=True)
     info = models.TextField(blank=True, null=True)
     test_date = models.DateField()
-    patient = models.ForeignKey('core.Patient', on_delete=models.CASCADE)
+    patient = models.ForeignKey('core.Patient', on_delete=models.CASCADE, related_name='test_recs')
 
     class Meta:
         db_table = 'test_rec'

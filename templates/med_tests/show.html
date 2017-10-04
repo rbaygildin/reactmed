@@ -1,0 +1,72 @@
+{% extends 'core/base_menu.html' %}
+{% load staticfiles %}
+{% block header %}
+    <style>
+        body {
+            padding-top: 80px;
+        }
+
+        .panel-body {
+            padding-left: 40px;
+            padding-right: 40px;
+        }
+
+        input[readonly] {
+            background-color: #fff;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            {{ test_rec.name }}
+        </div>
+        <div class="panel-body">
+            <form class="form-horizontal">
+                <div class="form-group row">
+                    <label for="id_info" class="control-label">Информация</label>
+                    <input id="id_info" value="{{ test_rec.info }}" readonly class="form-control"
+                           style="background-color: white">
+                </div>
+                <div class="form-group row">
+                    <label for="id_test_date" class="control-label">Дата проведения</label>
+                    <input id="id_test_date" value="{{ test_rec.test_date }}" readonly class="form-control"
+                           style="background-color: white">
+                </div>
+                <div class="form-group row">
+
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="panel panel-success">
+        <div class="panel-heading">
+            Показатели
+        </div>
+        <div class="panel-body">
+            <form class="form-horizontal">
+                {% for ind, val in test_rec.real_inds.items %}
+                    <div class="form-group row">
+                    <label for="{{ ind }}" class="control-label">{{ ind }}</label>
+                        <input id="{{ ind }}" value="{{ val }}" readonly class="form-control"
+                           style="background-color: white">
+                        </div>
+                {% endfor %}
+                {% for ind, val in test_rec.int_inds.items %}
+                    <div class="form-group row">
+                        <label for="{{ ind }}" class="control-label">{{ ind }}</label>
+                        <input id="{{ ind }}" value="{{ val }}" readonly class="form-control"
+                               style="background-color: white">
+                    </div>
+                {% endfor %}
+                {% for ind, val in test_rec.text_inds.items %}
+                    <div class="form-group row">
+                        <label for="{{ ind }}" class="control-label">{{ ind }}</label>
+                        <input id="{{ ind }}" value="{{ val }}" readonly class="form-control"
+                               style="background-color: white">
+                    </div>
+                {% endfor %}
+            </form>
+        </div>
+    </div>
+{% endblock %}
