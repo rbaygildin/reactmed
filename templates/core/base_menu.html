@@ -3,8 +3,10 @@
     <head>
         <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}"/>
         <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap-theme.min.css' %}"/>
+        {% block header %}
+        {% endblock %}
     </head>
-    <body style="padding-top: 60px;">
+    <body>
         <script type="text/javascript" src="{% static 'jquery/jquery.js' %}"></script>
         <div class="container">
             <nav class="navbar navbar-inverse navbar-fixed-top">
@@ -34,5 +36,7 @@
             {% endblock content %}
         </div>
         <script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+        {% block scripts %}
+        {% endblock %}
     </body>
 </html>

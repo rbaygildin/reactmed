@@ -17,6 +17,10 @@ class PatientForm(ModelForm):
             gender=self.cleaned_data['gender'],
             birthday=self.cleaned_data['birthday'],
             omi_card=self.cleaned_data['omi_card'],
+            address=self.cleaned_data['address'],
+            occupation=self.cleaned_data['occupation'],
+            blood_group=self.cleaned_data['blood_group'],
+            rh_factor=self.cleaned_data['rh_factor'],
             doctor=self.doctor
         )
 
@@ -28,8 +32,14 @@ class PatientForm(ModelForm):
         patient.gender = self.cleaned_data['gender']
         patient.birthday = self.cleaned_data['birthday']
         patient.omi_card = self.cleaned_data['omi_card']
+        patient.address = self.cleaned_data['address']
+        patient.occupation = self.cleaned_data['occupation']
+        patient.blood_group = self.cleaned_data['blood_group']
+        patient.rh_factor = self.cleaned_data['rh_factor']
         patient.save()
 
     class Meta:
         model = Patient
-        fields = ('name', 'surname', 'patronymic', 'gender', 'birthday', 'omi_card')
+        fields = ('name', 'surname', 'patronymic',
+                  'gender', 'birthday', 'omi_card',
+                  'address', 'occupation', 'blood_group', 'rh_factor')

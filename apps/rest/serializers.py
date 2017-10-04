@@ -45,19 +45,19 @@ class MedAreaSerializer(ModelSerializer):
 class RealIndSerializer(ModelSerializer):
     class Meta:
         model = RealInd
-        fields = ('id', 'name', 'description', 'min_norm', 'max_norm')
+        fields = ('id', 'name', 'description', 'min_norm', 'max_norm', 'unit')
         ordering = ('name',)
 
 
 class IntIndSerializer(ModelSerializer):
     class Meta:
         model = IntInd
-        fields = ('id', 'name', 'description', 'min_norm', 'max_norm')
+        fields = ('id', 'name', 'description', 'min_norm', 'max_norm', 'unit')
         ordering = ('name',)
 
 
 class TextIndSerializer(ModelSerializer):
-    values = ListField(child=CharField())
+    values = ListField(child=CharField(max_length=120), default=[])
 
     class Meta:
         model = TextInd
@@ -80,15 +80,14 @@ class MedTestSerializer(ModelSerializer):
         return serializer.data
 
     def _get_int_inds(self, obj):
-        serializer = RealIndSerializer(obj.int_inds.all(), many=True)
+        serializer = IntIndSerializer(obj.int_inds.all(), many=True)
         return serializer.data
 
     def _get_text_inds(self, obj):
-        serializer = RealIndSerializer(obj.text_inds.all(), many=True)
+        serializer = TextIndSerializer(obj.text_inds.all(), many=True)
         return serializer.data
 
     def update(self, instance, validated_data):
         instance.name = validated_data.get('name', instance.name)
-        instance.view_name = validated_data.get('view_name', instance.view_name)
         instance.description = validated_data.get('description', instance.description)
         return instance

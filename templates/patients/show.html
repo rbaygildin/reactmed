@@ -1,67 +1,148 @@
 {% extends 'core/base_menu.html' %}
 {% load staticfiles %}
+{% block header %}
+    <style>
+        body {
+            padding-top: 80px;
+        }
+
+        .panel-body {
+            padding-right: 40px;
+            padding-left: 40px;
+        }
+
+        .tab-pane {
+            padding-top: 20px;
+        }
+    </style>
+{% endblock %}
 {% block content %}
-    <h1 class="page-header">Пациент</h1>
-    <div class="row">
-        <div class="col-sm-6 col-md-4 col-xs-12">
-            <div class="text-center">
-                <img src="" class="img-responsive"/>
-            </div>
-            <input type="file" class="text-right center-block well well-sm"/>
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            Пациент {{ patient.surname }} {{ patient.name }} {{ patient.patronymic|default_if_none:'' }}
         </div>
-        <div class="col-sm-6 col-md-8 col-sx-12">
-            <form action="{% url 'patients:update' %}" class="form-horizontal" method="post">
-                {% csrf_token %}
-                <input id="id_patient_id" name="patient_id" type="hidden" style="display: none" value="{{ patient.id }}">
+        <div class="panel-body">
+            <form>
                 <div class="form-group row">
-                    <label for="id_name" class="col-sm-2 form-control-label">Имя: </label>
-                    <div class="col-sm-10">
-                        <input id="id_name" class="form-control" value="{{ patient.name }}" name="name"/>
+                    <label class="col-md-1 control-label">ФИО</label>
+                    <div class="col-md-6">
+                        <input value="{{ patient.surname }} {{ patient.name }} {{ patient.patronymic|default_if_none:'' }}"
+                               class="form-control">
                     </div>
                 </div>
                 <div class="form-group row">
-                    <label for="id_surname" class="col-sm-2 form-control-label">Фамилия: </label>
-                    <div class="col-sm-10">
-                        <input id="id_surname" class="form-control" value="{{ patient.surname }}" name="surname"/>
+                    <label class="col-md-1 control-label">Пол</label>
+                    <div class="col-md-2">
+                        <input value="{{ patient.gender }}"
+                               class="form-control">
                     </div>
-                </div>
-                <div class="form-group row">
-                    <label for="id_patronymic" class="col-sm-2 form-control-label">Отчество: </label>
-                    <div class="col-sm-10">
-                        <input id="id_patronymic" class="form-control" value="{{ patient.patronymic }}" name="patronymic"/>
+                    <label class="col-md-2 control-label">Дата рождения</label>
+                    <div class="col-md-3">
+                        <input value="{{ patient.birthday }} ({{ patient.age }} лет)"
+                           class="form-control">
                     </div>
-                </div>
-                <div class="form-group row">
-                    <label for="id_gender" class="col-sm-2 form-control-label">Пол: </label>
-                    <div class="col-sm-10">
-                        <input id="id_gender" class="form-control" value="{{ patient.gender }}" name="gender">
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="id_birthday" class="col-sm-2 form-control-label">Дата рождения: </label>
-                    <div class="col-sm-10">
-                        <input id="id_birthday" type="date" class="form-control" value="{{ patient.birthday|date:'Y-m-d' }}" name="birthday"/>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="id_omi_card" class="col-sm-2 form-control-label">ОМС: </label>
-                    <div class="col-sm-10">
-                        <input id="id_omi_card" class="form-control" value="{{ patient.omi_card }}" name="omi_card"/>
-                    </div>
-                </div>
-                <div class="row pull-right">
-                    <button class="btn btn-success">Обновить</button>
-                    <button class="btn btn-danger" type="button" onclick="deletePatient();">Удалить</button>
                 </div>
             </form>
         </div>
     </div>
+    <ul class="nav nav-tabs">
+        <li class="active">
+            <a href="#id_tests" data-toggle="tab">Обследования</a>
+        </li>
+        <li>
+            <a href="#id_dynamics" data-toggle="tab">Приемы</a>
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div id="id_tests" class="tab-pane active">
+            <div class="row">
+                <div class="col-sm-2">
+                    <button class="btn btn-success"
+                            onclick="window.location='{% url 'med_tests:create' patient_id=patient.id %}'">
+                        Добавить обследование
+                    </button>
+                </div>
+                <div class="col-sm-2">
+                    <button class="btn btn-success">
+                        Посмотреть динамику
+                    </button>
+                </div>
+            </div>
+            <br/>
+            <table class="table table-responsive" cellpadding="0">
+                <thead>
+                    <tr>
+                        <th>Тип обследования</th>
+                        <th>Дата проведения</th>
+                        <th>Краткая информация</th>
+                        <th>Информация</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for test in patient.test_recs.all %}
+                        <tr>
+                            <td>{{ test.name }}</td>
+                            <td>{{ test.test_date }}</td>
+                            <td>{{ test.summary|default_if_none:"" }}</td>
+                            <td>{{ test.info|default_if_none:"" }}</td>
+                            <td>
+                                <button onclick="window.location='{% url 'med_tests:show' test_id=test.id patient_id=patient.id %}'"
+                                        class="btn btn-success">Открыть
+                                </button>
+                            </td>
+                            <td>
+                                <button onclick="deleteTest('{% url 'med_tests:delete' test_id=test.id patient_id=patient.id %}');"
+                                        class="btn btn-danger">Удалить
+                                </button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div id="id_dynamics" class="tab-pane">
+
+        </div>
+    </div>
+    <script src="{% static 'bootbox/bootbox.js' %}"></script>
     <script>
+        /*
+        Delete patient
+         */
         function deletePatient() {
             $.post('{% url 'patients:delete' patient_id=patient.id %}', {'csrfmiddlewaretoken': '{{ csrf_token }}'})
                 .done(function () {
                     window.location = "{% url 'patients:list' %}";
                 });
+        }
+
+        /*
+        Delete medical test
+         */
+        function deleteTest(url) {
+            bootbox.confirm({
+                message: "Вы действительно хотите удалить запись об обследовании?",
+                buttons: {
+                    confirm: {
+                        label: 'Да',
+                        className: 'btn-success'
+                    },
+                    cancel: {
+                        label: 'Нет',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result) {
+                    if (result) {
+                        $.post(url, {'csrfmiddlewaretoken': '{{ csrf_token }}'})
+                            .done(function () {
+                                window.location = "{% url 'patients:show' patient_id=patient.id %}";
+                            });
+                    }
+                }
+            });
         }
     </script>
 {% endblock %}

@@ -1,0 +1,180 @@
+{% extends 'core/base_menu.html' %}
+{% load staticfiles %}
+{% block header %}
+    <style>
+        body {
+            padding-top: 80px;
+        }
+
+        .panel-body .row {
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+    </style>
+    <link rel="stylesheet" href="{% static 'bootstrap-datepicker/css/bootstrap-datepicker.min.css' %}">
+{% endblock %}
+{% block content %}
+    <form id="id_test_record">
+        {% csrf_token %}
+        <div class="panel panel-primary">
+            <div class="panel-heading" style="margin-bottom: 20px;">
+                Основные данные обследования
+            </div>
+            <div class="panel-body">
+                <div class="form-group row">
+                    <label for="id_test" class="col-md-2 control-label">Тип обследования</label>
+                    <div class="col-md-6">
+                        <input id="id_test" class="form-control" name="name">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="id_test_date" class="col-md-2 control-label">Дата проведения</label>
+                    <div class="col-md-6">
+                        <input id="id_test_date" name="test_date" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="id_summary" class="col-md-2 control-label">Краткое описание</label>
+                    <div class="col-md-6">
+                        <input id="id_summary" name="summary" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="id_info" class="col-md-2 control-label">Информация</label>
+                    <div class="col-md-6">
+                        <textarea id="id_info" name="info" class="form-control"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="id_real_inds_panel" class="panel panel-success">
+            <div class="panel-heading">
+                Числовые показатели
+            </div>
+            <div class="panel-body">
+                <div id="id_real_inds">
+
+                </div>
+                <div id="id_int_inds">
+
+                </div>
+            </div>
+        </div>
+        <div id="id_real_inds_panel" class="panel panel-success">
+            <div class="panel-heading">
+                Текстовые показатели
+            </div>
+            <div class="panel-body">
+                <div id="id_text_inds">
+
+                </div>
+            </div>
+        </div>
+        <div class="row pull-right">
+            <button class="btn btn-success" type="button" onclick="saveTestRecord();">Сохранить</button>
+        </div>
+    </form>
+{% endblock %}
+{% block scripts %}
+    <script src="{% static 'bootstrap-typeahead/bootstrap3-typeahead.js' %}"></script>
+    <script src="{% static 'jquery-serializer/serializer.js' %}"></script>
+    <script src="{% static 'bootstrap-datepicker/locales/bootstrap-datepicker.ru.min.js' %}"></script>
+    <script src="{% static 'bootstrap-datepicker/js/bootstrap-datepicker.min.js' %}"></script>
+    <script>
+        /**
+         * Select test type
+         * @param selectedItem
+         * @returns {*}
+         */
+        function selectTestType(selectedItem) {
+            $('#id_real_inds').empty();
+            $('#id_int_inds').empty();
+            $('#id_text_inds').empty();
+            selectedItem['real_inds'].forEach(function (ind, i, arr) {
+                $('#id_real_inds').append($(
+                    "<div class='form-group row'>" +
+                    "<label class='col-md-2 control-label'>" + ind['name'] + (ind['unit'] ? ' (' + ind['unit'] + ')' : '') + "</label>" +
+                    "<div class='col-md-3'>" +
+                    "<input class='form-control' name='real_inds[" + ind['name'] + "]'>" +
+                    "</div>" +
+                    "</div>"
+                ));
+            });
+            selectedItem['int_inds'].forEach(function (ind, i, arr) {
+                $('#id_int_inds').append($(
+                    "<div class='form-group row'>" +
+                    "<label class='col-md-2 control-label'>" + ind['name'] + (ind['unit'] ? ' (' + ind['unit'] + ')' : '') + "</label>" +
+                    "<div class='col-md-3'>" +
+                    "<input class='form-control' name='int_inds[" + ind['name'] + "]'>" +
+                    "</div>" +
+                    "</div>"
+                ));
+            });
+            selectedItem['text_inds'].forEach(function (ind, i, arr) {
+                if (ind['values']) {
+                    var select = "<div class='form-group row'>" +
+                        "<label class='col-md-2 control-label'>" + ind['name'] + "</label>" +
+                        "<div class='col-md-3'>" +
+                        "<select class='form-control' name='text_inds[" + ind['name'] + "]'>";
+                    for (var j = 0; j < ind['values'].length; j++) {
+                        select += "<option value='" + ind['values'][j] + "'>" + ind['values'][j] + "</option>";
+                    }
+                    select += "</select></div></div>";
+                    $('#id_text_inds').append(select);
+                }
+                else {
+                    $('#id_text_inds').append($(
+                        "<div class='form-group row'>" +
+                        "<label class='col-md-2 control-label'>" + ind['name'] + "</label>" +
+                        "<div class='col-md-3'>" +
+                        "<input class='form-control' name='text_inds[" + ind['name'] + "]'>" +
+                        "</div>" +
+                        "</div>"
+                    ));
+                }
+            });
+            return selectedItem['name'];
+        }
+
+        /**
+         * Save test record
+         */
+        function saveTestRecord() {
+            var testRecord = $('#id_test_record').serializeObject();
+            Object.keys(testRecord['real_inds']).forEach(function (ind, i, arr) {
+                testRecord['real_inds'][ind] = parseFloat(testRecord['real_inds'][ind]);
+            });
+            Object.keys(testRecord['int_inds']).forEach(function (ind, i, arr) {
+                testRecord['int_inds'][ind] = parseInt(testRecord['int_inds'][ind]);
+            });
+            testRecord['csrfmiddlewaretoken'] = '{{ csrf_token }}';
+            $.post('{{ request.path }}', JSON.stringify(testRecord)).done(function () {
+                window.location = "{% url 'patients:show' patient_id=patient_id %}";
+            });
+        }
+
+        /**
+         * Invokes when document is ready
+         */
+        function init() {
+            $('#id_test_date').datepicker({
+                format: 'yyyy-mm-dd',
+                language: 'ru-RU',
+                orientation: 'bottom'
+            });
+            $.get('{% url "api:tests" %}').done(
+                function (data) {
+                    console.log(data);
+                    $('#id_test').typeahead({
+                        order: 'asc',
+                        display: 'name',
+                        source: data,
+                        updater: selectTestType
+                    });
+                }
+            );
+        }
+
+        $(document).ready(init());
+    </script>
+{% endblock %}

@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'apps.rest',
     'apps.main',
     'apps.users',
-    'apps.patients'
+    'apps.patients',
+    'apps.med_tests'
 ]
 
 MIDDLEWARE = [
@@ -141,7 +142,7 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.JSONParser',
     ],
     'DEFAULT_RENDERER_CLASSES': (
-        'rest_framework.renderers.BrowsableAPIRenderer',
+        # 'rest_framework.renderers.BrowsableAPIRenderer',
         'rest_framework.renderers.JSONRenderer',
     ),
 }
