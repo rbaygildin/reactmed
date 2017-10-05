@@ -141,12 +141,14 @@
          */
         function saveTestRecord() {
             var testRecord = $('#id_test_record').serializeObject();
-            Object.keys(testRecord['real_inds']).forEach(function (ind, i, arr) {
-                testRecord['real_inds'][ind] = parseFloat(testRecord['real_inds'][ind]);
-            });
-            Object.keys(testRecord['int_inds']).forEach(function (ind, i, arr) {
-                testRecord['int_inds'][ind] = parseInt(testRecord['int_inds'][ind]);
-            });
+            if(testRecord['real_inds'])
+                Object.keys(testRecord['real_inds']).forEach(function (ind, i, arr) {
+                    testRecord['real_inds'][ind] = parseFloat(testRecord['real_inds'][ind]);
+                });
+            if(testRecord['int_inds'])
+                Object.keys(testRecord['int_inds']).forEach(function (ind, i, arr) {
+                    testRecord['int_inds'][ind] = parseInt(testRecord['int_inds'][ind]);
+                });
             testRecord['csrfmiddlewaretoken'] = '{{ csrf_token }}';
             $.post('{{ request.path }}', JSON.stringify(testRecord)).done(function () {
                 window.location = "{% url 'patients:show' patient_id=patient_id %}";

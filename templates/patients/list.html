@@ -2,7 +2,7 @@
 {% load staticfiles %}
 {% block header %}
     <style>
-        body{
+        body {
             padding-top: 80px;
         }
     </style>
@@ -23,8 +23,7 @@
                 <th>ФИО</th>
                 <th>Пол</th>
                 <th>Возраст</th>
-                <th></th>
-                <th></th>
+                <th>Действия</th>
             </tr>
         </thead>
         <tbody id="patients-table-body">
@@ -37,10 +36,12 @@
                     <td>{{ patient.gender }}</td>
                     <td>{{ patient.age }}</td>
                     <td>
-                        <a href="{% url 'patients:show' patient_id=patient.id %}">Открыть</a>
-                    </td>
-                    <td>
-                        <a href="{% url 'patients:delete' patient_id=patient.id %}">Удалить</a>
+                        <a href="{% url 'patients:show' patient_id=patient.id %}" class="btn btn-success">
+                            <span class="glyphicon glyphicon-edit"></span>
+                        </a>
+                        <a href="{% url 'patients:delete' patient_id=patient.id %}" class="btn btn-danger">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </a>
                     </td>
                 </tr>
             {% endfor %}

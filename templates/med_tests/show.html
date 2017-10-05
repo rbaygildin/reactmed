@@ -14,12 +14,25 @@
         input[readonly] {
             background-color: #fff;
         }
+
+        .panel-heading h3 {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: normal;
+            width: 75%;
+            padding-top: 8px;
+        }
     </style>
 {% endblock %}
 {% block content %}
     <div class="panel panel-primary">
         <div class="panel-heading">
-            {{ test_rec.name }}
+            <h3 class="panel-title pull-left">
+                {{ test_rec.name }}
+            </h3>
+            <button class="btn btn-success pull-right" onclick="window.location='{% url 'med_tests:export' patient_id=patient.id test_id=test_rec.id %}'">Экспорт</button>
+            <div class="clearfix"></div>
         </div>
         <div class="panel-body">
             <form class="form-horizontal">
@@ -47,10 +60,10 @@
             <form class="form-horizontal">
                 {% for ind, val in test_rec.real_inds.items %}
                     <div class="form-group row">
-                    <label for="{{ ind }}" class="control-label">{{ ind }}</label>
+                        <label for="{{ ind }}" class="control-label">{{ ind }}</label>
                         <input id="{{ ind }}" value="{{ val }}" readonly class="form-control"
-                           style="background-color: white">
-                        </div>
+                               style="background-color: white">
+                    </div>
                 {% endfor %}
                 {% for ind, val in test_rec.int_inds.items %}
                     <div class="form-group row">

@@ -30,14 +30,14 @@ class CustomUserAdmin(UserAdmin):
 
 @admin.register(MedArea)
 class MedAreaAdmin(admin.ModelAdmin):
-    list_display = ('name', 'description')
+    list_display = ('name', 'short_name', 'description')
     ordering = ('name', )
     search_fields = ('name', )
 
 
 @admin.register(MedTest)
 class MedTestAdmin(admin.ModelAdmin):
-    list_display = ('name', 'description', '_view_med_area')
+    list_display = ('name', 'short_name', 'description', '_view_med_area')
     ordering = ('name', )
     search_fields = ('name', )
     inlines = (RealIndInline, IntIndInline, TextIndInline)
@@ -50,21 +50,21 @@ class MedTestAdmin(admin.ModelAdmin):
 
 @admin.register(RealInd)
 class RealIndAdmin(admin.ModelAdmin):
-    list_display = ('name', 'description', 'min_norm', 'max_norm')
+    list_display = ('name', 'short_name', 'description', 'min_norm', 'max_norm')
     ordering = ('name',)
     search_fields = ('name',)
 
 
 @admin.register(IntInd)
 class IntIndAdmin(admin.ModelAdmin):
-    list_display = ('name', 'description', 'min_norm', 'max_norm')
+    list_display = ('name', 'short_name', 'description', 'min_norm', 'max_norm')
     ordering = ('name',)
     search_fields = ('name',)
 
 
 @admin.register(TextInd)
 class TextIndAdmin(admin.ModelAdmin):
-    list_display = ('name', 'description', '_view_values', '_view_med_test')
+    list_display = ('name', 'short_name', 'description', '_view_values', '_view_med_test')
     ordering = ('name',)
     search_fields = ('name',)
     list_filter = ('med_test__name', )
@@ -73,7 +73,7 @@ class TextIndAdmin(admin.ModelAdmin):
         return ', '.join(ind.values)
 
     def _view_med_test(self, ind):
-        return ind.med_test.view_name
+        return ind.med_test.name
 
     _view_values.short_description = _('Values')
     _view_med_test.short_description = _('Medical Test')
@@ -81,9 +81,16 @@ class TextIndAdmin(admin.ModelAdmin):
 
 @admin.register(TestRec)
 class TestRecAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('name', 'summary', 'info', 'test_date', '_view_patient')
+    ordering = ('test_date', )
+    list_filter = ('name', )
+
+    def _view_patient(self, rec):
+        return str(rec.patient)
+
+    _view_patient.short_description = _('Patient')
 
 
 @admin.register(Patient)
 class PatientAdmin(admin.ModelAdmin):
-    pass
+    list_display = ('name', 'surname', 'age', 'gender')
