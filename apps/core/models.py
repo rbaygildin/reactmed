@@ -8,6 +8,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from datetime import date, timedelta
 
+from transliterate import translit
+
 from apps.core.managers import UserManager
 
 GENDER = (
@@ -115,7 +117,8 @@ class Patient(AbstractModel):
     patronymic = models.CharField(verbose_name=_('Patronymic'), max_length=50, blank=True, null=True)
     gender = models.CharField(verbose_name=_('Gender'), max_length=20, choices=GENDER)
     birthday = models.DateField(verbose_name=_('Birthday'))
-    blood_group = models.CharField(verbose_name=_('Blood Group'), max_length=20, choices=BLOOD_GROUP, blank=True, null=True)
+    blood_group = models.CharField(verbose_name=_('Blood Group'), max_length=20, choices=BLOOD_GROUP, blank=True,
+                                   null=True)
     rh_factor = models.CharField(verbose_name=_('RH Factor'), max_length=20, choices=RH_FACTOR, blank=True, null=True)
     is_disabled = models.BooleanField(verbose_name=_('Disabled'), default=False)
     omi_card = models.CharField(verbose_name=_('OMI Card'), max_length=16, blank=True, null=True)
@@ -154,6 +157,7 @@ class Patient(AbstractModel):
 
 class BaseMedType(AbstractModel):
     name = models.CharField(max_length=200)
+    short_name = models.CharField(max_length=200, unique=True, blank=True, null=True)
     description = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
@@ -166,6 +170,11 @@ class BaseMedType(AbstractModel):
 class MedArea(BaseMedType):
     parent = models.ForeignKey('core.MedArea', blank=True, null=True)
 
+    def save(self, *args, **kwargs):
+        if self.short_name is None or self.short_name == '':
+            self.short_name = translit(self.name, 'ru', reversed=True).lower().replace(' ', '_')
+        super(MedArea, self).save(*args, **kwargs)
+
     class Meta:
         db_table = 'med_area'
         verbose_name = _('Medical Area')
@@ -174,6 +183,11 @@ class MedArea(BaseMedType):
 
 class MedTest(BaseMedType):
     med_area = models.ForeignKey('core.MedArea')
+
+    def save(self, *args, **kwargs):
+        if self.short_name is None or self.short_name == '':
+            self.short_name = self.med_area.short_name + '_' + translit(self.name, 'ru', reversed=True).lower().replace(' ', '_')
+        super(MedTest, self).save(*args, **kwargs)
 
     class Meta:
         db_table = 'med_test'
@@ -193,9 +207,13 @@ class RealInd(BaseMedType):
         verbose_name_plural = _('Real Indicators')
 
     def save(self, *args, **kwargs):
-        if self.min_norm > self.max_norm:
+        if self.min_norm is None or self.max_norm is None:
+            pass
+        elif self.min_norm > self.max_norm:
             raise ValidationError("Min norm must be less than max norm")
-        super(RealInd, self).save()
+        if self.short_name is None or self.short_name == '':
+            self.short_name = self.med_test.short_name + '_' + translit(self.name, 'ru', reversed=True).lower().replace(' ', '_')
+        super(RealInd, self).save(*args, **kwargs)
 
 
 class IntInd(BaseMedType):
@@ -210,9 +228,13 @@ class IntInd(BaseMedType):
         verbose_name_plural = _('Integer Indicators')
 
     def save(self, *args, **kwargs):
-        if self.min_norm > self.max_norm:
+        if self.min_norm is None or self.max_norm is None:
+            pass
+        elif self.min_norm > self.max_norm:
             raise ValidationError("Min norm must be less than max norm")
-        super(IntInd, self).save()
+        if self.short_name is None or self.short_name == '':
+            self.short_name = self.med_test.short_name + '_' + translit(self.name, 'ru', reversed=True).lower().replace(' ', '_')
+        super(IntInd, self).save(*args, **kwargs)
 
 
 class TextInd(BaseMedType):
@@ -223,6 +245,11 @@ class TextInd(BaseMedType):
         db_table = 'text_ind'
         verbose_name = _('Text Indicator')
         verbose_name_plural = _('Text Indicators')
+
+    def save(self, *args, **kwargs):
+        if self.short_name is None or self.short_name == '':
+            self.short_name = self.med_test.short_name + '_' + translit(self.name, 'ru', reversed=True).lower().replace(' ', '_')
+        super(TextInd, self).save(*args, **kwargs)
 
 
 class TestRec(AbstractModel):

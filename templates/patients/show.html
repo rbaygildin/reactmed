@@ -24,22 +24,52 @@
         <div class="panel-body">
             <form>
                 <div class="form-group row">
-                    <label class="col-md-1 control-label">ФИО</label>
-                    <div class="col-md-6">
+                    <label class="col-md-2 control-label">ФИО</label>
+                    <div class="col-md-4">
                         <input value="{{ patient.surname }} {{ patient.name }} {{ patient.patronymic|default_if_none:'' }}"
                                class="form-control">
                     </div>
-                </div>
-                <div class="form-group row">
                     <label class="col-md-1 control-label">Пол</label>
                     <div class="col-md-2">
                         <input value="{{ patient.gender }}"
                                class="form-control">
                     </div>
+                </div>
+                <div class="form-group row">
                     <label class="col-md-2 control-label">Дата рождения</label>
                     <div class="col-md-3">
                         <input value="{{ patient.birthday }} ({{ patient.age }} лет)"
-                           class="form-control">
+                               class="form-control">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-2 control-label">ОМС</label>
+                    <div class="col-md-3">
+                        <input value="{{ patient.omi_card }}"
+                               class="form-control">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-2 control-label">Группа крови</label>
+                    <div class="col-md-2">
+                        <input value="{{ patient.blood_group }}"
+                               class="form-control">
+                    </div>
+                    <label class="col-md-2 control-label">Резус-фактор</label>
+                    <div class="col-md-2">
+                        <input value="{{ patient.rh_factor }}"
+                               class="form-control">
+                    </div>
+                    <label class="col-md-2 control-label">Инвалидность</label>
+                    <div class="col-md-2">
+                        <input value="{{ patient.is_disabled }}"
+                               class="form-control">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-2 control-label">Адрес</label>
+                    <div class="col-md-6">
+                        <textarea class="form-control">{{ patient.address }}</textarea>
                     </div>
                 </div>
             </form>
@@ -69,38 +99,40 @@
                 </div>
             </div>
             <br/>
-            <table class="table table-responsive" cellpadding="0">
-                <thead>
-                    <tr>
-                        <th>Тип обследования</th>
-                        <th>Дата проведения</th>
-                        <th>Краткая информация</th>
-                        <th>Информация</th>
-                        <th></th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for test in patient.test_recs.all %}
+            {% if patient.test_recs.count != 0 %}
+                <table class="table table-bordered" cellpadding="0">
+                    <thead>
                         <tr>
-                            <td>{{ test.name }}</td>
-                            <td>{{ test.test_date }}</td>
-                            <td>{{ test.summary|default_if_none:"" }}</td>
-                            <td>{{ test.info|default_if_none:"" }}</td>
-                            <td>
-                                <button onclick="window.location='{% url 'med_tests:show' test_id=test.id patient_id=patient.id %}'"
-                                        class="btn btn-success">Открыть
-                                </button>
-                            </td>
-                            <td>
-                                <button onclick="deleteTest('{% url 'med_tests:delete' test_id=test.id patient_id=patient.id %}');"
-                                        class="btn btn-danger">Удалить
-                                </button>
-                            </td>
+                            <th>Тип обследования</th>
+                            <th>Дата проведения</th>
+                            <th>Краткая информация</th>
+                            <th>Информация</th>
+                            <th>Действия</th>
                         </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {% for test in patient.test_recs.all %}
+                            <tr>
+                                <td>{{ test.name }}</td>
+                                <td>{{ test.test_date }}</td>
+                                <td>{{ test.summary|default_if_none:"" }}</td>
+                                <td>{{ test.info|default_if_none:"" }}</td>
+                                <td>
+                                    <a href="{% url 'med_tests:show' test_id=test.id patient_id=patient.id %}"
+                                       class="btn btn-success">
+                                        <span class="glyphicon glyphicon-edit"></span>
+                                    </a>
+                                    <a onclick="deleteTest('{% url 'med_tests:delete' test_id=test.id patient_id=patient.id %}');"
+                                       class="btn btn-danger">
+                                        <span class="glyphicon glyphicon-remove"></span>
+                                    </a>
+                                </td>
+
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% endif %}
         </div>
         <div id="id_dynamics" class="tab-pane">
 

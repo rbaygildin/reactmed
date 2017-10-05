@@ -1,9 +1,13 @@
 from json import loads
 
 from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from django.template.loader import get_template
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
+from django_pdfkit import PDFView
+from pdfkit import from_string
 
 from apps.core.models import Patient, TestRec
 
@@ -49,3 +53,14 @@ def delete_action(request, test_id, patient_id):
     test_rec = TestRec.objects.get(pk=test_id)
     test_rec.delete()
     return redirect(reverse('patients:list'))
+
+
+class TestReportPdf(PDFView):
+
+    template_name = 'med_tests/test_report_pdf.html'
+
+    def get_context_data(self, **kwargs):
+        return {
+            'test_rec': ''
+        }
+
