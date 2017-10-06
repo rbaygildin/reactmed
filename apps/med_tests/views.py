@@ -49,18 +49,18 @@ def show_action(request, test_id, patient_id):
 
 
 @login_required
-def delete_action(request, test_id, patient_id):
+def delete_action(request, test_id, patient_id=None):
     test_rec = TestRec.objects.get(pk=test_id)
     test_rec.delete()
     return redirect(reverse('patients:list'))
 
 
-class TestReportPdf(PDFView):
-
-    template_name = 'med_tests/test_report_pdf.html'
-
-    def get_context_data(self, **kwargs):
-        return {
-            'test_rec': ''
+@login_required
+def dynamics_action(request, patient_id=None):
+    return render(
+        request,
+        'med_tests/dynamics.html',
+        {
+            'patient': Patient.objects.get(pk=patient_id)
         }
-
+    )

@@ -254,6 +254,7 @@ class TextInd(BaseMedType):
 
 class TestRec(AbstractModel):
     name = models.CharField(max_length=200)
+    short_name = models.CharField(max_length=200)
     description = models.CharField(max_length=255, blank=True, null=True)
     real_inds = JSONField(blank=True, null=True)
     int_inds = JSONField(blank=True, null=True)

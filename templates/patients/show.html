@@ -69,7 +69,7 @@
                 <div class="form-group row">
                     <label class="col-md-2 control-label">Адрес</label>
                     <div class="col-md-6">
-                        <textarea class="form-control">{{ patient.address }}</textarea>
+                        <textarea class="form-control">{{ patient.address|default_if_none:"" }}</textarea>
                     </div>
                 </div>
             </form>
@@ -87,15 +87,15 @@
         <div id="id_tests" class="tab-pane active">
             <div class="row">
                 <div class="col-sm-2">
-                    <button class="btn btn-success"
-                            onclick="window.location='{% url 'med_tests:create' patient_id=patient.id %}'">
+                    <a class="btn btn-success"
+                            href="{% url 'med_tests:create' patient_id=patient.id %}">
                         Добавить обследование
-                    </button>
+                    </a>
                 </div>
                 <div class="col-sm-2">
-                    <button class="btn btn-success">
+                    <a class="btn btn-success" href="{% url 'med_tests:dynamics' patient_id=patient.id %}">
                         Посмотреть динамику
-                    </button>
+                    </a>
                 </div>
             </div>
             <br/>

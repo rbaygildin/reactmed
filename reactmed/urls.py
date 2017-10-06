@@ -23,5 +23,6 @@ urlpatterns = [
     url(r'', include('apps.main.urls', namespace='main')),
     url(r'^users/', include('apps.users.urls', namespace='users')),
     url(r'^patients/', include('apps.patients.urls', namespace='patients')),
-    url(r'^patients/(?P<patient_id>\d+)/med_tests/', include('apps.med_tests.urls', namespace='med_tests'))
+    url(r'^patients/(?P<patient_id>\d+)/med_tests/', include('apps.med_tests.urls', namespace='med_tests')),
+    url(r'^reports/', include('apps.reports.urls', namespace='reports'))
 ]
