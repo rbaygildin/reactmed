@@ -1,6 +1,6 @@
 from rest_framework.generics import *
 
-from apps.rest.serializers import *
+from apps.api.serializers import *
 
 
 class RealIndListView(ListCreateAPIView):

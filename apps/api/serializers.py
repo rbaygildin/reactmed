@@ -1,7 +1,7 @@
 from rest_framework.serializers import *
 
 from apps.core.models import *
-from apps.rest.models import Signup
+from apps.api.models import Signup
 
 
 class SignupSerializer(Serializer):
