@@ -1,7 +1,7 @@
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 
 from apps.core.models import IntInd
-from apps.rest.serializers import MedTestSerializer
+from apps.api.serializers import MedTestSerializer
 
 
 class IntIndListView(ListCreateAPIView):

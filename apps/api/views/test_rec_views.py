@@ -1,7 +1,7 @@
 from rest_framework.generics import ListAPIView
 
 from apps.core.models import TestRec
-from apps.rest.serializers import TestRecSerializer
+from apps.api.serializers import TestRecSerializer
 from datetime import datetime
 
 
