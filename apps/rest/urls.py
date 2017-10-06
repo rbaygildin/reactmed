@@ -1,4 +1,5 @@
 from django.conf.urls import url
+from django.views.decorators.csrf import csrf_exempt
 
 from apps.rest.views import *
 
@@ -29,4 +30,7 @@ urlpatterns = (
     # Text Inds
     url(r'^text_inds$', TextIndListView.as_view(), name='text_inds'),
     url(r'^text_ind/(?P<pk>\d+)', TextIndView.as_view(), name='text_ind'),
+
+    # Test Records
+    url(r'^test_recs/(?P<patient_id>\d+)/(?P<test_type_id>.+)', csrf_exempt(TestRecListView.as_view()), name='test_recs')
 )

@@ -81,6 +81,7 @@
     <script src="{% static 'bootstrap-datepicker/locales/bootstrap-datepicker.ru.min.js' %}"></script>
     <script src="{% static 'bootstrap-datepicker/js/bootstrap-datepicker.min.js' %}"></script>
     <script>
+        window.testType = {};
         /**
          * Select test type
          * @param selectedItem
@@ -90,32 +91,38 @@
             $('#id_real_inds').empty();
             $('#id_int_inds').empty();
             $('#id_text_inds').empty();
+            window.testType['real_inds'] = {};
+            window.testType['int_inds'] = {};
+            window.testType['text_inds'] = {};
             selectedItem['real_inds'].forEach(function (ind, i, arr) {
+                window.testType['real_inds'][ind['short_name']] = ind;
                 $('#id_real_inds').append($(
                     "<div class='form-group row'>" +
                     "<label class='col-md-2 control-label'>" + ind['name'] + (ind['unit'] ? ' (' + ind['unit'] + ')' : '') + "</label>" +
                     "<div class='col-md-3'>" +
-                    "<input class='form-control' name='real_inds[" + ind['name'] + "]'>" +
+                    "<input class='form-control' name='real_inds[" + ind['short_name'] + "]'>" +
                     "</div>" +
                     "</div>"
                 ));
             });
             selectedItem['int_inds'].forEach(function (ind, i, arr) {
+                window.testType['int_inds'][ind['short_name']] = ind;
                 $('#id_int_inds').append($(
                     "<div class='form-group row'>" +
                     "<label class='col-md-2 control-label'>" + ind['name'] + (ind['unit'] ? ' (' + ind['unit'] + ')' : '') + "</label>" +
                     "<div class='col-md-3'>" +
-                    "<input class='form-control' name='int_inds[" + ind['name'] + "]'>" +
+                    "<input class='form-control' name='int_inds[" + ind['short_name'] + "]'>" +
                     "</div>" +
                     "</div>"
                 ));
             });
             selectedItem['text_inds'].forEach(function (ind, i, arr) {
+                window.testType['text_inds'][ind['short_name']] = ind;
                 if (ind['values']) {
                     var select = "<div class='form-group row'>" +
                         "<label class='col-md-2 control-label'>" + ind['name'] + "</label>" +
                         "<div class='col-md-3'>" +
-                        "<select class='form-control' name='text_inds[" + ind['name'] + "]'>";
+                        "<select class='form-control' name='text_inds[" + ind['short_name'] + "]'>";
                     for (var j = 0; j < ind['values'].length; j++) {
                         select += "<option value='" + ind['values'][j] + "'>" + ind['values'][j] + "</option>";
                     }
@@ -127,7 +134,7 @@
                         "<div class='form-group row'>" +
                         "<label class='col-md-2 control-label'>" + ind['name'] + "</label>" +
                         "<div class='col-md-3'>" +
-                        "<input class='form-control' name='text_inds[" + ind['name'] + "]'>" +
+                        "<input class='form-control' name='text_inds[" + ind['short_name'] + "]'>" +
                         "</div>" +
                         "</div>"
                     ));
@@ -141,13 +148,29 @@
          */
         function saveTestRecord() {
             var testRecord = $('#id_test_record').serializeObject();
+            //Foreach over real indicators
             if(testRecord['real_inds'])
                 Object.keys(testRecord['real_inds']).forEach(function (ind, i, arr) {
-                    testRecord['real_inds'][ind] = parseFloat(testRecord['real_inds'][ind]);
+                    testRecord['real_inds'][ind] = {
+                        name: window.testType['real_inds'][ind]['name'],
+                        value: parseFloat(testRecord['real_inds'][ind])
+                    };
                 });
+            //Foreach over int indicators
             if(testRecord['int_inds'])
                 Object.keys(testRecord['int_inds']).forEach(function (ind, i, arr) {
-                    testRecord['int_inds'][ind] = parseInt(testRecord['int_inds'][ind]);
+                    testRecord['int_inds'][ind] = {
+                        name: window.testType['int_inds'][ind]['name'],
+                        value: parseInt(testRecord['int_inds'][ind])
+                    };
+                });
+            //Foreach over text indicators
+            if(testRecord['text_inds'])
+                Object.keys(testRecord['text_inds']).forEach(function (ind, i, arr) {
+                    testRecord['text_inds'][ind] = {
+                        name: window.testType['text_inds'][ind]['name'],
+                        value: testRecord['text_inds'][ind]
+                    };
                 });
             testRecord['csrfmiddlewaretoken'] = '{{ csrf_token }}';
             $.post('{{ request.path }}', JSON.stringify(testRecord)).done(function () {

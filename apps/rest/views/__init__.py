@@ -5,3 +5,4 @@ from .int_ind_views import *
 from .text_ind_views import *
 from .user_views import *
 from .singup_views import *
+from .test_rec_views import *

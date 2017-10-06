@@ -32,27 +32,27 @@ class UserSerializer(ModelSerializer):
 class PatientSerializer(ModelSerializer):
     class Meta:
         model = Patient
-        fields = ('gender', 'birthday', 'rh', 'blood_group')
+        fields = ('name', 'surname', 'patronymic', 'gender', 'birthday', 'rh', 'blood_group')
 
 
 class MedAreaSerializer(ModelSerializer):
     class Meta:
         model = MedArea
-        fields = ('id', 'name', 'description')
+        fields = ('id', 'name', 'short_name', 'description')
         ordering = ('name',)
 
 
 class RealIndSerializer(ModelSerializer):
     class Meta:
         model = RealInd
-        fields = ('id', 'name', 'description', 'min_norm', 'max_norm', 'unit')
+        fields = ('id', 'name', 'short_name', 'description', 'min_norm', 'max_norm', 'unit')
         ordering = ('name',)
 
 
 class IntIndSerializer(ModelSerializer):
     class Meta:
         model = IntInd
-        fields = ('id', 'name', 'description', 'min_norm', 'max_norm', 'unit')
+        fields = ('id', 'name', 'short_name', 'description', 'min_norm', 'max_norm', 'unit')
         ordering = ('name',)
 
 
@@ -61,7 +61,7 @@ class TextIndSerializer(ModelSerializer):
 
     class Meta:
         model = TextInd
-        fields = ('id', 'name', 'description', 'values')
+        fields = ('id', 'name', 'short_name', 'description', 'values')
         ordering = ('name',)
 
 
@@ -72,7 +72,7 @@ class MedTestSerializer(ModelSerializer):
 
     class Meta:
         model = MedTest
-        fields = ('id', 'name', 'description', 'real_inds', 'int_inds', 'text_inds')
+        fields = ('id', 'name', 'short_name', 'description', 'real_inds', 'int_inds', 'text_inds')
         ordering = ('name',)
 
     def _get_real_inds(self, obj):
@@ -91,3 +91,14 @@ class MedTestSerializer(ModelSerializer):
         instance.name = validated_data.get('name', instance.name)
         instance.description = validated_data.get('description', instance.description)
         return instance
+
+
+class TestRecSerializer(ModelSerializer):
+    class Meta:
+        model = TestRec
+        fields = (
+            'id', 'name', 'short_name', 'summary',
+            'info', 'test_date', 'real_inds',
+            'int_inds', 'text_inds'
+        )
+        ordering = ('test_date', )

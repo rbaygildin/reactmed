@@ -60,22 +60,22 @@
             <form class="form-horizontal">
                 {% for ind, val in test_rec.real_inds.items %}
                     <div class="form-group row">
-                        <label for="{{ ind }}" class="control-label">{{ ind }}</label>
-                        <input id="{{ ind }}" value="{{ val }}" readonly class="form-control"
+                        <label for="{{ ind }}" class="control-label">{{ val.name }}</label>
+                        <input id="{{ ind }}" value="{{ val.value }}" readonly class="form-control"
                                style="background-color: white">
                     </div>
                 {% endfor %}
                 {% for ind, val in test_rec.int_inds.items %}
                     <div class="form-group row">
-                        <label for="{{ ind }}" class="control-label">{{ ind }}</label>
-                        <input id="{{ ind }}" value="{{ val }}" readonly class="form-control"
+                        <label for="{{ ind }}" class="control-label">{{ val.name }}</label>
+                        <input id="{{ ind }}" value="{{ val.value }}" readonly class="form-control"
                                style="background-color: white">
                     </div>
                 {% endfor %}
                 {% for ind, val in test_rec.text_inds.items %}
                     <div class="form-group row">
-                        <label for="{{ ind }}" class="control-label">{{ ind }}</label>
-                        <input id="{{ ind }}" value="{{ val }}" readonly class="form-control"
+                        <label for="{{ ind }}" class="control-label">{{ val.value }}</label>
+                        <input id="{{ ind }}" value="{{ val.value }}" readonly class="form-control"
                                style="background-color: white">
                     </div>
                 {% endfor %}

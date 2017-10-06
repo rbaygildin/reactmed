@@ -1,0 +1,214 @@
+{% extends 'core/base_menu.html' %}
+{% load staticfiles %}
+{% block header %}
+    <link rel="stylesheet" href="{% static 'bootstrap-datepicker/css/bootstrap-datepicker.min.css' %}">
+    <style>
+        body {
+            padding-top: 80px;
+        }
+
+        .panel-body {
+            padding-left: 40px;
+            padding-right: 40px;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            {{ patient.name }} {{ patient.surname }} {{ patient.patronymic|default_if_none:"" }}
+        </div>
+        <div class="panel-body">
+            <div class="form-horizontal">
+                <div class="form-group row">
+                    <label for="id_test_type" class="col-md-2 control-label">Тип обследования</label>
+                    <div class="col-md-4">
+                        <input id="id_test_type" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="id_start_date" class="col-md-2 control-label">Начальная дата</label>
+                    <div class="col-md-4">
+                        <input id="id_start_date" class="form-control">
+                    </div>
+                    <label for="id_end_date" class="col-md-2 control-label">Конечная дата</label>
+                    <div class="col-md-4">
+                        <input id="id_end_date" class="form-control">
+                    </div>
+                </div>
+                <br/>
+                <div class="form-group row pull-right">
+                    <button class="btn btn-success" onclick="showDynamics();">Посмотреть динамику</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="id_charts">
+
+    </div>
+{% endblock %}
+{% block scripts %}
+    <script src="{% static 'bootstrap-typeahead/bootstrap3-typeahead.js' %}"></script>
+    <script src="{% static 'bootstrap-datepicker/js/bootstrap-datepicker.min.js' %}"></script>
+    <script src="{% static 'plotly/plotly-latest.min.js' %}"></script>
+    <script type="application/javascript">
+
+        const testRecordsUrl = '/api/test_recs/{{ patient.id }}';
+        window.testType = {};
+
+        /**
+         * Prepare data suitable for drawing charts
+         * Data should be dict of type ind: {x: [], y: [], minNorm: <>, maxNorm: <>}
+         */
+        function prepareData(testRecords) {
+            var chartsData = {};
+            window.testType['real_inds'].forEach(function (ind, i, arr) {
+                chartsData[ind['short_name']] = {
+                    x: [],
+                    y: [],
+                    name: ind.name,
+                    minNorm: ind['min_norm'],
+                    maxNorm: ind['max_norm'],
+                    unit: ind['unit']
+                };
+            });
+            window.testType['real_inds'].forEach(function (ind, i, arr) {
+                chartsData[ind['short_name']] = {
+                    x: [],
+                    y: [],
+                    name: ind.name,
+                    minNorm: ind['min_norm'],
+                    maxNorm: ind['max_norm'],
+                    unit: ind['unit']
+                };
+            });
+            testRecords.forEach(function (record, i, arr) {
+                var realInds = record['real_inds'];
+                var intInds = record['int_inds'];
+                if (realInds)
+                    Object.keys(realInds).forEach(function (ind) {
+                        chartsData[ind].x.push(record['test_date']);
+                        chartsData[ind].y.push(realInds[ind].value);
+                    });
+                if (intInds)
+                    Object.keys(intInds).forEach(function (ind) {
+                        chartsData[ind].x.push(record['test_date']);
+                        chartsData[ind].y.push(intInds[ind].value);
+                    });
+            });
+            return chartsData;
+        }
+
+        /**
+         * Draw line chart which represents dynamics of test indicators
+         */
+        function drawLineChart(chartId, indData) {
+            console.log(indData);
+            indData.type = 'scatter';
+            indData.mode = 'lines+markers';
+            Plotly.newPlot(
+                chartId,
+                [indData], {
+                    title: indData.name,
+                    xaxis: {
+                        title: 'Дата проведения'
+                    },
+                    yaxis: {
+                        title: 'Значение' + (indData.unit ? ' (' + indData.unit + ')' : '')
+                    }
+                }
+            );
+        }
+
+        /**
+         * Draw indicators dynamics
+         */
+        function makeCharts(testRecords) {
+            var chartsData = prepareData(testRecords);
+            $('#id_charts').empty();
+            var makeChartPanel = function (ind) {
+                if (chartsData[ind['short_name']].x.length > 0) {
+                    var chartPanel = $("<div class='panel panel-default' style='margin-bottom: 40px;'></div>");
+                    var chartPanelHeading = $("<div class='panel-heading'>" + ind['name'] + "</div>");
+                    var chartId = ind['short_name'];
+                    var chartPanelBody = $("<div class='panel-body'></div>");
+                    var chart = $("<div id='" + chartId + "'></div>");
+                    chartPanelBody.append(chart);
+                    chartPanel.append(chartPanelHeading, chartPanelBody);
+                    $('#id_charts').append(chartPanel);
+                    drawLineChart(chartId, chartsData[chartId]);
+                }
+            };
+
+            //Real indicators
+            window.testType['real_inds'].forEach(function (ind, i, arr) {
+                makeChartPanel(ind);
+            });
+
+            //Integer indicators
+            window.testType['int_inds'].forEach(function (ind, i, arr) {
+                makeChartPanel(ind);
+            });
+
+        }
+
+        /**
+         * Show test dynamics over period from specific start date until end date
+         */
+        function showDynamics() {
+            var postParams = {};
+            if ($('#id_start_date').val() !== null && !$('#id_start_date').empty())
+                postParams['start_date'] = $('#id_start_date');
+            if ($('#id_end_date').val() !== null && !$('#id_end_date').empty())
+                postParams['end_date'] = $('#id_end_date');
+            $.get(
+                testRecordsUrl + '/' + window.testType['short_name'], postParams)
+                .done(function (testRecords) {
+                    console.log(new Date() + ': Got test records for patient with id {{ patient.id }}');
+                    console.log(testRecords);
+                    makeCharts(testRecords);
+                });
+        }
+
+        /**
+         * Handle selecting test type
+         */
+        function selectTestType(selectedItem) {
+            window.testType = selectedItem;
+            return selectedItem;
+        }
+
+        /**
+         * This function handles DOM of pre loading document
+         */
+        function init() {
+            $('#id_start_date').datepicker(
+                {
+                    format: 'yyyy-mm-dd',
+                    language: 'ru',
+                    orientation: 'bottom'
+                }
+            );
+            $('#id_end_date').datepicker(
+                {
+                    format: 'yyyy-mm-dd',
+                    language: 'ru',
+                    orientation: 'bottom'
+                }
+            );
+            $.get('{% url "api:tests" %}').done(
+                function (data) {
+                    console.log(data);
+                    $('#id_test_type').typeahead({
+                        order: 'asc',
+                        display: 'name',
+                        source: data,
+                        updater: selectTestType
+                    });
+                }
+            );
+        }
+
+        $(document).ready(init());
+    </script>
+{% endblock %}
