@@ -31,7 +31,7 @@ virtualenv -p python3 --no-site-packages venv
 
 As soon as you install executable environment you activate virtual environment
 ```bash
-activate venv/bin/activate
+source venv/bin/activate
 ```
 
 To install python packages run command
