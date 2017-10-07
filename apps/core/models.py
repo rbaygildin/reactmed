@@ -12,7 +12,7 @@ from datetime import date, timedelta
 
 from transliterate import translit
 
-from .managers import UserManager
+from apps.core.managers import UserManager
 
 GENDER = (
     ('Мужской', 'мужской'),
