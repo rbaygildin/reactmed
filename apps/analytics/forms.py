@@ -1,6 +1,13 @@
-from django.forms import Form, CharField
+from django.forms import Form
 
 
 class VisualizationParamsForm(Form):
-    test = CharField(max_length=50)
-    class_col = CharField(max_length=50)
+    pass
+
+
+class ClusteringParamsForm(Form):
+    pass
+
+
+class DataLoadParamsForm(Form):
+    pass
