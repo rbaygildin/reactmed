@@ -1,13 +1,12 @@
 import base64
-import json
 from io import BytesIO
-from time import time
+from io import StringIO
 
 from django.http import JsonResponse, HttpResponse
 from pandas import ExcelWriter
 
 import apps.analytics.visualizers as vis
-from apps.analytics.analysis import DescriptiveStatAnalyser, FeaturesSelectionAnalyser, ImputerAnalyser
+from apps.analytics.analysis import FeaturesSelectionAnalyser, ImputerAnalyser
 from apps.analytics.etl import PostgresDataLoader
 from apps.analytics.load import data_load
 
@@ -231,11 +230,17 @@ def data_action(request):
     orient = request.GET.get("orient")
     if out_format == 'application/json':
         return HttpResponse(df.reset_index().to_json(orient=orient), content_type=out_format)
-    # elif img_format == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
-    #     writer = ExcelWriter('pandas_simple.xlsx', engine='xlsxwriter')
-    #     return Response(response=df.reset_index().to_excel(excel_writer=writer),
-    #                     status=200,
-    #                     mimetype=img_format)
+    elif out_format == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+        sio = BytesIO()
+        writer = ExcelWriter('data.xlsx', engine='xlsxwriter')
+        writer.book.filename = sio
+        df.reset_index().to_excel(excel_writer=writer)
+        writer.save()
+        sio.seek(0)
+        file = sio.getvalue()
+        response = HttpResponse(file, content_type=out_format)
+        response['Content-Disposition'] = 'attachment; filename=data.xlsx'
+        return response
     elif out_format == 'text/html':
         return HttpResponse(df.reset_index().to_html(), content_type=out_format)
     return HttpResponse(df.reset_index().to_csv(), content_type='text/csv')
