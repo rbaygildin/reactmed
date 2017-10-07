@@ -6,7 +6,7 @@ from django.http import JsonResponse, HttpResponse
 from pandas import ExcelWriter
 
 import apps.analytics.visualizers as vis
-from apps.analytics.analysis import FeaturesSelectionAnalyser, ImputerAnalyser
+from apps.analytics.analysis import FeaturesSelectionAnalyser, ImputerAnalyser, DescriptiveStatAnalyser
 from apps.analytics.etl import PostgresDataLoader
 from apps.analytics.load import data_load
 
@@ -245,19 +245,16 @@ def data_action(request):
         return HttpResponse(df.reset_index().to_html(), content_type=out_format)
     return HttpResponse(df.reset_index().to_csv(), content_type='text/csv')
 
-#
-#
-# def data_stat_action():
-#     kwargs = {
-#         'test': request.args.get('test'),
-#         'feature_cols': request.args.getlist('feature_cols'),
-#         'class_col': request.args.get('class_col'),
-#         'normalize': request.args.get('normalize'),
-#         'load_pattern': request.args.get('load_pattern')
-#     }
-#     df, class_col = data_load(**kwargs)
-#     stat = DescriptiveStatAnalyser().perform_analysis(df, class_col=class_col)
-#     orient = request.args.get("orient")
-#     return Response(response=stat.to_json(orient=orient),
-#                     status=200,
-#                     mimetype='application/json')
+
+def features_stat_action(request):
+    kwargs = {
+        'test': request.GET.get('test'),
+        'feature_cols': request.GET.getlist('feature_cols'),
+        'class_col': request.GET.get('class_col'),
+        'normalize': request.GET.get('normalize'),
+        'load_pattern': request.GET.get('load_pattern')
+    }
+    df, class_col = data_load(**kwargs)
+    stat = DescriptiveStatAnalyser().perform_analysis(df, class_col=class_col)
+    orient = request.GET.get("orient")
+    return HttpResponse(stat.to_json(orient=orient), content_type='application/json')
