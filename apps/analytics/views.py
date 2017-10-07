@@ -129,79 +129,83 @@ def visualize_action(request):
         return JsonResponse(status=500, data=error_message)
 
 
-# def cluster_action():
-#     cluster_method = request.args.get("cluster_method")
-#     test = request.args.get('test')
-#     feature_cols = request.args.get('feature_cols')
-#     n_features = int(request.args.get('n_features') or 0)
-#     select_method = request.args.get('select_method', 'none')
-#     res = data_load(test=test, feature_cols=feature_cols, load_pattern='f', normalize="std")
-#     df = res[0]
-#     out_format = request.args.get("format")
-#     out_view = request.args.get('out_view')
-#     alpha = request.args.get("alpha")
-#     alpha = float(alpha) if not (alpha is None or alpha == "") else 1.0
-#     color_map = request.args.get('color_map')
-#     width = request.args.get('width')
-#     height = request.args.get('height')
-#     width = int(width) if not (width is None or width == "") else 8
-#     height = int(height) if not (height is None or height == "") else 8
-#     perf_method = request.args.get("perf_method")
-#     n_clusters = request.args.getlist("n_clusters[]")
-#     out = BytesIO()
-#     patients = request.args.getlist('patients[]', None)
-#     print(patients)
-#
-#     if patients is not None and len(patients) > 0:
-#         patients = PostgresDataLoader().load_data(
-#             query="SELECT patient_id, last_name || ' ' || first_name AS full_name "
-#                   "FROM patients "
-#                   "WHERE patient_id in (%s)" % " ,".join(patients))
-#     else:
-#         patients = None
-#
-#     if select_method != 'none':
-#         selector = FeaturesSelectionAnalyser()
-#         df = selector.perform_analysis(df, select_method=select_method, n_features=n_features)
-#     df = ImputerAnalyser().perform_analysis(df=df)
-#
-#     kwargs = {
-#         "out": out,
-#         "alpha": float(alpha),
-#         "color_map": color_map,
-#         "width": width,
-#         "height": height,
-#         "perf_method": perf_method,
-#         "format": out_format,
-#         "n_clusters": n_clusters,
-#         "patients": patients
-#     }
-#     visualizer = None
-#     if cluster_method == "k_means":
-#         visualizer = vis.KMeansClusteringVisualizer(**kwargs)
-#     elif cluster_method == "mini_batch_k_means":
-#         visualizer = vis.MiniBatchKMeansClusteringVisualizer(**kwargs)
-#     elif cluster_method == "agglomerative":
-#         linkage = request.args.get('linkage')
-#         kwargs["linkage"] = linkage
-#         visualizer = vis.AgglomerativeClusteringVisualizer(**kwargs)
-#     elif cluster_method == "mean_shift":
-#         quantile = float(request.args.get('quantile') or 0.3)
-#         kwargs["quantile"] = quantile
-#         visualizer = vis.MeanShiftClusteringVisualizer(**kwargs)
-#     visualizer.visualize(df)
-#     response = None
-#     if out_view == 'bin':
-#         response = make_response(out.getvalue())
-#         if out_format == "svg":
-#             response.headers['Content-Type'] = 'image/svg+xml'
-#         elif out_format == "png":
-#             response.headers['Content-Type'] = 'image/img'
-#     elif out_view == 'base64':
-#         response = make_response(base64.b64encode(out.getvalue()))
-#     return response
-#
-#
+def cluster_action(request):
+    cluster_method = request.GET.get("cluster_method")
+    test = request.GET.get('test')
+    feature_cols = request.GET.get('feature_cols')
+    n_features = int(request.GET.get('n_features') or 0)
+    select_method = request.GET.get('select_method', 'none')
+    res = data_load(test=test, feature_cols=feature_cols, load_pattern='f', normalize="std")
+    df = res[0]
+    out_format = request.GET.get("format")
+    out_view = request.GET.get('out_view')
+    alpha = request.GET.get("alpha")
+    alpha = float(alpha) if not (alpha is None or alpha == "") else 1.0
+    color_map = request.GET.get('color_map')
+    width = request.GET.get('width')
+    height = request.GET.get('height')
+    width = int(width) if not (width is None or width == "") else 8
+    height = int(height) if not (height is None or height == "") else 8
+    perf_method = request.GET.get("perf_method")
+    n_clusters = request.GET.getlist("n_clusters[]")
+    patients = request.GET.getlist('patients[]', None)
+    print(patients)
+
+    if patients is not None and len(patients) > 0:
+        patients = PostgresDataLoader().load_data(
+            query="SELECT patient_id, last_name || ' ' || first_name AS full_name "
+                  "FROM patients "
+                  "WHERE patient_id in (%s)" % " ,".join(patients))
+    else:
+        patients = None
+
+    if select_method != 'none':
+        selector = FeaturesSelectionAnalyser()
+        df = selector.perform_analysis(df, select_method=select_method, n_features=n_features)
+    df = ImputerAnalyser().perform_analysis(df=df)
+
+    visualizer = None
+    response = HttpResponse()
+    out = None
+
+    if out_view == 'bin':
+        out = response
+        if out_format == "svg":
+            response['Content-Type'] = 'image/svg+xml'
+        elif out_format == "png":
+            response['Content-Type'] = 'image/img'
+    elif out_view == 'base64':
+        out = BytesIO()
+
+    kwargs = {
+        "out": out,
+        "alpha": float(alpha),
+        "color_map": color_map,
+        "width": width,
+        "height": height,
+        "perf_method": perf_method,
+        "format": out_format,
+        "n_clusters": n_clusters,
+        "patients": patients
+    }
+
+    if cluster_method == "k_means":
+        visualizer = vis.KMeansClusteringVisualizer(**kwargs)
+    elif cluster_method == "mini_batch_k_means":
+        visualizer = vis.MiniBatchKMeansClusteringVisualizer(**kwargs)
+    elif cluster_method == "agglomerative":
+        linkage = request.GET.get('linkage')
+        kwargs["linkage"] = linkage
+        visualizer = vis.AgglomerativeClusteringVisualizer(**kwargs)
+    elif cluster_method == "mean_shift":
+        quantile = float(request.GET.get('quantile') or 0.3)
+        kwargs["quantile"] = quantile
+        visualizer = vis.MeanShiftClusteringVisualizer(**kwargs)
+    visualizer.visualize(df)
+    if out_view == 'base64':
+        response = HttpResponse(base64.b64encode(out.getvalue()))
+    return response
+
 
 def data_action(request):
     out_format = request.GET.get("format")
