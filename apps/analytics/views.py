@@ -203,51 +203,43 @@ def visualize_action(request):
 #     return response
 #
 #
-# def data_action():
-#     img_format = request.args.get("format")
-#     select_method = request.args.get('select_method')
-#     n_features = int(request.args.get('n_features') or 0)
-#     kwargs = {
-#         'test': request.args.get('test'),
-#         'feature_cols': request.args.getlist('feature_cols'),
-#         'class_col': request.args.get('class_col'),
-#         'normalize': request.args.get('normalize'),
-#         'load_pattern': request.args.get('load_pattern')
-#     }
-#     df, class_col = data_load(**kwargs)
-#     print(class_col)
-#     if select_method != 'none':
-#         selector = FeaturesSelectionAnalyser()
-#         if class_col is None:
-#             df = selector.perform_analysis(df, select_method=select_method, n_features=n_features)
-#         else:
-#             df = selector.perform_analysis(df, class_col=class_col, select_method=select_method, n_features=n_features)
-#     if class_col is None:
-#         df = ImputerAnalyser().perform_analysis(df=df)
-#     else:
-#         df = ImputerAnalyser().perform_analysis(df=df, class_col=class_col)
-#     df.reset_index(level=0, inplace=True)
-#     orient = request.args.get("orient")
-#     if img_format == 'application/json':
-#         return Response(response=df.reset_index().to_json(orient=orient),
-#                         status=200,
-#                         mimetype=img_format)
-#     elif img_format == 'text/csv':
-#         return Response(response=df.reset_index().to_csv(),
-#                         status=200,
-#                         mimetype=img_format)
-#     elif img_format == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
-#         writer = ExcelWriter('pandas_simple.xlsx', engine='xlsxwriter')
-#         return Response(response=df.reset_index().to_excel(excel_writer=writer),
-#                         status=200,
-#                         mimetype=img_format)
-#     elif img_format == 'text/html':
-#         return Response(response=df.reset_index().to_html(),
-#                         status=200,
-#                         mimetype=img_format)
-#     return Response(response=df.reset_index().to_csv(),
-#                     status=200,
-#                     mimetype='text/csv')
+
+def data_action(request):
+    out_format = request.GET.get("format")
+    select_method = request.GET.get('select_method')
+    n_features = int(request.GET.get('n_features') or 0)
+    kwargs = {
+        'test': request.GET.get('test'),
+        'feature_cols': request.GET.getlist('feature_cols'),
+        'class_col': request.GET.get('class_col'),
+        'normalize': request.GET.get('normalize'),
+        'load_pattern': request.GET.get('load_pattern')
+    }
+    df, class_col = data_load(**kwargs)
+    print(class_col)
+    if select_method != 'none':
+        selector = FeaturesSelectionAnalyser()
+        if class_col is None:
+            df = selector.perform_analysis(df, select_method=select_method, n_features=n_features)
+        else:
+            df = selector.perform_analysis(df, class_col=class_col, select_method=select_method, n_features=n_features)
+    if class_col is None:
+        df = ImputerAnalyser().perform_analysis(df=df)
+    else:
+        df = ImputerAnalyser().perform_analysis(df=df, class_col=class_col)
+    df.reset_index(level=0, inplace=True)
+    orient = request.GET.get("orient")
+    if out_format == 'application/json':
+        return HttpResponse(df.reset_index().to_json(orient=orient), content_type=out_format)
+    # elif img_format == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+    #     writer = ExcelWriter('pandas_simple.xlsx', engine='xlsxwriter')
+    #     return Response(response=df.reset_index().to_excel(excel_writer=writer),
+    #                     status=200,
+    #                     mimetype=img_format)
+    elif out_format == 'text/html':
+        return HttpResponse(df.reset_index().to_html(), content_type=out_format)
+    return HttpResponse(df.reset_index().to_csv(), content_type='text/csv')
+
 #
 #
 # def data_stat_action():
