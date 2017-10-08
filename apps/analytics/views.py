@@ -3,6 +3,7 @@ from io import BytesIO
 from io import StringIO
 
 from django.http import JsonResponse, HttpResponse
+from django.shortcuts import render
 from pandas import ExcelWriter
 
 import apps.analytics.visualizers as vis
@@ -262,3 +263,7 @@ def features_stat_action(request):
     stat = DescriptiveStatAnalyser().perform_analysis(df, class_col=class_col)
     orient = request.GET.get("orient")
     return HttpResponse(stat.to_json(orient=orient), content_type='application/json')
+
+
+def visualize_page_action(request):
+    return render(request, 'analytics/visualizing.html', {})
