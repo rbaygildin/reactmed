@@ -1,0 +1,764 @@
+{% extends 'core/base_menu.html' %}
+{% load staticfiles %}
+{% block header %}
+    <style rel="stylesheet">
+        body {
+            padding-top: 90px;
+        }
+
+        .nav-tabs > li.active > a, .nav-tabs > li.active > a:focus, .nav-tabs > li.active > a:hover {
+            border-color: #e36209 #e1e4e8 transparent;
+            border-top-width: 4px;
+        }
+
+        .tab-content {
+            padding-top: 20px;
+        }
+
+        .counter {
+            display: inline-block;
+            padding: 2px 5px;
+            font-size: 12px;
+            font-weight: 600;
+            line-height: 1;
+            color: #586069;
+            background-color: rgba(27, 31, 35, 0.08);
+            border-radius: 20px;
+        }
+
+        .modal-dialog {
+            margin-top: 100px;
+        }
+
+        .list-group {
+            margin-top: 20px;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <ul class="nav nav-tabs">
+        <li class="active">
+            <a data-toggle="tab" href="#dataset-tab-pane">Датасеты
+                <span id="datasets-counter" class="counter">
+                    1
+                </span>
+            </a>
+        </li>
+        <li>
+            <a data-toggle="tab" href="#visualization-tab-pane">Визуализация</a>
+        </li>
+        <li>
+            <a data-toggle="tab" href="#clustering-tab-pane">Кластеризация</a>
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div id="dataset-tab-pane" class="tab-pane fade in active">
+            <div id="datasets-table">
+                <div class="row">
+                    <form role="form">
+                        <div class="col-xs-6">
+                            <input class="form-control" placeholder="Найти датасет">
+                        </div>
+                        <div class="col-xs-3">
+                            <button id="open-create-dataset-dialog-btn" type="button" class="btn btn-success">
+                                Создать
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div id="datasets-list" class="list-group">
+
+                </div>
+            </div>
+            <div id="dataset-dashboard" style="display: none;">
+                <div class="panel panel-primary">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label">Название датасета</label>
+                                    <input class="form-control" name="name" id="name-input">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label">Описание</label>
+                                    <textarea class="form-control" name="description"
+                                              id="description-input"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-4">
+                                <div class="form-group">
+                                    <label class="control-label">Тип медицинского обследования</label>
+                                    <select class="form-control" name="med-test-select" id="med-test-select1">
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <div class="form-group">
+                                    <label class="control-label">Показатели</label>
+                                    <select class="form-control" name="indicators-select" id="indicators-select1"
+                                            multiple="multiple">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-xs-6">
+                                <div class="form-group">
+                                    <label class="control-label">Класс</label>
+                                    <select class="form-control" name="class-select" id="class-select1">
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="featurette-divider">
+                        <div class="row">
+                            <div class="col-xs-4">
+                                <div class="form-group">
+                                    <label for="features-select-select">Метод отбора показателей</label>
+                                    <select class="form-control" name="features_select"
+                                            id="features-select-select1">
+                                        <option value="none">-</option>
+                                        <option value="pca">Метод главных компонент</option>
+                                        <option value="ranking">Ранжирование по весу</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-xs-4">
+                                <div class="form-group">
+                                    <label for="n-features-input">Количество показателей</label>
+                                    <input type="text" class="form-control" name="n_features"
+                                           id="n-features-input1">
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="featurette-divider">
+                        <div class="form-group row">
+                            <div class="col-xs-2">
+                                <button class="btn btn-success" id="dataset-refresh-btn1"
+                                        style="margin: 10px; width: 100%">
+                                    Обновить
+                                </button>
+                            </div>
+                            <div class="col-xs-2">
+                                <button class="btn btn-success" id="dataset-clear-btn1"
+                                        style="margin: 10px; width: 100%">
+                                    Очистить
+                                </button>
+                            </div>
+                            <div class="col-xs-2">
+                                <div class="btn-group">
+                                    <button type="button" data-toggle="dropdown"
+                                            class="btn btn-success dropdown-toggle"
+                                            style="margin: 10px;">Экспортировать <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="#">PDF</a></li>
+                                        <li><a href="#">Word</a></li>
+                                        <li><a href="#">Excel</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="visualization-tab-pane" class="tab-pane fade">
+            <div class="panel panel-primary">
+                <div class="panel-body">
+                    <div class="panel-group">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" href="#collapse1">Основные параметры анализа
+                                        данных</a>
+                                </h4>
+                            </div>
+                            <div id="collapse1" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-xs-4">
+                                            <div class="form-group">
+                                                <label class="control-label">Тип медицинского обследования</label>
+                                                <select class="form-control" name="med-test-select"
+                                                        id="med-test-select">
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-6">
+                                            <div class="form-group">
+                                                <label class="control-label">Показатели</label>
+                                                <select class="form-control" name="indicators-select"
+                                                        id="indicators-select" multiple="multiple">
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-6">
+                                            <div class="form-group">
+                                                <label class="control-label">Класс</label>
+                                                <select class="form-control" name="class-select" id="class-select">
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="featurette-divider">
+                    <div class="panel-group">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" href="#collapse2">Отбор показателей</a>
+                                </h4>
+                            </div>
+                            <div id="collapse2" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-xs-4">
+                                            <div class="form-group">
+                                                <label for="features-select-select">Метод отбора показателей</label>
+                                                <select class="form-control" name="features_select"
+                                                        id="features-select-select">
+                                                    <option value="none">-</option>
+                                                    <option value="pca">Метод главных компонент</option>
+                                                    <option value="ranking">Ранжирование по весу</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-4">
+                                            <div class="form-group">
+                                                <label for="n-features-input">Количество показателей</label>
+                                                <input type="text" class="form-control" name="n_features"
+                                                       id="n-features-input">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="featurette-divider">
+                    <div class="panel-group">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" href="#collapse3">Настройки параметров
+                                        визуализации</a>
+                                </h4>
+                            </div>
+                            <div id="collapse3" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-xs-3">
+                                            <div class="form-group">
+                                                <label for="alpha-input">Прозрачность</label>
+                                                <input type="range" min="0.05" max="1.0" step="0.05"
+                                                       class="form-control" name="alpha" id="alpha-input">
+                                                <datalist>
+                                                    <option>0.05</option>
+                                                    <option>0.1</option>
+                                                    <option>0.15</option>
+                                                    <option>0.2</option>
+                                                    <option>0.25</option>
+                                                    <option>1.0</option>
+                                                </datalist>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-3">
+                                            <div class="form-group">
+                                                <label for="color-map-select">Цветовая гамма</label>
+                                                <select class="form-control" name="color_map" id="color-map-select">
+                                                    <option value="brg">RGB</option>
+                                                    <option value="hsv">HSV</option>
+                                                    <option value="rainbow">Радуга</option>
+                                                    <option value="summer">Лето</option>
+                                                    <option value="autumn">Осень</option>
+                                                    <option value="winter">Зима</option>
+                                                    <option value="spring">Весна</option>
+                                                    <option value="gnuplot">GNU Plot</option>
+                                                    <option value="jet">Jet</option>
+                                                    <option value="gist_rainbow">Gist Rainbow</option>
+                                                    <option value="nipy_spectral">Nipy Spectral</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-3">
+                                            <div class="form-group">
+                                                <label for="n_dimensions-select">Размерность</label>
+                                                <select class="form-control" name="n_dimensions"
+                                                        id="n_dimensions-select">
+                                                    <option value="png">2D</option>
+                                                    <option value="svg">3D</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-3">
+                                            <div class="form-group">
+                                                <label for="format-select">Формат</label>
+                                                <select class="form-control" name="format" id="format-select">
+                                                    <option value="png">png</option>
+                                                    <option value="svg">svg</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-4">
+                                            <div class="form-group">
+                                                <label for="datavis-method-select">Метод визуализации</label>
+                                                <select class="form-control" name="datavis-method-select"
+                                                        id="datavis-method-select">
+                                                    <option value="andrews_curves">Кривые Эндрюса</option>
+                                                    <option value="pca">PCA</option>
+                                                    <option value="radviz">RadViz</option>
+                                                    <option value="parallel_coords">Параллельные прямые</option>
+                                                    <option value="scatter_plot">Диграммы рассеивания</option>
+                                                    <option value="hist">Гистограмма</option>
+                                                    <option value="dist">Плотность распределения</option>
+                                                    <option value="boxplot">Boxplot</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="featurette-divider">
+                    <div class="form-group row">
+                        <div class="col-xs-3">
+                            <button class="btn btn-success" id="dataset-visualize-btn"
+                                    style="margin: 10px; width: 100%;">
+                                Визуализировать
+                            </button>
+                        </div>
+                        <div class="col-xs-2">
+                            <button class="btn btn-success" id="dataset-clear-btn"
+                                    style="margin: 10px; width: 100%">
+                                Очистить
+                            </button>
+                        </div>
+                        <div class="col-xs-2">
+                            <div class="btn-group">
+                                <button type="button" data-toggle="dropdown" class="btn btn-success dropdown-toggle"
+                                        style="margin: 10px;">Экспортировать <span class="caret"></span></button>
+                                <ul class="dropdown-menu">
+                                    <li><a href="#">PDF</a></li>
+                                    <li><a href="#">Word</a></li>
+                                    <li><a href="#">Excel</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div hidden>
+                <div class="panel with-nav-tabs panel-default">
+                    <div class="panel-heading" id="dataset-panel-heading">
+                        <ul class="nav nav-tabs" id="dataset-panel-heading-tabs">
+                            <li id="tab1-head-table" class="active">
+                                <a href="#tab1-table" data-toggle="tab">
+                                    Таблица
+                                </a>
+                            </li>
+                            <li id="tab2-head-andrews_curves">
+                                <a href="#tab2-andrews_curves" data-toggle="tab">
+                                    Кривые Эндрюса
+                                </a>
+                            </li>
+                            <li id="tab2-head-pca">
+                                <a href="#tab2-pca" data-toggle="tab">
+                                    PCA
+                                </a>
+                            </li>
+                            <li id="tab2-head-radviz">
+                                <a href="#tab2-radviz" data-toggle="tab">
+                                    RadViz
+                                </a>
+                            </li>
+                            <li id="tab2-head-parallel_coords">
+                                <a href="#tab2-parallel_coords" data-toggle="tab">
+                                    Параллельные координаты
+                                </a>
+                            </li>
+                            <li id="tab2-head-hist">
+                                <a href="#tab2-hist" data-toggle="tab">
+                                    Гистограмма
+                                </a>
+                            </li>
+                            <li id="tab2-head-dist">
+                                <a href="#tab2-dist" data-toggle="tab">
+                                    Плотность распределения
+                                </a>
+                            </li>
+                            <li id="tab2-head-boxplot">
+                                <a href="#tab2-boxplot" data-toggle="tab">
+                                    Boxplot
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="panel-body">
+                        <div class="tab-content" id="dataset-panel-content">
+                            <div class="tab-pane fade in active" id="tab1-table">
+                                <div class="table-responsive">
+                                    <table class="table" id="dataset-table" data-pagination="true"
+                                           data-search="true">
+                                        <thead id="dataset-table-head">
+
+                                        </thead>
+                                        <tbody id="dataset-table-body">
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade in" id="tab2-andrews_curves" style="overflow: auto;">
+
+                            </div>
+                            <div class="tab-pane fade in" id="tab2-pca" style="overflow: auto;">
+
+                            </div>
+                            <div class="tab-pane fade in" id="tab2-parallel_coords" style="overflow: auto;">
+
+                            </div>
+                            <div class="tab-pane fade in" id="tab2-radviz" style="overflow: auto;">
+
+                            </div>
+                            <div class="tab-pane fade in" id="tab2-hist" style="overflow: auto;">
+
+                            </div>
+                            <div class="tab-pane fade in" id="tab2-dist" style="overflow: auto;">
+
+                            </div>
+                            <div class="tab-pane fade in" id="tab2-boxplot" style="overflow: auto;">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="clustering-tab-pane" class="tab-pane fade">
+            <div class="panel panel-primary">
+                <div class="panel-body">
+                    <div class="panel-group">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" href="#collapse21">Основные параметры анализа
+                                        данных</a>
+                                </h4>
+                            </div>
+                            <div id="collapse21" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-xs-4">
+                                            <div class="form-group">
+                                                <label class="control-label">Тип медицинского обследования</label>
+                                                <select class="form-control" name="med-test-select"
+                                                        id="med-test-select">
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-6">
+                                            <div class="form-group">
+                                                <label class="control-label">Показатели</label>
+                                                <select class="form-control" name="indicators-select"
+                                                        id="indicators-select" multiple="multiple">
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="featurette-divider">
+                    <div class="panel-group">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" href="#collapse22">Параметры кластеризации</a>
+                                </h4>
+                            </div>
+                            <div id="collapse22" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-xs-3">
+                                            <div class="form-group">
+                                                <label for="datavis-method-select">Метод кластеризации</label>
+                                                <select class="form-control" name="datavis-method-select"
+                                                        id="datavis-method-select">
+                                                    <option value="k_means">K Means</option>
+                                                    <option value="mini_batch_k_means">Mini Batch K Means</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-3">
+                                            <div class="form-group">
+                                                <label for="datavis-method-select">Минимум кластеров</label>
+                                                <input class="form-control" type="text" name="n-clusters-min-input"
+                                                       id="n-clusters-min-input">
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-3">
+                                            <div class="form-group">
+                                                <label for="datavis-method-select">Максимум кластеров</label>
+                                                <input class="form-control" type="text" name="n-clusters-max-input"
+                                                       id="n-clusters-max-input">
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-3">
+                                            <div class="form-group">
+                                                <label for="elbow-method-select">Elbow method</label>
+                                                <select class="form-control" name="elbow" id="elbow-method-select">
+                                                    <option value="true">Произвести</option>
+                                                    <option value="false">Не производить</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="featurette-divider">
+                    <div class="panel-group">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">
+                                    <a data-toggle="collapse" href="#collapse23">Настройки параметров
+                                        визуализации</a>
+                                </h4>
+                            </div>
+                            <div id="collapse23" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-xs-3">
+                                            <div class="form-group">
+                                                <label for="alpha-input">Прозрачность</label>
+                                                <input type="range" min="0.05" max="1.0" step="0.05"
+                                                       class="form-control" name="alpha" id="alpha-input">
+                                                <datalist>
+                                                    <option>0.05</option>
+                                                    <option>0.1</option>
+                                                    <option>0.15</option>
+                                                    <option>0.2</option>
+                                                    <option>0.25</option>
+                                                    <option>1.0</option>
+                                                </datalist>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-3">
+                                            <div class="form-group">
+                                                <label for="color-map-select">Цветовая гамма</label>
+                                                <select class="form-control" name="color_map" id="color-map-select">
+                                                    <option value="brg">RGB</option>
+                                                    <option value="hsv">HSV</option>
+                                                    <option value="rainbow">Радуга</option>
+                                                    <option value="summer">Лето</option>
+                                                    <option value="autumn">Осень</option>
+                                                    <option value="winter">Зима</option>
+                                                    <option value="spring">Весна</option>
+                                                    <option value="gnuplot">GNU Plot</option>
+                                                    <option value="jet">Jet</option>
+                                                    <option value="gist_rainbow">Gist Rainbow</option>
+                                                    <option value="nipy_spectral">Nipy Spectral</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-3">
+                                            <div class="form-group">
+                                                <label for="n_dimensions-select">Размерность</label>
+                                                <select class="form-control" name="n_dimensions"
+                                                        id="n_dimensions-select">
+                                                    <option value="png">2D</option>
+                                                    <option value="svg">3D</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-3">
+                                            <div class="form-group">
+                                                <label for="format-select">Формат</label>
+                                                <select class="form-control" name="format" id="format-select">
+                                                    <option value="png">png</option>
+                                                    <option value="svg">svg</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-xs-3">
+                                            <div class="form-group">
+                                                <label for="width-input">Ширина графика</label>
+                                                <input class="form-control" name="w" id="width-input">
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-3">
+                                            <div class="form-group">
+                                                <label for="height-input">Высота графика</label>
+                                                <input class="form-control" name="h" id="height-input">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="featurette-divider">
+                    <div class="row">
+                        <div class="col-xs-4">
+                            <div class="form-group">
+                                <label for="datavis-method-select">Отобразить пациента</label>
+                                <input class="form-control" type="text" name="patient-id-input"
+                                       id="patient-id-input">
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="featurette-divider">
+                    <div class="form-group row">
+                        <div class="col-xs-2">
+                            <button class="btn btn-success" id="dataset-refresh-btn"
+                                    style="margin: 10px; width: 100%">
+
+                                Обновить
+                            </button>
+                        </div>
+                        <div class="col-xs-2">
+                            <button class="btn btn-success" id="dataset-stat-btn"
+                                    style="margin: 10px; width: 100%;">
+
+                                Статистика
+                            </button>
+                        </div>
+                        <div class="col-xs-3">
+                            <button class="btn btn-success" id="dataset-cluster-btn"
+                                    style="margin: 10px; width: 100%;">
+                                Кластеризовать
+                            </button>
+                        </div>
+                        <div class="col-xs-2">
+                            <button class="btn btn-success" id="dataset-clear-btn"
+                                    style="margin: 10px; width: 100%">
+
+                                Очистить
+                            </button>
+                        </div>
+                        <div class="col-xs-2">
+                            <div class="btn-group">
+                                <button type="button" data-toggle="dropdown" class="btn btn-success dropdown-toggle"
+                                        style="margin: 10px;">Экспортировать <span class="caret"></span></button>
+                                <ul class="dropdown-menu">
+                                    <li><a href="#">PDF</a></li>
+                                    <li><a href="#">Word</a></li>
+                                    <li><a href="#">Excel</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div hidden>
+                <div class="panel with-nav-tabs panel-default">
+                    <div class="panel-heading" id="dataset-panel-heading">
+                        <ul class="nav nav-tabs" id="dataset-panel-heading-tabs">
+                            <li id="tab1-head-table" class="active">
+                                <a href="#tab1-table" data-toggle="tab">
+                                    Таблица
+                                </a>
+                            </li>
+                            <li id="tab2-head-k_means">
+                                <a href="#tab2-k_means" data-toggle="tab">
+                                    K Means
+                                </a>
+                            </li>
+                            <li id="tab2-head-mini_batch_k_means">
+                                <a href="#tab2-mini_batch_k_means" data-toggle="tab">
+                                    Mini Batch K Means
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="panel-body">
+                        <div class="tab-content" id="dataset-panel-content">
+                            <div class="tab-pane fade in active" id="tab1-table">
+                                <div class="table-responsive">
+                                    <table class="table" id="dataset-table" data-pagination="true"
+                                           data-search="true">
+                                        <thead id="dataset-table-head">
+
+                                        </thead>
+                                        <tbody id="dataset-table-body">
+
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade in" id="tab2-k_means" style="overflow: auto;">
+
+                            </div>
+                            <div class="tab-pane fade in" id="tab2-mini_batch_k_means" style="overflow: auto;">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Modal dialogs-->
+
+    <!--Create dataset dialog-->
+    <div class="modal fade" id="create-dataset-dialog" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Создать датасет</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="new-dataset-form" class="form-horizontal" role="form">
+                        <div class="form-group">
+                            <div class="col-md-9">
+                                <label class="control-label">Имя датасета</label>
+                                <div class="controls">
+                                    <input name="name" type="text" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-9">
+                                <label class="control-label">Описание</label>
+                                <textarea name="description" class="form-control"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button id="create-dataset-btn" type="button" class="btn btn-success" data-dismiss="modal">
+                        Создать
+                    </button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Отмена</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Modal dialogs: end-->
+{% endblock %}
+{% block scripts %}
+    <script src="{% static 'jquery-serializer/jquery.serialize-object.min.js' %}"></script>
+{% endblock %}
