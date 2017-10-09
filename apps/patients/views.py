@@ -11,12 +11,6 @@ User = get_user_model()
 
 
 @login_required
-def list_action(request):
-    patients = request.user.patients.all()
-    return render(request, 'patients/list.html', {'patients': patients})
-
-
-@login_required
 def create_action(request):
     if request.method == 'POST':
         form = PatientForm(request)
@@ -37,6 +31,7 @@ def show_action(request, patient_id):
 
 @login_required
 def update_action(request):
+    patient_id = None
     if request.method == 'POST':
         patient_id = int(request.POST['patient_id'])
         form = PatientForm(request)

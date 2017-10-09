@@ -6,7 +6,7 @@ from django.urls import reverse
 from apps.users.forms import SignUpForm, ChangePasswordForm, UpdateUserForm
 
 
-def create_view(request):
+def create_action(request):
     if request.method == 'GET':
         return render(request, 'users/create.html', {})
     elif request.method == 'POST':
@@ -20,12 +20,12 @@ def create_view(request):
 
 
 @login_required
-def show_view(request):
+def show_action(request):
     return render(request, 'users/show.html', {})
 
 
 @login_required
-def update_user_view(request):
+def update_action(request):
     form = UpdateUserForm(request=request)
     if form.is_valid():
         form.update()
@@ -33,7 +33,7 @@ def update_user_view(request):
 
 
 @login_required
-def change_password_view(request):
+def change_password_action(request):
     if request.method == 'POST':
         user = request.user
         form = ChangePasswordForm(request.POST, user=user)
@@ -42,8 +42,12 @@ def change_password_view(request):
     return redirect(reverse('users:show'))
 
 
+def reset_password_action(request):
+    pass
+
+
 @login_required
-def delete_view(request):
+def delete_action(request):
     if request.method == 'POST':
         password = request.POST['current_password']
         user = request.user
@@ -55,6 +59,12 @@ def delete_view(request):
 
 
 @login_required
-def logout_view(request):
+def logout_action(request):
     logout(request)
     return redirect(reverse('main:index'))
+
+
+@login_required()
+def dashboard_action(request):
+    patients = request.user.patients.all()
+    return render(request, 'users/dashboard.html', {'patients': patients})

@@ -61,7 +61,7 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                            <h4 class="modal-title" id="myModalLabel">Вход в систему ReactMed</h4>
+                            <h4 class="modal-title" id="myModalLabel">Войти</h4>
                         </div>
                         <div class="modal-body">
                             <div class="row">
@@ -71,7 +71,8 @@
                                     </ul>
                                     <div class="tab-content">
                                         <div class="tab-pane active" id="login">
-                                            <form id="login-form" action="{% url 'main:login' %}" class="form-horizontal" method="post">
+                                            <form id="login-form" action="{% url 'main:login' %}"
+                                                  class="form-horizontal" method="post">
                                                 {% csrf_token %}
                                                 <div class="form-group">
                                                     <label class="col-sm-2 control-label">Логин</label>
@@ -112,6 +113,9 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div class="modal-footer">
+                            <a href="{% url 'users:reset_password' %}">Забыли пароль?</a>
                         </div>
                     </div>
                 </div>

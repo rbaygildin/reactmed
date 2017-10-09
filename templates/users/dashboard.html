@@ -1,0 +1,176 @@
+{% extends 'core/base_menu_fluid.html' %}
+{% load staticfiles %}
+{% block header %}
+    <style>
+        body {
+            padding-top: 80px;
+        }
+
+        .bg-light {
+            background-color: #f8f9fa !important;
+        }
+
+        .d-sm-block {
+            display: block !important;
+        }
+
+        .d-sm-block {
+            display: block !important;
+        }
+
+        .flex-column {
+            -ms-flex-direction: column !important;
+            flex-direction: column !important;
+        }
+
+        .sidebar {
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 51px;
+            bottom: 0;
+            left: 0;
+            z-index: 1000;
+            padding-top: 10px;
+            overflow-x: hidden;
+            overflow-y: auto;
+            border-right: 1px solid #eee;
+        }
+
+        .sidebar .nav-item {
+            width: 100%;
+        }
+
+        .nav {
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+            padding-left: 0;
+            margin-bottom: 0;
+            list-style: none;
+        }
+
+        .nav-link {
+            display: block;
+            padding: .5rem 1rem;
+        }
+
+        .sidebar .nav-link {
+            border-radius: 0;
+        }
+
+        .nav-item > a {
+            border-bottom: 1px solid #e1e4e8;
+        }
+
+        .nav-pills > li + li {
+            margin-left: 0;
+        }
+
+        .nav-pills > li.active > a, .nav-pills > li.active > a:focus, .nav-pills > li.active > a:hover {
+            border-left: 4px solid #e36209;
+            background-color: #eee;
+            color: #0f0f0f;
+        }
+
+        .counter {
+            display: inline-block;
+            padding: 2px 5px;
+            font-size: 12px;
+            font-weight: 600;
+            line-height: 1;
+            color: #586069;
+            background-color: rgba(27, 31, 35, 0.08);
+            border-radius: 20px;
+        }
+
+        main {
+            margin-left: 240px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            padding-bottom: 9px;
+            border-bottom: 1px solid #eee;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <nav class="col-sm-3 col-md-2 d-none d-sm-block bg-light sidebar">
+            <ul class="nav nav-pills flex-column">
+                <li class="nav-item active">
+                    <a data-toggle="tab" href="#id_patients" class="nav-link">Пациенты <span
+                            class="counter">{{ patients.count }}</span></a>
+                </li>
+                <li class="nav-item">
+                    <a data-toggle="tab" href="#id_tests" class="nav-link">Обследования</a>
+                </li>
+                <li class="nav-item">
+                    <a data-toggle="tab" href="#id_appointments" class="nav-link">Приемы</a>
+                </li>
+            </ul>
+        </nav>
+        <main class="col-sm-9 ml-sm-auto col-md-10 pt-3 tab-content">
+            <div class="tab-pane active" id="id_patients">
+                <div class="row">
+                    <div class="col-xs-4">
+                        <div class="input-group">
+                            <input class="form-control" placeholder="ФИО пациента">
+                            <span class="input-group-btn">
+                                <button class="btn btn-success" type="button">Найти</button>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <button class="btn btn-success" onclick="window.location='{% url 'patients:create' %}'">Добавить
+                            пациента
+                        </button>
+                    </div>
+                </div>
+                <br/>
+                <table id="patients-table" class="table table-striped table-bordered table-hover" cellpadding="0" style="width: 100%; ">
+                    <thead>
+                        <tr>
+                            <th>ОМС</th>
+                            <th>ФИО</th>
+                            <th>Пол</th>
+                            <th>Возраст</th>
+                            <th>Действия</th>
+                        </tr>
+                    </thead>
+                    <tbody id="patients-table-body">
+                        {% for patient in patients %}
+                            <tr>
+                                <td>
+                                    № {{ patient.omi_card }}
+                                </td>
+                                <td>{{ patient.surname }} {{ patient.name }} {{ patient.patronymic|default_if_none:"" }}</td>
+                                <td>{{ patient.gender }}</td>
+                                <td>{{ patient.age }}</td>
+                                <td>
+                                    <a href="{% url 'patients:show' patient_id=patient.id %}" class="btn btn-success">
+                                        <span class="glyphicon glyphicon-edit"></span>
+                                    </a>
+                                    <a href="{% url 'patients:delete' patient_id=patient.id %}" class="btn btn-danger">
+                                        <span class="glyphicon glyphicon-remove"></span>
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="tab-pane" id="id_tests">
+
+            </div>
+            <div class="tab-pane" id="id_appointments">
+
+            </div>
+        </main>
+    </div>
+{% endblock %}
