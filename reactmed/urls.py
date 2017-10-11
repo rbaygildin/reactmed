@@ -24,6 +24,7 @@ urlpatterns = [
     url(r'^users/', include('apps.users.urls', namespace='users')),
     url(r'^patients/', include('apps.patients.urls', namespace='patients')),
     url(r'^patients/(?P<patient_id>\d+)/med_tests/', include('apps.med_tests.urls', namespace='med_tests')),
+    url(r'^appointments/', include('apps.appointments.urls', namespace='appointments')),
     url(r'^reports/', include('apps.reports.urls', namespace='reports')),
     url(r'^analytics/', include('apps.analytics.urls', namespace='analytics'))
 ]

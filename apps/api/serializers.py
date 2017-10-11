@@ -32,7 +32,7 @@ class UserSerializer(ModelSerializer):
 class PatientSerializer(ModelSerializer):
     class Meta:
         model = Patient
-        fields = ('name', 'surname', 'patronymic', 'gender', 'birthday', 'rh', 'blood_group')
+        fields = ('id', 'name', 'surname', 'patronymic', 'gender', 'birthday', 'omi_card', 'short_info')
 
 
 class MedAreaSerializer(ModelSerializer):

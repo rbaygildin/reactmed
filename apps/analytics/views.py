@@ -265,5 +265,13 @@ def features_stat_action(request):
     return HttpResponse(stat.to_json(orient=orient), content_type='application/json')
 
 
+def datasets_page_action(request):
+    return render(request, 'analytics/data_sets.html', {})
+
+
 def visualize_page_action(request):
-    return render(request, 'analytics/visualizing.html', {})
+    return render(request, 'analytics/visualization.html', {})
+
+
+def clustering_page_action(request):
+    return render(request, 'analytics/clustering.html', {})

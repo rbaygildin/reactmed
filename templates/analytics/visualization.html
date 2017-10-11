@@ -1,0 +1,1474 @@
+{% extends 'core/analytics_sidebar.html' %}
+{% load staticfiles %}
+
+{% block main %}
+    <div id="visualization-tab-pane" class="tab-pane active">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                Визуализация
+            </div>
+            <div class="panel-body">
+                <form>
+                    <div class="form-group row">
+                        <div class="col-xs-4">
+                            <label for="id_vis_method">Метод визуализации</label>
+                            <select class="form-control" name="datavis-method-select"
+                                    id="id_vis_method">
+                                <option value="andrews_curves">Кривые Эндрюса</option>
+                                <option value="pca">PCA</option>
+                                <option value="radviz">RadViz</option>
+                                <option value="parallel_coords">Параллельные прямые</option>
+                                <option value="hist">Гистограмма</option>
+                                <option value="dist">Плотность распределения</option>
+                                <option value="boxplot">Boxplot</option>
+                                <option value="corrmatrix">Тепловая карта</option>
+                            </select>
+                        </div>
+                        <div class="col-xs-4">
+                            <label class="control-label">Тип медицинского обследования</label>
+                            <select class="form-control" name="test" id="id_test">
+                            </select>
+                        </div>
+                        <div class="col-xs-4">
+                            <label class="control-label">Класс</label>
+                            <select class="form-control" name="class" id="id_class">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-xs-8">
+                            <label class="control-label">Показатели</label>
+                            <select class="form-control" name="features" id="id_features"
+                                    multiple="multiple">
+                            </select>
+                        </div>
+                    </div>
+                </form>
+                <!--Patients-->
+                <div class="form-group row">
+                    <div class="col-xs-8">
+                        <div class="form-group">
+                            <label for="patients-textarea">Выбранные пациенты</label>
+                            <textarea class="form-control" name="patients" id="id_patients"
+                                      data-patients="">
+                                            </textarea>
+                        </div>
+                    </div>
+                </div>
+                <!--Visualization preferences-->
+                <div class="form-group row">
+                    <div class="col-xs-2">
+                        <button type="button" class="form-control btn btn-success"
+                                onclick="openVisualizationDialog($('#id_vis_method').val());">Визуализировать
+                        </button>
+                    </div>
+                    <div class="col-xs-2">
+                        <button class="btn btn-success" id="dataset-clear-btn">
+                            Очистить
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="id_visualization_panel" hidden>
+            <div class="panel with-nav-tabs panel-default">
+                <div class="panel-heading" id="dataset-panel-heading">
+                    <ul class="nav nav-tabs" id="dataset-panel-heading-tabs">
+                        <li id="id_andrews_curves_tab" style="display: none">
+                            <a href="#id_andrews_curves_chart" data-toggle="tab">
+                                Кривые Эндрюса
+                            </a>
+                        </li>
+                        <li id="id_pca_tab" style="display: none">
+                            <a href="#id_pca_chart" data-toggle="tab">
+                                PCA
+                            </a>
+                        </li>
+                        <li id="id_radviz_tab" style="display: none">
+                            <a href="#id_radviz_chart" data-toggle="tab">
+                                RadViz
+                            </a>
+                        </li>
+                        <li id="id_parallel_coords_tab" style="display: none">
+                            <a href="#id_parallel_coords_chart" data-toggle="tab">
+                                Параллельные координаты
+                            </a>
+                        </li>
+                        <li id="id_hist_tab" style="display: none">
+                            <a href="#id_hist_chart" data-toggle="tab">
+                                Гистограмма
+                            </a>
+                        </li>
+                        <li id="id_dist_tab" style="display: none">
+                            <a href="#id_dist_chart" data-toggle="tab">
+                                Плотность распределения
+                            </a>
+                        </li>
+                        <li id="id_boxplot_tab" style="display: none">
+                            <a href="#id_boxplot_chart" data-toggle="tab">
+                                Boxplot
+                            </a>
+                        </li>
+                        <li id="id_corrmatrix_tab" style="display: none">
+                            <a href="#id_corrmatrix_chart" data-toggle="tab">
+                                Тепловая карта
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="panel-body">
+                    <div class="tab-content" id="dataset-panel-content">
+                        <div class="tab-pane fade in" id="id_andrews_curves_chart"
+                             style="overflow: auto; display: none">
+
+                        </div>
+                        <div class="tab-pane fade in" id="id_pca_chart" style="overflow: auto; display: none">
+
+                        </div>
+                        <div class="tab-pane fade in" id="id_parallel_coords_chart"
+                             style="overflow: auto; display: none">
+
+                        </div>
+                        <div class="tab-pane fade in" id="id_radviz_chart" style="overflow: auto; display: none">
+
+                        </div>
+                        <div class="tab-pane fade in" id="id_hist_chart" style="overflow: auto; display: none">
+
+                        </div>
+                        <div class="tab-pane fade in" id="id_dist_chart" style="overflow: auto; display: none">
+
+                        </div>
+                        <div class="tab-pane fade in" id="id_boxplot_chart" style="overflow: auto; display: none">
+
+                        </div>
+                        <div class="tab-pane fade in" id="id_corrmatrix_chart" style="overflow: auto; display: none">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Patient selection dialog-->
+    <div class="modal fade" id="select-patients-dialog" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Выбрать пациентов</h4>
+                </div>
+                <div class="modal-body">
+                    <div style="overflow: auto; height: 300px;">
+                        <table id="patients-table" class="table table-responsive">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>ФИО</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button id="patient-select-btn" type="button" class="btn btn-success" data-dismiss="modal"
+                            onclick="selectPatient();">Выбрать
+                    </button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Отмена</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Andrews Curves dialog-->
+    <div class="modal fade" id="id_andrews_curves_dialog" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Кривые Эндрюса</h4>
+                </div>
+                <div class="modal-body">
+                    <div style="overflow: auto; height: 300px;">
+                        <form id="id_andrews_curves_form" class="modal-form">
+                            <div class="row">
+                                <div class="form-group col-xs-12">
+                                    <label>
+                                        Метод отбора показателей
+                                    </label>
+                                    <select class="form-control" name="select_method">
+                                        <option value="none">Не снижать размерность</option>
+                                        <option value="pca">PCA</option>
+                                        <option value="kernel_pca">Kernel PCA</option>
+                                        <option value="logit">Логистическая регрессия</option>
+                                        <option value="chi2">Хи-квадрат статистика</option>
+                                        <option value="svc">SVC</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-xs-12">
+                                    <label>
+                                        Количество показателей
+                                    </label>
+                                    <input type="text" class="form-control" name="n_features">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-xs-12">
+                                    <label>
+                                        Ядро
+                                    </label>
+                                    <select class="form-control" name="kernel">
+                                        <option value="poly">Полиномиальное</option>
+                                        <option value="sigmoid">Сигмоида</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-xs-12">
+                                    <label>
+                                        Степень (Kernel PCA)
+                                    </label>
+                                    <input type="text" class="form-control" name="degree">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-xs-9">
+                                    <label>
+                                        Прозрачность
+                                    </label>
+                                    <input id="ac-alpha-ranger1" type="range" min="0.05" max="1.0" step="0.05"
+                                           class="form-control"
+                                           name="alpha" onchange="$('#ac-alpha-ranger2').val($(this).val())">
+                                </div>
+                                <div class="col-xs-3">
+                                    <label class="form"></label>
+                                    <input id="ac-alpha-ranger2" class="form-control"
+                                           onchange="$('#ac-alpha-ranger1').val($(this).val())"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-xs-12">
+                                    <label class="control-label">
+                                        Цветовая гамма
+                                    </label>
+                                    <select class="form-control" name="color_map">
+                                        <option value="brg">RGB</option>
+                                        <option value="hsv">HSV</option>
+                                        <option value="rainbow">Радуга</option>
+                                        <option value="summer">Лето</option>
+                                        <option value="autumn">Осень</option>
+                                        <option value="winter">Зима</option>
+                                        <option value="spring">Весна</option>
+                                        <option value="gnuplot">GNU Plot</option>
+                                        <option value="jet">Jet</option>
+                                        <option value="gist_rainbow">Gist Rainbow</option>
+                                        <option value="nipy_spectral">Nipy Spectral</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-xs-12">
+                                    <label class="control-label">
+                                        Формат
+                                    </label>
+                                    <select class="form-control" name="format">
+                                        <option value="png">png</option>
+                                        <option value="svg">svg</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-xs-6">
+                                    <label class="control-label">
+                                        Ширина
+                                    </label>
+                                    <input class="form-control" name="width">
+                                </div>
+                                <div class="form-group col-xs-6">
+                                    <label class="control-label">
+                                        Длина
+                                    </label>
+                                    <input class="form-control" name="height">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-dismiss="modal"
+                            onclick="visualize('andrews_curves')();">Визуализировать
+                    </button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Отмена</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--PCA dialog-->
+    <div class="modal fade" id="id_pca_dialog" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">PCA</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div style="overflow: auto; height: 300px;">
+                            <form id="id_pca_form" class="modal-form">
+                                <div class="row">
+                                    <div class="form-group col-xs-12">
+                                        <label>
+                                            Метод отбора показателей
+                                        </label>
+                                        <select class="form-control" name="select_method">
+                                            <option value="none">Не снижать размерность</option>
+                                            <option value="pca">PCA</option>
+                                            <option value="kernel_pca">Kernel PCA</option>
+                                            <option value="logit">Логистическая регрессия</option>
+                                            <option value="chi2">Хи-квадрат статистика</option>
+                                            <option value="svc">SVC</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-xs-12">
+                                        <label>
+                                            Количество показателей
+                                        </label>
+                                        <input type="text" class="form-control" name="n_features">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-xs-12">
+                                        <label>
+                                            Ядро
+                                        </label>
+                                        <select class="form-control" name="kernel">
+                                            <option value="poly">Полиномиальное</option>
+                                            <option value="sigmoid">Сигмоида</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-xs-12">
+                                        <label>
+                                            Степень (Kernel PCA)
+                                        </label>
+                                        <input type="text" class="form-control" name="degree">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-xs-9">
+                                        <label>
+                                            Прозрачность
+                                        </label>
+                                        <input id="pca-alpha-ranger1" type="range" min="0.05" max="1.0" step="0.05"
+                                               class="form-control"
+                                               name="alpha" onchange="$('#pca-alpha-ranger2').val($(this).val())">
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <label class="form"></label>
+                                        <input id="pca-alpha-ranger2" class="form-control"
+                                               onchange="$('#pca-alpha-ranger1').val($(this).val())"/>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-xs-12">
+                                        <label class="control-label">
+                                            Цветовая гамма
+                                        </label>
+                                        <select class="form-control" name="color_map">
+                                            <option value="brg">RGB</option>
+                                            <option value="hsv">HSV</option>
+                                            <option value="rainbow">Радуга</option>
+                                            <option value="summer">Лето</option>
+                                            <option value="autumn">Осень</option>
+                                            <option value="winter">Зима</option>
+                                            <option value="spring">Весна</option>
+                                            <option value="gnuplot">GNU Plot</option>
+                                            <option value="jet">Jet</option>
+                                            <option value="gist_rainbow">Gist Rainbow</option>
+                                            <option value="nipy_spectral">Nipy Spectral</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-xs-12">
+                                        <label class="control-label">
+                                            Формат
+                                        </label>
+                                        <select class="form-control" name="format">
+                                            <option value="png">png</option>
+                                            <option value="svg">svg</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-xs-6">
+                                        <label class="control-label">
+                                            Ширина
+                                        </label>
+                                        <input class="form-control" name="width">
+                                    </div>
+                                    <div class="form-group col-xs-6">
+                                        <label class="control-label">
+                                            Длина
+                                        </label>
+                                        <input class="form-control" name="height">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-dismiss="modal"
+                                onclick="visualize('pca')();">Визуализировать
+                        </button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Отмена</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Parallel Coordinates dialog-->
+    <div class="modal fade" id="id_parallel_coords_dialog" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Параллельные прямые</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div style="overflow: auto; height: 300px;">
+                            <form id="id_parallel_coords_form" class="modal-form">
+                                <div class="row">
+                                    <div class="form-group col-xs-12">
+                                        <label>
+                                            Метод отбора показателей
+                                        </label>
+                                        <select class="form-control" name="select_method">
+                                            <option value="none">Не снижать размерность</option>
+                                            <option value="pca">PCA</option>
+                                            <option value="kernel_pca">Kernel PCA</option>
+                                            <option value="logit">Логистическая регрессия</option>
+                                            <option value="chi2">Хи-квадрат статистика</option>
+                                            <option value="svc">SVC</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-xs-12">
+                                        <label>
+                                            Количество показателей
+                                        </label>
+                                        <input type="text" class="form-control" name="n_features">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-xs-12">
+                                        <label>
+                                            Ядро
+                                        </label>
+                                        <select class="form-control" name="kernel">
+                                            <option value="poly">Полиномиальное</option>
+                                            <option value="sigmoid">Сигмоида</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-xs-12">
+                                        <label>
+                                            Степень (Kernel PCA)
+                                        </label>
+                                        <input type="text" class="form-control" name="degree">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-xs-9">
+                                        <label>
+                                            Прозрачность
+                                        </label>
+                                        <input id="pc-alpha-ranger1" type="range" min="0.05" max="1.0" step="0.05"
+                                               class="form-control"
+                                               name="alpha" onchange="$('#pc-alpha-ranger2').val($(this).val())">
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <label class="form"></label>
+                                        <input id="pc-alpha-ranger2" class="form-control"
+                                               onchange="$('#pc-alpha-ranger1').val($(this).val())"/>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-xs-12">
+                                        <label class="control-label">
+                                            Цветовая гамма
+                                        </label>
+                                        <select class="form-control" name="color_map">
+                                            <option value="brg">RGB</option>
+                                            <option value="hsv">HSV</option>
+                                            <option value="rainbow">Радуга</option>
+                                            <option value="summer">Лето</option>
+                                            <option value="autumn">Осень</option>
+                                            <option value="winter">Зима</option>
+                                            <option value="spring">Весна</option>
+                                            <option value="gnuplot">GNU Plot</option>
+                                            <option value="jet">Jet</option>
+                                            <option value="gist_rainbow">Gist Rainbow</option>
+                                            <option value="nipy_spectral">Nipy Spectral</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-xs-12">
+                                        <label class="control-label">
+                                            Формат
+                                        </label>
+                                        <select class="form-control" name="format">
+                                            <option value="png">png</option>
+                                            <option value="svg">svg</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-xs-6">
+                                        <label class="control-label">
+                                            Ширина
+                                        </label>
+                                        <input class="form-control" name="width">
+                                    </div>
+                                    <div class="form-group col-xs-6">
+                                        <label class="control-label">
+                                            Длина
+                                        </label>
+                                        <input class="form-control" name="height">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-dismiss="modal"
+                                onclick="visualize('parallel_coords')();">Визуализировать
+                        </button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Отмена</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--RadViz dialog-->
+    <div class="modal fade" id="id_radviz_dialog" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">RadViz</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div style="overflow: auto; height: 300px;">
+                            <form id="id_radviz_form" class="modal-form">
+                                <div class="row">
+                                    <div class="form-group col-xs-12">
+                                        <label>
+                                            Метод отбора показателей
+                                        </label>
+                                        <select class="form-control" name="select_method">
+                                            <option value="none">Не снижать размерность</option>
+                                            <option value="pca">PCA</option>
+                                            <option value="kernel_pca">Kernel PCA</option>
+                                            <option value="logit">Логистическая регрессия</option>
+                                            <option value="chi2">Хи-квадрат статистика</option>
+                                            <option value="svc">SVC</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-xs-12">
+                                        <label>
+                                            Количество показателей
+                                        </label>
+                                        <input type="text" class="form-control" name="n_features">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-xs-12">
+                                        <label>
+                                            Ядро
+                                        </label>
+                                        <select class="form-control" name="kernel">
+                                            <option value="poly">Полиномиальное</option>
+                                            <option value="sigmoid">Сигмоида</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-xs-12">
+                                        <label>
+                                            Степень (Kernel PCA)
+                                        </label>
+                                        <input type="text" class="form-control" name="degree">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-xs-9">
+                                        <label>
+                                            Прозрачность
+                                        </label>
+                                        <input id="rv-alpha-ranger1" type="range" min="0.05" max="1.0" step="0.05"
+                                               class="form-control"
+                                               name="alpha" onchange="$('#rv-alpha-ranger2').val($(this).val())">
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <label class="form"></label>
+                                        <input id="rv-alpha-ranger2" class="form-control"
+                                               onchange="$('#rv-alpha-ranger1').val($(this).val())"/>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-xs-12">
+                                        <label class="control-label">
+                                            Цветовая гамма
+                                        </label>
+                                        <select class="form-control" name="color_map">
+                                            <option value="brg">RGB</option>
+                                            <option value="hsv">HSV</option>
+                                            <option value="rainbow">Радуга</option>
+                                            <option value="summer">Лето</option>
+                                            <option value="autumn">Осень</option>
+                                            <option value="winter">Зима</option>
+                                            <option value="spring">Весна</option>
+                                            <option value="gnuplot">GNU Plot</option>
+                                            <option value="jet">Jet</option>
+                                            <option value="gist_rainbow">Gist Rainbow</option>
+                                            <option value="nipy_spectral">Nipy Spectral</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-xs-12">
+                                        <label class="control-label">
+                                            Формат
+                                        </label>
+                                        <select class="form-control" name="format">
+                                            <option value="png">png</option>
+                                            <option value="svg">svg</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-xs-6">
+                                        <label class="control-label">
+                                            Ширина
+                                        </label>
+                                        <input class="form-control" name="width">
+                                    </div>
+                                    <div class="form-group col-xs-6">
+                                        <label class="control-label">
+                                            Длина
+                                        </label>
+                                        <input class="form-control" name="height">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-dismiss="modal"
+                                onclick="visualize('radviz')();">Визуализировать
+                        </button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Отмена</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Hist dialog-->
+    <div class="modal fade" id="id_hist_dialog" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Гистограмма</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div style="overflow: auto; height: 300px;">
+                            <form id="id_hist_form" class="modal-form">
+                                <div class="row">
+                                    <div class="form-group col-xs-12">
+                                        <label>
+                                            Метод отбора показателей
+                                        </label>
+                                        <select class="form-control" name="select_method">
+                                            <option value="none">Не снижать размерность</option>
+                                            <option value="pca">PCA</option>
+                                            <option value="kernel_pca">Kernel PCA</option>
+                                            <option value="logit">Логистическая регрессия</option>
+                                            <option value="chi2">Хи-квадрат статистика</option>
+                                            <option value="svc">SVC</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-xs-12">
+                                        <label>
+                                            Количество показателей
+                                        </label>
+                                        <input type="text" class="form-control" name="n_features">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-xs-12">
+                                        <label>
+                                            Ядро
+                                        </label>
+                                        <select class="form-control" name="kernel">
+                                            <option value="poly">Полиномиальное</option>
+                                            <option value="sigmoid">Сигмоида</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-xs-12">
+                                        <label>
+                                            Степень (Kernel PCA)
+                                        </label>
+                                        <input type="text" class="form-control" name="degree">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-xs-9">
+                                        <label>
+                                            Прозрачность
+                                        </label>
+                                        <input id="hst-alpha-ranger1" type="range" min="0.05" max="1.0" step="0.05"
+                                               class="form-control"
+                                               name="alpha" onchange="$('#hst-alpha-ranger2').val($(this).val())">
+                                    </div>
+                                    <div class="col-xs-3">
+                                        <label class="form"></label>
+                                        <input id="hst-alpha-ranger2" class="form-control"
+                                               onchange="$('#hst-alpha-ranger1').val($(this).val())"/>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-xs-12">
+                                        <label class="control-label">
+                                            Цветовая гамма
+                                        </label>
+                                        <select class="form-control" name="color_map">
+                                            <option value="brg">RGB</option>
+                                            <option value="hsv">HSV</option>
+                                            <option value="rainbow">Радуга</option>
+                                            <option value="summer">Лето</option>
+                                            <option value="autumn">Осень</option>
+                                            <option value="winter">Зима</option>
+                                            <option value="spring">Весна</option>
+                                            <option value="gnuplot">GNU Plot</option>
+                                            <option value="jet">Jet</option>
+                                            <option value="gist_rainbow">Gist Rainbow</option>
+                                            <option value="nipy_spectral">Nipy Spectral</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-xs-12">
+                                        <label class="control-label">
+                                            Формат
+                                        </label>
+                                        <select class="form-control" name="format">
+                                            <option value="png">png</option>
+                                            <option value="svg">svg</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-xs-6">
+                                        <label class="control-label">
+                                            Ширина
+                                        </label>
+                                        <input class="form-control" name="width">
+                                    </div>
+                                    <div class="form-group col-xs-6">
+                                        <label class="control-label">
+                                            Длина
+                                        </label>
+                                        <input class="form-control" name="height">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-dismiss="modal"
+                                onclick="visualize('hist')();">Визуализировать
+                        </button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal">Отмена</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Dist dialog-->
+    <div class="modal fade" id="id_dist_dialog" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Плотность распределения</h4>
+                </div>
+                <div class="modal-body">
+                    <div style="overflow: auto; height: 300px;">
+                        <form id="id_dist_form" class="modal-form">
+                            <div class="row">
+                                <div class="form-group col-xs-12">
+                                    <label>
+                                        Метод отбора показателей
+                                    </label>
+                                    <select class="form-control" name="select_method">
+                                        <option value="none">Не снижать размерность</option>
+                                        <option value="pca">PCA</option>
+                                        <option value="kernel_pca">Kernel PCA</option>
+                                        <option value="logit">Логистическая регрессия</option>
+                                        <option value="chi2">Хи-квадрат статистика</option>
+                                        <option value="svc">SVC</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-xs-12">
+                                    <label>
+                                        Количество показателей
+                                    </label>
+                                    <input type="text" class="form-control" name="n_features">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-xs-12">
+                                    <label>
+                                        Ядро
+                                    </label>
+                                    <select class="form-control" name="kernel">
+                                        <option value="poly">Полиномиальное</option>
+                                        <option value="sigmoid">Сигмоида</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-xs-12">
+                                    <label>
+                                        Степень (Kernel PCA)
+                                    </label>
+                                    <input type="text" class="form-control" name="degree">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-xs-9">
+                                    <div class="form-group">
+                                        <label>
+                                            Bins
+                                        </label>
+                                        <input type="text" class="form-control" name="bins">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-xs-9">
+                                    <label>
+                                        Прозрачность
+                                    </label>
+                                    <input id="dst-alpha-ranger1" type="range" min="0.05" max="1.0" step="0.05"
+                                           class="form-control"
+                                           name="alpha" onchange="$('#dst-alpha-ranger2').val($(this).val())">
+                                </div>
+                                <div class="col-xs-3">
+                                    <label class="form"></label>
+                                    <input id="dst-alpha-ranger2" class="form-control"
+                                           onchange="$('#dst-alpha-ranger1').val($(this).val())"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-xs-12">
+                                    <label class="control-label">
+                                        Цветовая гамма
+                                    </label>
+                                    <select class="form-control" name="color_map">
+                                        <option value="brg">RGB</option>
+                                        <option value="hsv">HSV</option>
+                                        <option value="rainbow">Радуга</option>
+                                        <option value="summer">Лето</option>
+                                        <option value="autumn">Осень</option>
+                                        <option value="winter">Зима</option>
+                                        <option value="spring">Весна</option>
+                                        <option value="gnuplot">GNU Plot</option>
+                                        <option value="jet">Jet</option>
+                                        <option value="gist_rainbow">Gist Rainbow</option>
+                                        <option value="nipy_spectral">Nipy Spectral</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-xs-12">
+                                    <label class="control-label">
+                                        Формат
+                                    </label>
+                                    <select class="form-control" name="format">
+                                        <option value="png">png</option>
+                                        <option value="svg">svg</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-xs-6">
+                                    <label class="control-label">
+                                        Ширина
+                                    </label>
+                                    <input class="form-control" name="width">
+                                </div>
+                                <div class="form-group col-xs-6">
+                                    <label class="control-label">
+                                        Длина
+                                    </label>
+                                    <input class="form-control" name="height">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-dismiss="modal"
+                            onclick="visualize('dist')();">Визуализировать
+                    </button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Отмена</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Boxplot dialog-->
+    <div class="modal fade" id="id_boxplot_dialog" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Boxplot</h4>
+                </div>
+                <div class="modal-body">
+                    <div style="overflow: auto; height: 300px;">
+                        <form id="id_boxplot_form" class="modal-form">
+                            <div class="row">
+                                <div class="form-group col-xs-12">
+                                    <label>
+                                        Метод отбора показателей
+                                    </label>
+                                    <select class="form-control" name="select_method">
+                                        <option value="none">Не снижать размерность</option>
+                                        <option value="pca">PCA</option>
+                                        <option value="kernel_pca">Kernel PCA</option>
+                                        <option value="logit">Логистическая регрессия</option>
+                                        <option value="chi2">Хи-квадрат статистика</option>
+                                        <option value="svc">SVC</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-xs-12">
+                                    <label>
+                                        Количество показателей
+                                    </label>
+                                    <input type="text" class="form-control" name="n_features">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-xs-12">
+                                    <label>
+                                        Ядро
+                                    </label>
+                                    <select class="form-control" name="kernel">
+                                        <option value="poly">Полиномиальное</option>
+                                        <option value="sigmoid">Сигмоида</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-xs-12">
+                                    <label>
+                                        Степень (Kernel PCA)
+                                    </label>
+                                    <input type="text" class="form-control" name="degree">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-xs-9">
+                                    <label>
+                                        Прозрачность
+                                    </label>
+                                    <input id="bplt-alpha-ranger1" type="range" min="0.05" max="1.0" step="0.05"
+                                           class="form-control"
+                                           name="alpha" onchange="$('#bplt-alpha-ranger2').val($(this).val())">
+                                </div>
+                                <div class="col-xs-3">
+                                    <label class="form"></label>
+                                    <input id="bplt-alpha-ranger2" class="form-control"
+                                           onchange="$('#bplt-alpha-ranger1').val($(this).val())"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-xs-12">
+                                    <label class="control-label">
+                                        Цветовая гамма
+                                    </label>
+                                    <select class="form-control" name="color_map">
+                                        <option value="brg">RGB</option>
+                                        <option value="hsv">HSV</option>
+                                        <option value="rainbow">Радуга</option>
+                                        <option value="summer">Лето</option>
+                                        <option value="autumn">Осень</option>
+                                        <option value="winter">Зима</option>
+                                        <option value="spring">Весна</option>
+                                        <option value="gnuplot">GNU Plot</option>
+                                        <option value="jet">Jet</option>
+                                        <option value="gist_rainbow">Gist Rainbow</option>
+                                        <option value="nipy_spectral">Nipy Spectral</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-xs-12">
+                                    <label class="control-label">
+                                        Формат
+                                    </label>
+                                    <select class="form-control" name="format">
+                                        <option value="png">png</option>
+                                        <option value="svg">svg</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-xs-6">
+                                    <label class="control-label">
+                                        Ширина
+                                    </label>
+                                    <input class="form-control" name="width">
+                                </div>
+                                <div class="form-group col-xs-6">
+                                    <label class="control-label">
+                                        Длина
+                                    </label>
+                                    <input class="form-control" name="height">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-dismiss="modal"
+                            onclick="visualize('boxplot')();">Визуализировать
+                    </button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Отмена</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="id_corrmatrix_dialog" role="dialog">
+        <div class="modal-dialog">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Тепловая карта</h4>
+                </div>
+                <div class="modal-body">
+                    <div style="overflow: auto; height: 300px;">
+                        <form id="id_corrmatrix_form" class="modal-form">
+                            <div class="row">
+                                <div class="form-group col-xs-12">
+                                    <label>
+                                        Метод отбора показателей
+                                    </label>
+                                    <select class="form-control" name="select_method">
+                                        <option value="none">Не снижать размерность</option>
+                                        <option value="pca">PCA</option>
+                                        <option value="kernel_pca">Kernel PCA</option>
+                                        <option value="logit">Логистическая регрессия</option>
+                                        <option value="chi2">Хи-квадрат статистика</option>
+                                        <option value="svc">SVC</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-xs-12">
+                                    <label>
+                                        Количество показателей
+                                    </label>
+                                    <input type="text" class="form-control" name="n_features">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-xs-12">
+                                    <label>
+                                        Ядро
+                                    </label>
+                                    <select class="form-control" name="kernel">
+                                        <option value="poly">Полиномиальное</option>
+                                        <option value="sigmoid">Сигмоида</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-xs-12">
+                                    <label>
+                                        Степень (Kernel PCA)
+                                    </label>
+                                    <input type="text" class="form-control" name="degree">
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-xs-9">
+                                    <label>
+                                        Прозрачность
+                                    </label>
+                                    <input id="cm-alpha-ranger1" type="range" min="0.05" max="1.0" step="0.05"
+                                           class="form-control"
+                                           name="alpha" onchange="$('#cm-alpha-ranger2').val($(this).val())">
+                                </div>
+                                <div class="col-xs-3">
+                                    <label class="form"></label>
+                                    <input id="cm-alpha-ranger2" class="form-control"
+                                           onchange="$('#cm-alpha-ranger1').val($(this).val())"/>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-xs-12">
+                                    <label class="control-label">
+                                        Цветовая гамма
+                                    </label>
+                                    <select class="form-control" name="color_map">
+                                        <option value="brg">RGB</option>
+                                        <option value="hsv">HSV</option>
+                                        <option value="rainbow">Радуга</option>
+                                        <option value="summer">Лето</option>
+                                        <option value="autumn">Осень</option>
+                                        <option value="winter">Зима</option>
+                                        <option value="spring">Весна</option>
+                                        <option value="gnuplot">GNU Plot</option>
+                                        <option value="jet">Jet</option>
+                                        <option value="gist_rainbow">Gist Rainbow</option>
+                                        <option value="nipy_spectral">Nipy Spectral</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-xs-12">
+                                    <label class="control-label">
+                                        Формат
+                                    </label>
+                                    <select class="form-control" name="format">
+                                        <option value="png">png</option>
+                                        <option value="svg">svg</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="form-group col-xs-6">
+                                    <label class="control-label">
+                                        Ширина
+                                    </label>
+                                    <input class="form-control" name="width">
+                                </div>
+                                <div class="form-group col-xs-6">
+                                    <label class="control-label">
+                                        Длина
+                                    </label>
+                                    <input class="form-control" name="height">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-success" data-dismiss="modal"
+                            onclick="visualize('corrmatrix')();">Визуализировать
+                    </button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Отмена</button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'babel/babel.min.js' %}">
+    </script>
+    <script src="{% static 'react-dom/react.development.js' %}"></script>
+    <script src="{% static 'react-dom/react-dom.development.js' %}"></script>
+    <script src="{% static 'bootstrap-typeahead/bootstrap3-typeahead.js' %}"></script>
+    <script src="{% static 'jquery-serializer/jquery.serialize-object.min.js' %}"></script>
+    <script>
+        $('#id_visualization_nav_item').addClass('active');
+    </script>
+    <script>
+        var visFunctions = {};
+
+
+        /**
+         * Draw chart
+         */
+        function drawChart(visMethod, image) {
+            $('#id_visualization_panel').attr('hidden', null);
+            $('#id_' + visMethod + '_tab').css('display', '');
+            $('#id_' + visMethod + '_chart').css('display', '');
+            $('#id_' + visMethod + '_chart').empty();
+            var chart = $('<img></img');
+            {#            chart.css("width", "400px");#}
+            {#            chart.css("height", "400px")#}
+            chart.attr("src", "data: image/png; base64, " + image);
+            $('#id_' + visMethod + '_chart').append(chart);
+        }
+
+        function returnDrawChart(visMethod) {
+            return function (image) {
+                drawChart(visMethod, image);
+            };
+        }
+
+        /**
+         * Visualize Andrews Curves
+         */
+        function visualizeAndrewsCurves() {
+            var params = $('#id_andrews_curves_form').serializeObject();
+            params['vis_method'] = 'andrews_curves';
+            params['test'] = 'breastCancerTest';
+            params['class_col'] = 'breastCancerTest.diagnosis';
+            params["out_view"] = "base64";
+            $.ajax({
+                    type: "get",
+                    url: '{% url 'analytics:visualize' %}',
+                    crossDomain: true,
+                    cache: false,
+                    data: $.param(params),
+                    success: returnDrawChart('andrews_curves'),
+                    error: function (xhr, textStatus, errorThrown) {
+                        console.log(errorThrown);
+                        alert(errorThrown);
+                    }
+                }
+            );
+        }
+
+        /**
+         * Visualize PCA
+         */
+        function visualizePCA() {
+            var params = $('#id_pca_form').serializeObject();
+            params['vis_method'] = 'pca';
+            params['test'] = 'breastCancerTest';
+            params['class_col'] = 'breastCancerTest.diagnosis';
+            params["out_view"] = "base64";
+            $.ajax({
+                    type: "get",
+                    url: '{% url 'analytics:visualize' %}',
+                    crossDomain: true,
+                    cache: false,
+                    data: $.param(params),
+                    success: returnDrawChart('pca'),
+                    error: function (xhr, textStatus, errorThrown) {
+                        console.log(errorThrown);
+                        alert(errorThrown);
+                    }
+                }
+            );
+        }
+
+        /**
+         * Visualize RadViz
+         */
+        function visualizeRadViz() {
+            var params = $('#id_radviz_form').serializeObject();
+            params['vis_method'] = 'radviz';
+            params['test'] = 'breastCancerTest';
+            params['class_col'] = 'breastCancerTest.diagnosis';
+            params["out_view"] = "base64";
+            $.ajax({
+                type: "get",
+                url: '{% url 'analytics:visualize' %}',
+                crossDomain: true,
+                cache: false,
+                data: $.param(params),
+                success: returnDrawChart('radviz'),
+                error: function (xhr, textStatus, errorThrown) {
+                    console.log(errorThrown);
+                    alert(errorThrown);
+                }}
+            );
+        }
+
+        /**
+         * Visualize Parallel coords
+         */
+        function visualizeParallelCoords() {
+            var params = $('#id_parallel_coords_form').serializeObject();
+            params['vis_method'] = 'parallel_coords';
+            params['test'] = 'breastCancerTest';
+            params['class_col'] = 'breastCancerTest.diagnosis';
+            params["out_view"] = "base64";
+            $.ajax({
+                type: "get",
+                url: '{% url 'analytics:visualize' %}',
+                crossDomain: true,
+                cache: false,
+                data: $.param(params),
+                success: returnDrawChart('parallel_coords'),
+                error: function (xhr, textStatus, errorThrown) {
+                    console.log(errorThrown);
+                    alert(errorThrown);
+                }}
+            );
+        }
+
+        /**
+         * Visualize hist
+         */
+        function visualizeHist() {
+            var params = $('#id_hist_form').serializeObject();
+            params['vis_method'] = 'hist';
+            params['test'] = 'breastCancerTest';
+            params['class_col'] = 'breastCancerTest.diagnosis';
+            params["out_view"] = "base64";
+            $.ajax({
+                type: "get",
+                url: '{% url 'analytics:visualize' %}',
+                crossDomain: true,
+                cache: false,
+                data: $.param(params),
+                success: returnDrawChart('hist'),
+                error: function (xhr, textStatus, errorThrown) {
+                    console.log(errorThrown);
+                    alert(errorThrown);
+                }}
+            );
+        }
+
+        /**
+         * Visualize dist
+         */
+        function visualizeDist() {
+            var params = $('#id_dist_form').serializeObject();
+            params['vis_method'] = 'dist';
+            params['test'] = 'breastCancerTest';
+            params['class_col'] = 'breastCancerTest.diagnosis';
+            params["out_view"] = "base64";
+            $.ajax({
+                type: "get",
+                url: '{% url 'analytics:visualize' %}',
+                crossDomain: true,
+                cache: false,
+                data: $.param(params),
+                success: returnDrawChart('dist'),
+                error: function (xhr, textStatus, errorThrown) {
+                    console.log(errorThrown);
+                    alert(errorThrown);
+                }}
+            );
+        }
+
+
+        /**
+         * Visualize boxplot
+         */
+        function visualizeBoxplot() {
+            var params = $('#id_boxplot_form').serializeObject();
+            params['vis_method'] = 'boxplot';
+            params['test'] = 'breastCancerTest';
+            params['class_col'] = 'breastCancerTest.diagnosis';
+            params["out_view"] = "base64";
+            $.ajax({
+                type: "get",
+                url: '{% url 'analytics:visualize' %}',
+                crossDomain: true,
+                cache: false,
+                data: $.param(params),
+                success: returnDrawChart('boxplot'),
+                error: function (xhr, textStatus, errorThrown) {
+                    console.log(errorThrown);
+                    alert(errorThrown);
+                }}
+            );
+        }
+
+        /**
+         * Visualize Corr matrix
+         */
+        function visualizeCorrMatrix() {
+            var params = $('#id_corrmatrix_form').serializeObject();
+            params['vis_method'] = 'corrmatrix';
+            params['test'] = 'breastCancerTest';
+            params['class_col'] = 'breastCancerTest.diagnosis';
+            params["out_view"] = "base64";
+            $.ajax({
+                type: "get",
+                url: '{% url 'analytics:visualize' %}',
+                crossDomain: true,
+                cache: false,
+                data: $.param(params),
+                success: returnDrawChart('corrmatrix'),
+                error: function (xhr, textStatus, errorThrown) {
+                    console.log(errorThrown);
+                    alert(errorThrown);
+                }}
+            );
+        }
+
+
+        visFunctions['andrews_curves'] = visualizeAndrewsCurves;
+        visFunctions['pca'] = visualizePCA;
+        visFunctions['radviz'] = visualizeRadViz;
+        visFunctions['parallel_coords'] = visualizeParallelCoords;
+        visFunctions['hist'] = visualizeHist;
+        visFunctions['dist'] = visualizeDist;
+        visFunctions['boxplot'] = visualizeBoxplot;
+        visFunctions['corrmatrix'] = visualizeCorrMatrix;
+
+
+        /**
+         * Show visualization dialog
+         * @param visMethod
+         */
+        function openVisualizationDialog(visMethod) {
+            $('#id_' + visMethod + "_dialog").modal();
+        }
+
+        /**
+         * Return visualization function
+         */
+        function visualize(visMethod) {
+            return visFunctions[visMethod];
+        }
+
+        /**
+         * Init function after document is ready
+         */
+        function init() {
+
+        }
+
+        $(document).ready(init());
+    </script>
+{% endblock %}

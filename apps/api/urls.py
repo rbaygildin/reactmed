@@ -1,7 +1,9 @@
 from django.conf.urls import url
+from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 
 from apps.api.views import *
+from apps.api.views.patients_views import PatientListView
 
 urlpatterns = (
     # Create account
@@ -32,5 +34,8 @@ urlpatterns = (
     url(r'^text_ind/(?P<pk>\d+)', TextIndView.as_view(), name='text_ind'),
 
     # Test Records
-    url(r'^test_recs/(?P<patient_id>\d+)/(?P<test_type_id>.+)', csrf_exempt(TestRecListView.as_view()), name='test_recs')
+    url(r'^test_recs/(?P<patient_id>\d+)/(?P<test_type_id>.+)', csrf_exempt(TestRecListView.as_view()), name='test_recs'),
+
+    # Patients
+    url(r'^patients$', login_required(PatientListView.as_view()), name='patients')
 )

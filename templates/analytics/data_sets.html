@@ -1,0 +1,138 @@
+{% extends 'core/analytics_sidebar.html' %}
+{% load staticfiles %}
+
+{% block main %}
+    <div id="dataset-tab-pane" class="tab-pane active">
+            <div id="datasets-table">
+                <div class="row">
+                    <form role="form">
+                        <div class="col-xs-6">
+                            <input class="form-control" placeholder="Найти датасет">
+                        </div>
+                        <div class="col-xs-3">
+                            <button id="open-create-dataset-dialog-btn" type="button" class="btn btn-success">
+                                Создать
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div id="datasets-list" class="list-group">
+
+                </div>
+            </div>
+            <div id="dataset-dashboard" style="display: none;">
+                <div class="panel panel-primary">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label">Название датасета</label>
+                                    <input class="form-control" name="name" id="name-input">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="form-group">
+                                    <label class="control-label">Описание</label>
+                                    <textarea class="form-control" name="description"
+                                              id="description-input"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-4">
+                                <div class="form-group">
+                                    <label class="control-label">Тип медицинского обследования</label>
+                                    <select class="form-control" name="med-test-select" id="med-test-select1">
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-6">
+                                <div class="form-group">
+                                    <label class="control-label">Показатели</label>
+                                    <select class="form-control" name="indicators-select" id="indicators-select1"
+                                            multiple="multiple">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-xs-6">
+                                <div class="form-group">
+                                    <label class="control-label">Класс</label>
+                                    <select class="form-control" name="class-select" id="class-select1">
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="featurette-divider">
+                        <div class="row">
+                            <div class="col-xs-4">
+                                <div class="form-group">
+                                    <label for="features-select-select">Метод отбора показателей</label>
+                                    <select class="form-control" name="features_select"
+                                            id="features-select-select1">
+                                        <option value="none">-</option>
+                                        <option value="pca">Метод главных компонент</option>
+                                        <option value="ranking">Ранжирование по весу</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-xs-4">
+                                <div class="form-group">
+                                    <label for="n-features-input">Количество показателей</label>
+                                    <input type="text" class="form-control" name="n_features"
+                                           id="n-features-input1">
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="featurette-divider">
+                        <div class="form-group row">
+                            <div class="col-xs-2">
+                                <button class="btn btn-success" id="dataset-refresh-btn1"
+                                        style="margin: 10px; width: 100%">
+                                    Обновить
+                                </button>
+                            </div>
+                            <div class="col-xs-2">
+                                <button class="btn btn-success" id="dataset-clear-btn1"
+                                        style="margin: 10px; width: 100%">
+                                    Очистить
+                                </button>
+                            </div>
+                            <div class="col-xs-2">
+                                <div class="btn-group">
+                                    <button type="button" data-toggle="dropdown"
+                                            class="btn btn-success dropdown-toggle"
+                                            style="margin: 10px;">Экспортировать <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="#">PDF</a></li>
+                                        <li><a href="#">Word</a></li>
+                                        <li><a href="#">Excel</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'babel/babel.min.js' %}">
+    </script>
+    <script src="{% static 'react-dom/react.development.js' %}"></script>
+    <script src="{% static 'react-dom/react-dom.development.js' %}"></script>
+    <script>
+        $('#id_datasets_nav_item').addClass('active');
+    </script>
+    <script type="text/babel">
+{#        ReactDOM.render(#}
+{#                <p>34</p>,#}
+{#            document.getElementById('id_charts')#}
+{#        );#}
+    </script>
+{% endblock %}

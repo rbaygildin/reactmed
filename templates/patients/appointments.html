@@ -1,0 +1,55 @@
+{% extends 'patients/sidebar.html' %}
+{% load staticfiles %}
+
+{% block main %}
+    <div class="tab-pane active" id="id_tests">
+        <div class="row">
+            <div class="col-xs-4">
+                <div class="input-group">
+                    <input class="form-control" placeholder="ФИО пациента">
+                    <span class="input-group-btn">
+                                <button class="btn btn-success" type="button">Найти</button>
+                            </span>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <button class="btn btn-success" onclick="window.location='{% url 'appointments:create' %}'">Создать запись о приеме
+                </button>
+            </div>
+        </div>
+        <br/>
+        <table id="patients-table" class="table table-striped table-bordered table-hover" cellpadding="0"
+               style="width: 100%; ">
+            <thead>
+                <tr>
+                    <th>Пациент</th>
+                    <th>Дата приема</th>
+                    <th>Информация</th>
+                    <th>Статус</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody id="patients-table-body">
+                {% for appointment in appointments %}
+                    <tr>
+                        <td>{{ appointment.patient.short_name }} (ОМС № {{ appointment.patient.omi_card }})</td>
+                        <td>{{ appointment.appointment_date }}</td>
+                        <td>{{ appointment.info }}</td>
+                        <td>{{ appointment.status }}</td>
+                        <td>
+                            <a href="{% url 'appointments:show' appointment_id=appointment.id %}" class="btn btn-success">
+                                <span class="glyphicon glyphicon-edit"></span>
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        $('#id_appointments_nav_item').addClass('active');
+    </script>
+{% endblock %}

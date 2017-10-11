@@ -31,15 +31,15 @@ class CustomUserAdmin(UserAdmin):
 @admin.register(MedArea)
 class MedAreaAdmin(admin.ModelAdmin):
     list_display = ('name', 'short_name', 'description')
-    ordering = ('name', )
-    search_fields = ('name', )
+    ordering = ('name',)
+    search_fields = ('name',)
 
 
 @admin.register(MedTest)
 class MedTestAdmin(admin.ModelAdmin):
     list_display = ('name', 'short_name', 'description', '_view_med_area')
-    ordering = ('name', )
-    search_fields = ('name', )
+    ordering = ('name',)
+    search_fields = ('name',)
     inlines = (RealIndInline, IntIndInline, TextIndInline)
 
     def _view_med_area(self, med_test):
@@ -67,7 +67,7 @@ class TextIndAdmin(admin.ModelAdmin):
     list_display = ('name', 'short_name', 'description', '_view_values', '_view_med_test')
     ordering = ('name',)
     search_fields = ('name',)
-    list_filter = ('med_test__name', )
+    list_filter = ('med_test__name',)
 
     def _view_values(self, ind):
         return ', '.join(ind.values)
@@ -82,8 +82,8 @@ class TextIndAdmin(admin.ModelAdmin):
 @admin.register(TestRec)
 class TestRecAdmin(admin.ModelAdmin):
     list_display = ('name', 'summary', 'info', 'test_date', '_view_patient')
-    ordering = ('test_date', )
-    list_filter = ('name', )
+    ordering = ('test_date',)
+    list_filter = ('name',)
 
     def _view_patient(self, rec):
         return str(rec.patient)
@@ -94,3 +94,15 @@ class TestRecAdmin(admin.ModelAdmin):
 @admin.register(Patient)
 class PatientAdmin(admin.ModelAdmin):
     list_display = ('name', 'surname', 'age', 'gender')
+
+
+@admin.register(Appointment)
+class AppointmentAdmin(admin.ModelAdmin):
+    list_display = ('appointment_date', 'info', 'status', '_view_patient')
+    ordering = ('appointment_date',)
+    list_filter = ('status',)
+
+    def _view_patient(self, appointment):
+        return str(appointment.patient)
+
+    _view_patient.short_description = _('Patient')
