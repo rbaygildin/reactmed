@@ -38,6 +38,34 @@ def tests_action(request):
 
 
 @login_required
+def patient_test_action(request, patient_id):
+    patient = request.user.patients.get(pk=patient_id)
+    tests = patient.test_recs
+    return render(
+        request,
+        'patients/patient_tests.html',
+        {
+            'patient': patient,
+            'tests': tests
+        }
+    )
+
+
+@login_required
+def patient_dynamics_action(request, patient_id):
+    patient = request.user.patients.get(pk=patient_id)
+    tests = patient.test_recs
+    return render(
+        request,
+        'patients/patient_dynamics.html',
+        {
+            'patient': patient,
+            'tests': tests
+        }
+    )
+
+
+@login_required
 def appointments_action(request):
     patients_count = request.user.patients.count()
     appointments = Appointment.objects.filter(patient__doctor_id=request.user.id)
@@ -49,6 +77,20 @@ def appointments_action(request):
             'appointments': appointments
         }
     )
+
+
+# @login_required
+# def patient_appointments_action(request):
+#     patients_count = request.user.patients.count()
+#     appointments = Appointment.objects.filter(patient__doctor_id=request.user.id)
+#     return render(
+#         request,
+#         'patients/appointments.html',
+#         {
+#             'patients_count': patients_count,
+#             'appointments': appointments
+#         }
+#     )
 
 
 @login_required
