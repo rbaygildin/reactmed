@@ -21,6 +21,7 @@
     "bootstrap": "^3.3.7",
     "bootstrap-3-typeahead": "^4.0.2",
     "bootstrap-datepicker": "^1.7.1",
+    "bootstrap-datetime-picker": "^2.4.4",
     "bootstrap-datetimepicker-npm": "^4.17.37-npm",
     "d3": "^4.11.0",
     "form-serializer": "^2.5.0",

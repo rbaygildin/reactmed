@@ -5,7 +5,7 @@ from django.urls import reverse
 
 def index_view(request):
     if request.user is not None and request.user.is_active:
-        return redirect(reverse('users:dashboard'))
+        return redirect(reverse('patients:list'))
     return render(request, 'main/index.html', {})
 
 
@@ -21,5 +21,5 @@ def login_view(request):
         if user is not None:
             if user.is_active:
                 login(request=request, user=user)
-                return redirect(reverse('users:dashboard'))
+                return redirect(reverse('patients:list'))
     return redirect(reverse('main:index'))

@@ -1,0 +1,127 @@
+{% extends 'core/base_menu_fluid.html' %}
+{% block header %}
+    <style>
+        body {
+            padding-top: 80px;
+        }
+
+        .bg-light {
+            background-color: #f8f9fa !important;
+        }
+
+        .d-sm-block {
+            display: block !important;
+        }
+
+        .d-sm-block {
+            display: block !important;
+        }
+
+        .flex-column {
+            -ms-flex-direction: column !important;
+            flex-direction: column !important;
+        }
+
+        .sidebar {
+            padding-left: 0;
+            padding-right: 0;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 51px;
+            bottom: 0;
+            left: 0;
+            z-index: 1000;
+            padding-top: 10px;
+            overflow-x: hidden;
+            overflow-y: auto;
+            border-right: 1px solid #eee;
+        }
+
+        .sidebar .nav-item {
+            width: 100%;
+        }
+
+        .nav {
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-wrap: wrap;
+            flex-wrap: wrap;
+            padding-left: 0;
+            margin-bottom: 0;
+            list-style: none;
+        }
+
+        .link {
+            display: block;
+            padding: .5rem 1rem;
+        }
+
+        .sidebar .link {
+            border-radius: 0;
+        }
+
+        .nav-item > a {
+            border-bottom: 1px solid #e1e4e8;
+        }
+
+        .nav-pills > li + li {
+            margin-left: 0;
+        }
+
+        .nav-pills > li.active > a, .nav-pills > li.active > a:focus, .nav-pills > li.active > a:hover {
+            border-left: 4px solid #e36209;
+            background-color: #eee;
+            color: #0f0f0f;
+        }
+
+        .counter {
+            display: inline-block;
+            padding: 2px 5px;
+            font-size: 12px;
+            font-weight: 600;
+            line-height: 1;
+            color: #586069;
+            background-color: rgba(27, 31, 35, 0.08);
+            border-radius: 20px;
+        }
+
+        main {
+            margin-left: 240px;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            padding-bottom: 9px;
+            border-bottom: 1px solid #eee;
+        }
+    </style>
+{% endblock %}
+
+{% block header2 %}
+
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+        <nav class="col-sm-3 col-md-2 d-none d-sm-block bg-light sidebar">
+            <ul class="nav nav-pills flex-column">
+                <li class="nav-item" id="id_datasets_nav_item">
+                    <a data-target="#" href="#" onclick="window.location='{% url 'analytics:datasets' %}'" class="link">Датасеты<span
+                            class="counter">{{ patients_count }}</span></a>
+                </li>
+                <li id="id_visualization_nav_item">
+                    <a data-target="#" href="#" onclick="window.location='{% url 'analytics:visualization' %}'" class="link">Визуализация</a>
+                </li>
+                <li id="id_clustering_nav_item">
+                    <a data-target="#" href="#" onclick="window.location='{% url 'analytics:clustering' %}'" class="link">Кластеризация</a>
+                </li>
+            </ul>
+        </nav>
+        <main class="col-sm-9 ml-sm-auto col-md-10 pt-3 tab-content">
+            {% block main %}
+            {% endblock %}
+        </main>
+    </div>
+{% endblock %}

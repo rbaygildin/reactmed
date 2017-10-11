@@ -6,5 +6,7 @@ urlpatterns = [
     url(r'^cluster$', cluster_action, name='cluster'),
     url(r'^data$', data_action, name='data'),
     url(r'^data/features/stat$', features_stat_action, name='features_stat'),
-    url(r'^$', visualize_page_action, name='index')
+    url(r'^datasets$', datasets_page_action, name='datasets'),
+    url(r'^visualization$', visualize_page_action, name='visualization'),
+    url(r'^clustering$', clustering_page_action, name='clustering')
 ]

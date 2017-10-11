@@ -31,6 +31,12 @@ RH_FACTOR = (
     ('Rh-', 'Rh-')
 )
 
+APPOINTMENT_STATUS = (
+    ('Назначено', 'Назначено'),
+    ('Завершено', 'Завершено'),
+    ('Отменено', 'Отменено')
+)
+
 
 class AbstractModel(models.Model):
     id = models.AutoField(primary_key=True)
@@ -131,6 +137,17 @@ class Patient(AbstractModel):
     @property
     def age(self):
         return (date.today() - self.birthday) // timedelta(days=365.2425)
+
+    @property
+    def short_name(self):
+        if self.patronymic is not None and self.patronymic != '':
+            return '%s %s %s' % (self.surname, self.name[0], self.patronymic[0])
+        else:
+            return '%s %s.' % (self.surname, self.name[0])
+
+    @property
+    def short_info(self):
+        return '%s (ОМС № %s)' % (self.short_name, self.omi_card)
 
     class Meta:
         db_table = 'patient'
@@ -284,14 +301,17 @@ class Attachment(AbstractModel):
         verbose_name_plural = _('Attachments')
 
 
-# class Appointment(AbstractModel):
-#     appointment_date = models.DateTimeField()
-#     info = models.DateTimeField()
-#     patient = models.ForeignKey('core.Patient')
-#     doctor = models.ForeignKey('core.Doctor')
-#
-#     class Meta:
-#         db_table = 'appointment'
+class Appointment(AbstractModel):
+    appointment_date = models.DateTimeField()
+    info = models.TextField(blank=True, null=True)
+    complaints = models.TextField(blank=True, null=True)
+    status = models.CharField(max_length=30, choices=APPOINTMENT_STATUS, default='Назначено')
+    patient = models.ForeignKey('core.Patient', related_name='appointments', on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = 'appointment'
+        verbose_name = _('Appointment')
+        verbose_name_plural = _('Appointments')
 
 
 class Treatment(AbstractModel):
