@@ -48,6 +48,10 @@ To start application run command
 ```bash
 ./manage.py runserver 0.0.0.0:8080
 ```
+Or 
+```bash
+nohup ./manage.py runserver 0.0.0.0:8080 &
+```
 
 That's All! You're all set! My congratulations
 
