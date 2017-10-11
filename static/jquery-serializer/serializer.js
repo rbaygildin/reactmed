@@ -1,1 +1,146 @@
-!function(e,i){if("function"==typeof define&&define.amd)define(["exports","jquery"],function(e,r){return i(e,r)});else if("undefined"!=typeof exports){var r=require("jquery");i(exports,r)}else i(e,e.jQuery||e.Zepto||e.ender||e.$)}(this,function(e,i){function r(e,r){function n(e,i,r){return e[i]=r,e}function a(e,i){for(var r,a=e.match(t.key);void 0!==(r=a.pop());)t.push.test(r)?i=n([],s(e.replace(/\[]$/,"")),i):t.fixed.test(r)?i=n([],r,i):t.named.test(r)&&(i=n({},r,i));return i}function s(e){return void 0===d[e]&&(d[e]=0),d[e]++}function u(e){switch(i('[name="'+e.name+'"]',r).attr("type")){case"checkbox":return"on"===e.value||e.value;default:return e.value}}function f(){return o}var o={},d={};this.addPair=function(i){if(!t.validate.test(i.name))return this;var r=a(i.name,u(i));return o=e.extend(!0,o,r),this},this.addPairs=function(i){if(!e.isArray(i))throw new Error("formSerializer.addPairs expects an Array");for(var r=0,t=i.length;r<t;r++)this.addPair(i[r]);return this},this.serialize=f,this.serializeJSON=function(){return JSON.stringify(f())}}var t={validate:/^[a-zA-Zа-яА-Я_][a-zA-Zа-яА-Я0-9_\s]*(?:\[(?:\d*|[a-zA-Zа-яА-Я0-9_\s]+)])*$/i,key:/[a-zA-Zа-яА-Я0-9_\s]+|(?=\[])/gi,push:/^$/,fixed:/^\d+$/,named:/^[a-zA-Zа-яА-Я0-9_\s]+$/i};return r.patterns=t,r.serializeObject=function(){return new r(i,this).addPairs(this.serializeArray()).serialize()},r.serializeJSON=function(){return new r(i,this).addPairs(this.serializeArray()).serializeJSON()},void 0!==i.fn&&(i.fn.serializeObject=r.serializeObject,i.fn.serializeJSON=r.serializeJSON),e.FormSerializer=r,r});
+/**
+ * jQuery serializeObject
+ * @copyright 2014, macek <paulmacek@gmail.com>
+ * @link https://github.com/macek/jquery-serialize-object
+ * @license BSD
+ * @version 2.5.0
+ */
+(function(root, factory) {
+
+  // AMD
+  if (typeof define === "function" && define.amd) {
+    define(["exports", "jquery"], function(exports, $) {
+      return factory(exports, $);
+    });
+  }
+
+  // CommonJS
+  else if (typeof exports !== "undefined") {
+    var $ = require("jquery");
+    factory(exports, $);
+  }
+
+  // Browser
+  else {
+    factory(root, (root.jQuery || root.Zepto || root.ender || root.$));
+  }
+
+}(this, function(exports, $) {
+
+  var patterns = {
+    validate: /^[a-zA-Zа-яА-Я_][a-zA-Zа-яА-Я0-9_]*(?:\[(?:\d*|[a-zA-Zа-яА-Я0-9_]+)])*$/i,
+    key:      /[a-zA-Zа-яА-Я0-9_]+|(?=\[])/gi,
+    push:     /^$/,
+    fixed:    /^\d+$/,
+    named:    /^[a-zA-Zа-яА-Я0-9_]+$/i
+  };
+
+  function FormSerializer(helper, $form) {
+
+    // private variables
+    var data     = {},
+        pushes   = {};
+
+    // private API
+    function build(base, key, value) {
+      base[key] = value;
+      return base;
+    }
+
+    function makeObject(root, value) {
+
+      var keys = root.match(patterns.key), k;
+
+      // nest, nest, ..., nest
+      while ((k = keys.pop()) !== undefined) {
+        // foo[]
+        if (patterns.push.test(k)) {
+          var idx = incrementPush(root.replace(/\[\]$/, ''));
+          value = build([], idx, value);
+        }
+
+        // foo[n]
+        else if (patterns.fixed.test(k)) {
+          value = build([], k, value);
+        }
+
+        // foo; foo[bar]
+        else if (patterns.named.test(k)) {
+          value = build({}, k, value);
+        }
+      }
+
+      return value;
+    }
+
+    function incrementPush(key) {
+      if (pushes[key] === undefined) {
+        pushes[key] = 0;
+      }
+      return pushes[key]++;
+    }
+
+    function encode(pair) {
+      switch ($('[name="' + pair.name + '"]', $form).attr("type")) {
+        case "checkbox":
+          return pair.value === "on" ? true : pair.value;
+        default:
+          return pair.value;
+      }
+    }
+
+    function addPair(pair) {
+      if (!patterns.validate.test(pair.name)) return this;
+      var obj = makeObject(pair.name, encode(pair));
+      data = helper.extend(true, data, obj);
+      return this;
+    }
+
+    function addPairs(pairs) {
+      if (!helper.isArray(pairs)) {
+        throw new Error("formSerializer.addPairs expects an Array");
+      }
+      for (var i=0, len=pairs.length; i<len; i++) {
+        this.addPair(pairs[i]);
+      }
+      return this;
+    }
+
+    function serialize() {
+      return data;
+    }
+
+    function serializeJSON() {
+      return JSON.stringify(serialize());
+    }
+
+    // public API
+    this.addPair = addPair;
+    this.addPairs = addPairs;
+    this.serialize = serialize;
+    this.serializeJSON = serializeJSON;
+  }
+
+  FormSerializer.patterns = patterns;
+
+  FormSerializer.serializeObject = function serializeObject() {
+    return new FormSerializer($, this).
+      addPairs(this.serializeArray()).
+      serialize();
+  };
+
+  FormSerializer.serializeJSON = function serializeJSON() {
+    return new FormSerializer($, this).
+      addPairs(this.serializeArray()).
+      serializeJSON();
+  };
+
+  if (typeof $.fn !== "undefined") {
+    $.fn.serializeObject = FormSerializer.serializeObject;
+    $.fn.serializeJSON   = FormSerializer.serializeJSON;
+  }
+
+  exports.FormSerializer = FormSerializer;
+
+  return FormSerializer;
+}));

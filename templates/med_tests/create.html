@@ -91,6 +91,7 @@
             $('#id_real_inds').empty();
             $('#id_int_inds').empty();
             $('#id_text_inds').empty();
+            window.testType['short_name'] = selectedItem['short_name'];
             window.testType['real_inds'] = {};
             window.testType['int_inds'] = {};
             window.testType['text_inds'] = {};
@@ -148,6 +149,7 @@
          */
         function saveTestRecord() {
             var testRecord = $('#id_test_record').serializeObject();
+            testRecord['short_name'] = window.testType['short_name'];
             //Foreach over real indicators
             if(testRecord['real_inds'])
                 Object.keys(testRecord['real_inds']).forEach(function (ind, i, arr) {

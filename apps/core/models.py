@@ -15,8 +15,8 @@ from transliterate import translit
 from apps.core.managers import UserManager
 
 GENDER = (
-    ('Мужской', 'мужской'),
-    ('Женский', 'женский')
+    ('Мужской', 'Мужской'),
+    ('Женский', 'Женский')
 )
 
 BLOOD_GROUP = (
@@ -218,6 +218,8 @@ class RealInd(BaseMedType):
     med_test = models.ForeignKey('core.MedTest', related_name='real_inds')
     min_norm = models.FloatField(blank=True, null=True)
     max_norm = models.FloatField(blank=True, null=True)
+    min_critical = models.FloatField(blank=True, null=True)
+    max_critical = models.FloatField(blank=True, null=True)
     unit = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:
@@ -239,6 +241,8 @@ class IntInd(BaseMedType):
     med_test = models.ForeignKey('core.MedTest', related_name='int_inds')
     min_norm = models.IntegerField(blank=True, null=True)
     max_norm = models.IntegerField(blank=True, null=True)
+    min_critical = models.IntegerField(blank=True, null=True)
+    max_critical = models.IntegerField(blank=True, null=True)
     unit = models.CharField(max_length=20, blank=True, null=True)
 
     class Meta:

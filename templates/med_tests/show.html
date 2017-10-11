@@ -74,7 +74,7 @@
                 {% endfor %}
                 {% for ind, val in test_rec.text_inds.items %}
                     <div class="form-group row">
-                        <label for="{{ ind }}" class="control-label">{{ val.value }}</label>
+                        <label for="{{ ind }}" class="control-label">{{ val.name }}</label>
                         <input id="{{ ind }}" value="{{ val.value }}" readonly class="form-control"
                                style="background-color: white">
                     </div>

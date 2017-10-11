@@ -1,55 +1,6 @@
-{% extends 'core/base_menu.html' %}
+{% extends 'patients/patient_sidebar.html' %}
 {% load staticfiles %}
-{% block header %}
-    <style>
-        body {
-            padding-top: 80px;
-        }
-
-        .panel-body {
-            padding-right: 40px;
-            padding-left: 40px;
-        }
-
-        .tab-pane {
-            padding-top: 20px;
-        }
-    </style>
-    <style rel="stylesheet">
-        body {
-            padding-top: 90px;
-        }
-
-        .nav-tabs > li.active > a, .nav-tabs > li.active > a:focus, .nav-tabs > li.active > a:hover {
-            border-color: #e36209 #e1e4e8 transparent;
-            border-top-width: 4px;
-        }
-
-        .tab-content {
-            padding-top: 20px;
-        }
-
-        .counter {
-            display: inline-block;
-            padding: 2px 5px;
-            font-size: 12px;
-            font-weight: 600;
-            line-height: 1;
-            color: #586069;
-            background-color: rgba(27, 31, 35, 0.08);
-            border-radius: 20px;
-        }
-
-        .modal-dialog {
-            margin-top: 100px;
-        }
-
-        .list-group {
-            margin-top: 20px;
-        }
-    </style>
-{% endblock %}
-{% block content %}
+{% block main %}
     <div class="panel panel-primary">
         <div class="panel-heading">
             Пациент {{ patient.surname }} {{ patient.name }} {{ patient.patronymic|default_if_none:'' }}
@@ -108,70 +59,10 @@
             </form>
         </div>
     </div>
-    <ul class="nav nav-tabs">
-        <li class="active">
-            <a href="#id_tests" data-toggle="tab">Обследования</a>
-        </li>
-        <li>
-            <a href="#id_dynamics" data-toggle="tab">Приемы</a>
-        </li>
-    </ul>
-    <div class="tab-content">
-        <div id="id_tests" class="tab-pane active">
-            <div class="row">
-                <div class="col-sm-2">
-                    <a class="btn btn-success"
-                            href="{% url 'med_tests:create' patient_id=patient.id %}">
-                        Добавить обследование
-                    </a>
-                </div>
-                <div class="col-sm-2">
-                    <a class="btn btn-success" href="{% url 'med_tests:dynamics' patient_id=patient.id %}">
-                        Посмотреть динамику
-                    </a>
-                </div>
-            </div>
-            <br/>
-            {% if patient.test_recs.count != 0 %}
-                <table class="table table-bordered" cellpadding="0">
-                    <thead>
-                        <tr>
-                            <th>Тип обследования</th>
-                            <th>Дата проведения</th>
-                            <th>Краткая информация</th>
-                            <th>Информация</th>
-                            <th>Действия</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for test in patient.test_recs.all %}
-                            <tr>
-                                <td>{{ test.name }}</td>
-                                <td>{{ test.test_date }}</td>
-                                <td>{{ test.summary|default_if_none:"" }}</td>
-                                <td>{{ test.info|default_if_none:"" }}</td>
-                                <td>
-                                    <a href="{% url 'med_tests:show' test_id=test.id patient_id=patient.id %}"
-                                       class="btn btn-success">
-                                        <span class="glyphicon glyphicon-edit"></span>
-                                    </a>
-                                    <a onclick="deleteTest('{% url 'med_tests:delete' test_id=test.id patient_id=patient.id %}');"
-                                       class="btn btn-danger">
-                                        <span class="glyphicon glyphicon-remove"></span>
-                                    </a>
-                                </td>
-
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            {% endif %}
-        </div>
-        <div id="id_dynamics" class="tab-pane">
-
-        </div>
-    </div>
     <script src="{% static 'bootbox/bootbox.js' %}"></script>
+    <script>
+        $('#id_patient_nav_item').addClass('active');
+    </script>
     <script>
         /*
         Delete patient

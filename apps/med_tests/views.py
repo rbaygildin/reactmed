@@ -22,6 +22,7 @@ def create_action(request, patient_id):
         d = loads(request.body)
         TestRec.objects.create(
             name=d.get('name'),
+            short_name=d.get('short_name'),
             description=d.get('description', None),
             real_inds=d.get('real_inds', None),
             int_inds=d.get('int_inds', None),
