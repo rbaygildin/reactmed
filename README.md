@@ -1,5 +1,8 @@
 # Reactmed
 ## Links
+### Deployement
+  1. https://www.digitalocean.com/community/tutorials/nginx-ubuntu-16-04-ru 
+  2. https://khashtamov.com/ru/how-to-deploy-django-app/
 ### Machine Learning in diagnosis
   1. [Datasets](https://vincentarelbundock.github.io/Rdatasets/datasets.html)
   2. [Machine learning open course](https://habrahabr.ru/company/ods/blog/326418/)
