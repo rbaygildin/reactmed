@@ -29,11 +29,11 @@
                         <td>{{ test.summary|default_if_none:"" }}</td>
                         <td>{{ test.info|default_if_none:"" }}</td>
                         <td>
-                            <a href="{% url 'med_tests:show' test_id=test.id patient_id=patient.id %}"
+                            <a href="{% url 'med_tests:show' test_id=test.id %}"
                                class="btn btn-success">
                                 <span class="glyphicon glyphicon-edit"></span>
                             </a>
-                            <a onclick="deleteTest('{% url 'med_tests:delete' test_id=test.id patient_id=patient.id %}');"
+                            <a onclick="deleteTest('{% url 'med_tests:delete' test_id=test.id %}');"
                                class="btn btn-danger">
                                 <span class="glyphicon glyphicon-remove"></span>
                             </a>

@@ -36,9 +36,9 @@
                         <td>{{ test.patient.name }} {{ test.patient.surname }} (ОМС № {{ test.patient.omi_card }})</td>
                         <td>{{ test.name }}</td>
                         <td>{{ test.test_date }}</td>
-                        <td>{{ test.info }}</td>
+                        <td>{{ test.info|default_if_none:"" }}</td>
                         <td>
-                            <a href="{% url 'med_tests:show' patient_id=test.patient.id test_id=test.id %}" class="btn btn-success">
+                            <a href="{% url 'med_tests:show' test_id=test.id %}" class="btn btn-success">
                                 <span class="glyphicon glyphicon-edit"></span>
                             </a>
                         </td>

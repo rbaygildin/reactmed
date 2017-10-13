@@ -35,16 +35,45 @@
             <div class="clearfix"></div>
         </div>
         <div class="panel-body">
-            <form class="form-horizontal">
+            <form>
                 <div class="form-group row">
-                    <label for="id_info" class="control-label">Информация</label>
-                    <input id="id_info" value="{{ test_rec.info }}" readonly class="form-control"
-                           style="background-color: white">
+                    <label class="col-md-2 control-label">Пациент</label>
+                    <div class="col-md-4">
+                        <input id="id_full_name" value="{{ patient.full_name }}" readonly class="form-control"
+                               style="background-color: white">
+                    </div>
+                    <label class="col-md-1 control-label">Пол</label>
+                    <div class="col-md-2">
+                        <input id="id_full_name" value="{{ patient.gender }}" readonly class="form-control"
+                               style="background-color: white">
+                    </div>
+                    <label class="col-md-1 control-label">Возраст</label>
+                    <div class="col-md-1">
+                        <input id="id_full_name" value="{{ patient.age }}" readonly class="form-control"
+                               style="background-color: white">
+                    </div>
                 </div>
                 <div class="form-group row">
-                    <label for="id_test_date" class="control-label">Дата проведения</label>
-                    <input id="id_test_date" value="{{ test_rec.test_date }}" readonly class="form-control"
-                           style="background-color: white">
+                    <label for="id_info" class="col-md-2 control-label">Краткая информация</label>
+                    <div class="col-md-4">
+                        <input id="id_info" value="{{ test_rec.summary|default_if_none:"" }}" readonly
+                               class="form-control"
+                               style="background-color: white">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="id_info" class="col-md-2 control-label">Информация</label>
+                    <div class="col-md-10">
+                        <textarea id="id_info" readonly class="form-control"
+                                  style="background-color: white">{{ test_rec.info|default_if_none:"" }}</textarea>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="id_test_date" class="col-md-2 control-label">Дата проведения</label>
+                    <div class="col-md-4">
+                        <input id="id_test_date" value="{{ test_rec.test_date }}" readonly class="form-control"
+                               style="background-color: white">
+                    </div>
                 </div>
                 <div class="form-group row">
 
@@ -57,27 +86,53 @@
             Показатели
         </div>
         <div class="panel-body">
-            <form class="form-horizontal">
+            <form>
+                {#            Real indicators#}
                 {% for ind, val in test_rec.real_inds.items %}
-                    <div class="form-group row">
-                        <label for="{{ ind }}" class="control-label">{{ val.name }}</label>
+                    {% if forloop.first %}
+                        <div class="form-group row">
+                    {% endif %}
+                    <label for="{{ ind }}" class="col-md-3 control-label">{{ val.name }}</label>
+                    <div class="col-md-2">
                         <input id="{{ ind }}" value="{{ val.value }}" readonly class="form-control"
-                               style="background-color: white">
+                            style="background-color: white">
                     </div>
+                    {% if forloop.counter|divisibleby:2 %}</div>
+                        <div class="form-group row">
+                    {% endif %}
+                    {% if forloop.last %}</div>
+                    {% endif %}
                 {% endfor %}
+
                 {% for ind, val in test_rec.int_inds.items %}
-                    <div class="form-group row">
-                        <label for="{{ ind }}" class="control-label">{{ val.name }}</label>
+                    {% if forloop.first %}
+                        <div class="form-group row">
+                    {% endif %}
+                    <label for="{{ ind }}" class="col-md-3 control-label">{{ val.name }}</label>
+                    <div class="col-md-2">
                         <input id="{{ ind }}" value="{{ val.value }}" readonly class="form-control"
-                               style="background-color: white">
+                            style="background-color: white">
                     </div>
+                    {% if forloop.counter|divisibleby:2 %}</div>
+                        <div class="form-group row">
+                    {% endif %}
+                    {% if forloop.last %}</div>
+                    {% endif %}
                 {% endfor %}
                 {% for ind, val in test_rec.text_inds.items %}
-                    <div class="form-group row">
-                        <label for="{{ ind }}" class="control-label">{{ val.name }}</label>
+                    {% if forloop.first %}
+                        <div class="form-group row">
+                    {% endif %}
+                    <label for="{{ ind }}" class="col-md-3 control-label">{{ val.name }}</label>
+                    <div class="col-md-3">
                         <input id="{{ ind }}" value="{{ val.value }}" readonly class="form-control"
-                               style="background-color: white">
+                            style="background-color: white">
                     </div>
+                    {% if forloop.counter|divisibleby:2 %}</div>
+                        <div class="form-group row">
+                    {% endif %}
+                    {% if forloop.last %}</div>
+                    {% endif %}
                 {% endfor %}
             </form>
         </div>
