@@ -1,13 +1,13 @@
+from datetime import date, timedelta
+
+from django.conf import settings
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.postgres.fields import *
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.utils import timezone
+from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _
-from django.conf import settings
-from datetime import date, timedelta
-
 from transliterate import translit
 
 from apps.core.managers import UserManager
@@ -35,6 +35,11 @@ APPOINTMENT_STATUS = (
     ('Отменено', 'Отменено')
 )
 
+USER_ROLES = (
+    ('ADMIN', 'ADMIN'),
+    ('DOCTOR', 'DOCTOR')
+)
+
 
 class AbstractModel(models.Model):
     id = models.AutoField(primary_key=True)
@@ -50,7 +55,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     patronymic = models.CharField(verbose_name=_('Patronymic'), max_length=30, blank=True, null=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(_('Is Staff'), default=False)
-    date_joined = models.DateTimeField(default=timezone.now())
+    date_joined = models.DateTimeField(default=now())
+    role = models.CharField(verbose_name=_('Role'), max_length=20, choices=USER_ROLES, default='DOCTOR')
 
     objects = UserManager()
 
@@ -93,30 +99,6 @@ class OmiCard(AbstractModel):
         verbose_name_plural = _('OMI Cards')
 
 
-# class Passport(AbstractModel):
-#     series = models.CharField(max_length=4, verbose_name='Series')
-#     number = models.CharField(max_length=6, verbose_name='Number')
-#     issue_date = models.DateField(verbose_name='Issue date')
-#     authority_code = models.CharField(max_length=30, verbose_name='Authority Code')
-#     authority = models.CharField(max_length=100, verbose_name='Authority')
-#     issue_place = models.CharField(max_length=150, verbose_name='Issue Place')
-#
-#     class Meta:
-#         db_table = 'passport'
-#         verbose_name = _('Passport')
-#         verbose_name_plural = _('Passports')
-
-
-# class Hospital(AbstractModel):
-#     name = models.CharField(max_length=70, verbose_name='Hospital Name')
-#     address = models.OneToOneField('core.Address')
-#
-#     class Meta:
-#         db_table = 'hospital'
-#         verbose_name = _('Hospital')
-#         verbose_name_plural = _('Hospitals')
-
-
 class Patient(AbstractModel):
     name = models.CharField(verbose_name=_('Name'), max_length=50)
     surname = models.CharField(verbose_name=_('Surname'), max_length=50)
@@ -147,29 +129,17 @@ class Patient(AbstractModel):
     def short_info(self):
         return '%s (ОМС № %s)' % (self.short_name, self.omi_card)
 
+    @property
+    def full_name(self):
+        if self.patronymic is not None and self.patronymic != '':
+            return '%s %s %s' % (self.surname, self.name, self.patronymic)
+        else:
+            return '%s %s' % (self.surname, self.name)
+
     class Meta:
         db_table = 'patient'
         verbose_name = _('Patient')
         verbose_name_plural = _('Patients')
-
-
-#
-# class MedicalEmployee(AbstractModel):
-#     user_account = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-#     hospital = models.ManyToManyField('core.Hospital')
-#
-#     class Meta:
-#         abstract = True
-#
-#
-# class Doctor(MedicalEmployee):
-#     class Meta:
-#         db_table = 'doctor'
-#
-#
-# class Nurse(MedicalEmployee):
-#     class Meta:
-#         db_table = 'nurse'
 
 
 class BaseMedType(AbstractModel):

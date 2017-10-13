@@ -36,9 +36,9 @@ def create_action(request, patient_id):
 
 
 @login_required
-def show_action(request, test_id, patient_id):
+def show_action(request, test_id):
     test_rec = TestRec.objects.get(pk=test_id)
-    patient = Patient.objects.get(pk=patient_id)
+    patient = test_rec.patient
     return render(
         request,
         'med_tests/show.html',
@@ -50,7 +50,7 @@ def show_action(request, test_id, patient_id):
 
 
 @login_required
-def delete_action(request, test_id, patient_id=None):
+def delete_action(request, test_id):
     test_rec = TestRec.objects.get(pk=test_id)
     test_rec.delete()
     return redirect(reverse('patients:list'))

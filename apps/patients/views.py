@@ -39,7 +39,7 @@ def tests_action(request):
 
 @login_required
 def patient_test_action(request, patient_id):
-    patient = request.user.patients.get(pk=patient_id)
+    patient = Patient.objects.get(pk=patient_id)
     tests = patient.test_recs
     return render(
         request,
@@ -53,7 +53,7 @@ def patient_test_action(request, patient_id):
 
 @login_required
 def patient_dynamics_action(request, patient_id):
-    patient = request.user.patients.get(pk=patient_id)
+    patient = Patient.objects.get(pk=patient_id)
     tests = patient.test_recs
     return render(
         request,
