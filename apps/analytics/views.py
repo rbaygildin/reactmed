@@ -1,6 +1,5 @@
 import base64
 from io import BytesIO
-from io import StringIO
 
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render

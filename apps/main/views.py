@@ -13,6 +13,10 @@ def about_view(request):
     return render(request, 'main/about.html', {})
 
 
+def help_view(request):
+    return render(request, 'main/help.html', {})
+
+
 def login_view(request):
     if request.method == 'POST':
         username = request.POST['username']

@@ -38,6 +38,7 @@ def create_action(request, patient_id):
 @login_required
 def show_action(request, test_id):
     test_rec = TestRec.objects.get(pk=test_id)
+
     patient = test_rec.patient
     return render(
         request,

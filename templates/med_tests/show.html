@@ -71,7 +71,7 @@
                 <div class="form-group row">
                     <label for="id_test_date" class="col-md-2 control-label">Дата проведения</label>
                     <div class="col-md-4">
-                        <input id="id_test_date" value="{{ test_rec.test_date }}" readonly class="form-control"
+                        <input id="id_test_date" value="{{ test_rec.test_date|date:'d E Y' }}" readonly class="form-control"
                                style="background-color: white">
                     </div>
                 </div>

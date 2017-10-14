@@ -21,7 +21,7 @@
                                aria-expanded="false">Сайт <span class="caret"></span></a>
                             <ul class="dropdown-menu">
                                 <li><a href="{% url 'main:about' %}">О сайте</a></li>
-                                <li><a href="">Помощь</a></li>
+                                <li><a href="{% url 'main:help' %}">Помощь</a></li>
                             </ul>
                         </li>
                         <li><a href="{% url 'patients:list' %}">Пациенты</a></li>
