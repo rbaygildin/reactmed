@@ -1,6 +1,4 @@
-from datetime import date, timedelta
-
-from django.conf import settings
+# -*- coding: utf-8 -*- 
 from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 from django.contrib.postgres.fields import *
@@ -9,6 +7,8 @@ from django.db import models
 from django.utils.timezone import now
 from django.utils.translation import ugettext_lazy as _
 from transliterate import translit
+from datetime import date, timedelta
+from django.conf import settings
 
 from apps.core.managers import UserManager
 
