@@ -45,7 +45,7 @@ class MedTestAdmin(admin.ModelAdmin):
     def _view_med_area(self, med_test):
         return med_test.med_area
 
-    _view_med_area.short_description = _('Med Area')
+    _view_med_area.short_description = _('Медицинская область')
 
 
 @admin.register(RealInd)
@@ -75,8 +75,8 @@ class TextIndAdmin(admin.ModelAdmin):
     def _view_med_test(self, ind):
         return ind.med_test.name
 
-    _view_values.short_description = _('Values')
-    _view_med_test.short_description = _('Medical Test')
+    _view_values.short_description = _('Принимаемые значения')
+    _view_med_test.short_description = _('Тип обследования')
 
 
 @admin.register(TestRec)
@@ -86,14 +86,19 @@ class TestRecAdmin(admin.ModelAdmin):
     list_filter = ('name',)
 
     def _view_patient(self, rec):
-        return str(rec.patient)
+        return rec.patient.short_info
 
-    _view_patient.short_description = _('Patient')
+    _view_patient.short_description = _('Пациент')
 
 
 @admin.register(Patient)
 class PatientAdmin(admin.ModelAdmin):
-    list_display = ('name', 'surname', 'age', 'gender')
+    list_display = ('name', 'surname', '_view_age', 'gender')
+
+    def _view_age(self, patient):
+        return patient.age
+
+    _view_age.short_description = 'Возраст'
 
 
 @admin.register(Appointment)
@@ -103,6 +108,6 @@ class AppointmentAdmin(admin.ModelAdmin):
     list_filter = ('status',)
 
     def _view_patient(self, appointment):
-        return str(appointment.patient)
+        return appointment.patient.short_info
 
-    _view_patient.short_description = _('Patient')
+    _view_patient.short_description = _('Пациент')
