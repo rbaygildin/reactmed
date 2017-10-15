@@ -5,6 +5,9 @@ from apps.core.forms import CustomUserChangeForm, CustomUserCreationForm, RealIn
 from apps.core.models import *
 from django.utils.translation import ugettext_lazy as _
 
+from django_json_widget.widgets import JSONEditorWidget
+
+
 
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
@@ -84,6 +87,9 @@ class TestRecAdmin(admin.ModelAdmin):
     list_display = ('name', 'summary', 'info', 'test_date', '_view_patient')
     ordering = ('test_date',)
     list_filter = ('name',)
+    formfield_overrides = {
+        JSONField: {'widget': JSONEditorWidget},
+    }
 
     def _view_patient(self, rec):
         return rec.patient.short_info
