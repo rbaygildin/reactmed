@@ -50,13 +50,13 @@ class AbstractModel(models.Model):
 
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.CharField(verbose_name=_('Email'), max_length=30, unique=True)
-    name = models.CharField(verbose_name=_('Name'), max_length=30)
-    surname = models.CharField(verbose_name=_('Surname'), max_length=30)
-    patronymic = models.CharField(verbose_name=_('Patronymic'), max_length=30, blank=True, null=True)
+    name = models.CharField(verbose_name=_('Имя'), max_length=30)
+    surname = models.CharField(verbose_name=_('Фамилия'), max_length=30)
+    patronymic = models.CharField(verbose_name=_('Отчество'), max_length=30, blank=True, null=True)
     is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(_('Is Staff'), default=False)
+    is_staff = models.BooleanField(_('Администратор?'), default=False)
     date_joined = models.DateTimeField(default=now())
-    role = models.CharField(verbose_name=_('Role'), max_length=20, choices=USER_ROLES, default='DOCTOR')
+    role = models.CharField(verbose_name=_('Роль'), max_length=20, choices=USER_ROLES, default='DOCTOR')
 
     objects = UserManager()
 
@@ -65,8 +65,8 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     class Meta:
         db_table = 'user'
-        verbose_name = _('User')
-        verbose_name_plural = _('Users')
+        verbose_name = _('Пользователь')
+        verbose_name_plural = _('Пользователи')
 
     def get_short_name(self):
         return '%s %s' % (self.name, self.surname)
@@ -100,18 +100,18 @@ class OmiCard(AbstractModel):
 
 
 class Patient(AbstractModel):
-    name = models.CharField(verbose_name=_('Name'), max_length=50)
-    surname = models.CharField(verbose_name=_('Surname'), max_length=50)
-    patronymic = models.CharField(verbose_name=_('Patronymic'), max_length=50, blank=True, null=True)
-    gender = models.CharField(verbose_name=_('Gender'), max_length=20, choices=GENDER)
-    birthday = models.DateField(verbose_name=_('Birthday'))
-    blood_group = models.CharField(verbose_name=_('Blood Group'), max_length=20, choices=BLOOD_GROUP, blank=True,
+    name = models.CharField(verbose_name=_('Имя'), max_length=50)
+    surname = models.CharField(verbose_name=_('Фамилия'), max_length=50)
+    patronymic = models.CharField(verbose_name=_('Отчество'), max_length=50, blank=True, null=True)
+    gender = models.CharField(verbose_name=_('Пол'), max_length=20, choices=GENDER)
+    birthday = models.DateField(verbose_name=_('Дата рождения'))
+    blood_group = models.CharField(verbose_name=_('Группа крови'), max_length=20, choices=BLOOD_GROUP, blank=True,
                                    null=True)
-    rh_factor = models.CharField(verbose_name=_('RH Factor'), max_length=20, choices=RH_FACTOR, blank=True, null=True)
-    is_disabled = models.BooleanField(verbose_name=_('Disabled'), default=False)
-    omi_card = models.CharField(verbose_name=_('OMI Card'), max_length=16, blank=True, null=True)
-    address = models.CharField(verbose_name=_('Address'), max_length=255, blank=True, null=True)
-    occupation = models.CharField(verbose_name=_('Occupation'), max_length=100, blank=True, null=True)
+    rh_factor = models.CharField(verbose_name=_('Резус-фактор'), max_length=20, choices=RH_FACTOR, blank=True, null=True)
+    is_disabled = models.BooleanField(verbose_name=_('Инвалидность'), default=False)
+    omi_card = models.CharField(verbose_name=_('ОМС'), max_length=16, blank=True, null=True)
+    address = models.CharField(verbose_name=_('Адрес проживания'), max_length=255, blank=True, null=True)
+    occupation = models.CharField(verbose_name=_('Род деятельности'), max_length=100, blank=True, null=True)
     doctor = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='patients', on_delete=models.CASCADE)
 
     @property
@@ -138,14 +138,14 @@ class Patient(AbstractModel):
 
     class Meta:
         db_table = 'patient'
-        verbose_name = _('Patient')
-        verbose_name_plural = _('Patients')
+        verbose_name = _('Пациент')
+        verbose_name_plural = _('Пациенты')
 
 
 class BaseMedType(AbstractModel):
-    name = models.CharField(max_length=200)
-    short_name = models.CharField(max_length=200, unique=True, blank=True, null=True)
-    description = models.CharField(max_length=255, blank=True, null=True)
+    name = models.CharField(max_length=200, verbose_name=_('Название'))
+    short_name = models.CharField(max_length=200, unique=True, blank=True, null=True, verbose_name=_('Идентификатор'))
+    description = models.CharField(max_length=255, blank=True, null=True, verbose_name=_('Описание'))
 
     def __str__(self):
         return self.name
@@ -164,8 +164,8 @@ class MedArea(BaseMedType):
 
     class Meta:
         db_table = 'med_area'
-        verbose_name = _('Medical Area')
-        verbose_name_plural = _('Medical Areas')
+        verbose_name = _('Медицинская область')
+        verbose_name_plural = _('Медицинские области')
 
 
 class MedTest(BaseMedType):
@@ -178,22 +178,22 @@ class MedTest(BaseMedType):
 
     class Meta:
         db_table = 'med_test'
-        verbose_name = _('Medical Test')
-        verbose_name_plural = _('Medical Tests')
+        verbose_name = _('Тип обследования')
+        verbose_name_plural = _('Типы обследования')
 
 
 class RealInd(BaseMedType):
     med_test = models.ForeignKey('core.MedTest', related_name='real_inds')
-    min_norm = models.FloatField(blank=True, null=True)
-    max_norm = models.FloatField(blank=True, null=True)
-    min_critical = models.FloatField(blank=True, null=True)
-    max_critical = models.FloatField(blank=True, null=True)
-    unit = models.CharField(max_length=20, blank=True, null=True)
+    min_norm = models.FloatField(blank=True, null=True, verbose_name=_('Минимальная норма'))
+    max_norm = models.FloatField(blank=True, null=True, verbose_name=_('Максимальная норма'))
+    min_critical = models.FloatField(blank=True, null=True, verbose_name=_('Минимальная критическая норма'))
+    max_critical = models.FloatField(blank=True, null=True, verbose_name=_('Максимальная критическая норма'))
+    unit = models.CharField(max_length=20, blank=True, null=True, verbose_name=_('Единица измерения'))
 
     class Meta:
         db_table = 'real_ind'
-        verbose_name = _('Real Indicator')
-        verbose_name_plural = _('Real Indicators')
+        verbose_name = _('Вещественный показатель')
+        verbose_name_plural = _('Вещественные показатели')
 
     def save(self, *args, **kwargs):
         if self.min_norm is None or self.max_norm is None:
@@ -207,16 +207,16 @@ class RealInd(BaseMedType):
 
 class IntInd(BaseMedType):
     med_test = models.ForeignKey('core.MedTest', related_name='int_inds')
-    min_norm = models.IntegerField(blank=True, null=True)
-    max_norm = models.IntegerField(blank=True, null=True)
-    min_critical = models.IntegerField(blank=True, null=True)
-    max_critical = models.IntegerField(blank=True, null=True)
-    unit = models.CharField(max_length=20, blank=True, null=True)
+    min_norm = models.IntegerField(blank=True, null=True, verbose_name=_('Минимальная норма'))
+    max_norm = models.IntegerField(blank=True, null=True, verbose_name=_('Максимальная норма'))
+    min_critical = models.IntegerField(blank=True, null=True, verbose_name=_('Минимальная критическая норма'))
+    max_critical = models.IntegerField(blank=True, null=True, verbose_name=_('Максимальная критическая норма'))
+    unit = models.CharField(max_length=20, blank=True, null=True, verbose_name=_('Единица измерения'))
 
     class Meta:
         db_table = 'int_ind'
-        verbose_name = _('Integer Indicator')
-        verbose_name_plural = _('Integer Indicators')
+        verbose_name = _('Целый показатель')
+        verbose_name_plural = _('Целые показатели')
 
     def save(self, *args, **kwargs):
         if self.min_norm is None or self.max_norm is None:
@@ -230,12 +230,12 @@ class IntInd(BaseMedType):
 
 class TextInd(BaseMedType):
     med_test = models.ForeignKey('core.MedTest', related_name='text_inds')
-    values = ArrayField(models.CharField(max_length=255), null=True, blank=True)
+    values = ArrayField(models.CharField(max_length=255), null=True, blank=True, verbose_name=_('Принимаемые значения'))
 
     class Meta:
         db_table = 'text_ind'
-        verbose_name = _('Text Indicator')
-        verbose_name_plural = _('Text Indicators')
+        verbose_name = _('Строковой показатель')
+        verbose_name_plural = _('Строковые показатели')
 
     def save(self, *args, **kwargs):
         if self.short_name is None or self.short_name == '':
@@ -244,80 +244,80 @@ class TextInd(BaseMedType):
 
 
 class TestRec(AbstractModel):
-    name = models.CharField(max_length=200)
-    short_name = models.CharField(max_length=200)
-    description = models.CharField(max_length=255, blank=True, null=True)
-    real_inds = JSONField(blank=True, null=True)
-    int_inds = JSONField(blank=True, null=True)
-    text_inds = JSONField(blank=True, null=True)
-    summary = models.CharField(max_length=100, blank=True, null=True)
-    info = models.TextField(blank=True, null=True)
-    test_date = models.DateField()
-    patient = models.ForeignKey('core.Patient', on_delete=models.CASCADE, related_name='test_recs')
+    name = models.CharField(max_length=200, verbose_name=_('Тип обследования'))
+    short_name = models.CharField(max_length=200, verbose_name=_('Тип обследования (идентификатор)'))
+    description = models.CharField(max_length=255, blank=True, null=True, verbose_name=_('Описание'))
+    real_inds = JSONField(blank=True, null=True, verbose_name=_('Вещественные показатели'))
+    int_inds = JSONField(blank=True, null=True, verbose_name=_('Целые показатели'))
+    text_inds = JSONField(blank=True, null=True, verbose_name=_('Строковые показатели'))
+    summary = models.CharField(max_length=100, blank=True, null=True, verbose_name=_('Краткая информация'))
+    info = models.TextField(blank=True, null=True, verbose_name=_('Информация'))
+    test_date = models.DateField(verbose_name=_('Дата проведения'))
+    patient = models.ForeignKey('core.Patient', on_delete=models.CASCADE, related_name='test_recs', verbose_name=_('Пациент'))
 
     class Meta:
         db_table = 'test_rec'
-        verbose_name = _('Test Record')
-        verbose_name_plural = _('Test Records')
+        verbose_name = _('Обследование')
+        verbose_name_plural = _('Обследования')
 
 
 class Attachment(AbstractModel):
-    name = models.CharField(max_length=200)
-    description = models.CharField(max_length=255, blank=True, null=True)
-    content = models.BinaryField()
-    test_record = models.ForeignKey('core.TestRec')
+    name = models.CharField(max_length=200, verbose_name=_('Название'))
+    description = models.CharField(max_length=255, blank=True, null=True, verbose_name=_('Описание'))
+    content = models.BinaryField(verbose_name=_('Содержимое'))
+    test_record = models.ForeignKey('core.TestRec', verbose_name=_('Обследование'))
 
     class Meta:
         db_table = 'attachment'
-        verbose_name = _('Attachment')
-        verbose_name_plural = _('Attachments')
+        verbose_name = _('Файл')
+        verbose_name_plural = _('Файлы')
 
 
 class Appointment(AbstractModel):
-    appointment_date = models.DateTimeField()
-    info = models.TextField(blank=True, null=True)
-    complaints = models.TextField(blank=True, null=True)
-    status = models.CharField(max_length=30, choices=APPOINTMENT_STATUS, default='Назначено')
-    patient = models.ForeignKey('core.Patient', related_name='appointments', on_delete=models.CASCADE)
+    appointment_date = models.DateTimeField(verbose_name=_('Дата приема'))
+    info = models.TextField(blank=True, null=True, verbose_name=_('Информация'))
+    complaints = models.TextField(blank=True, null=True, verbose_name=_('Жалобы пациента'))
+    status = models.CharField(max_length=30, choices=APPOINTMENT_STATUS, default='Назначено', verbose_name=_('Статус'))
+    patient = models.ForeignKey('core.Patient', related_name='appointments', on_delete=models.CASCADE, verbose_name=_('Пациент'))
 
     class Meta:
         db_table = 'appointment'
-        verbose_name = _('Appointment')
-        verbose_name_plural = _('Appointments')
+        verbose_name = _('Прием')
+        verbose_name_plural = _('Приемы')
 
 
 class Treatment(AbstractModel):
-    start_date = models.DateField()
-    finish_date = models.DateField()
-    summary = models.CharField(max_length=255)
-    info = models.TextField(blank=True, null=True)
-    patient = models.ForeignKey('core.Patient', on_delete=models.CASCADE)
+    start_date = models.DateField(verbose_name=_('Начало лечения'))
+    finish_date = models.DateField(verbose_name=_('Конец лечения'))
+    summary = models.CharField(max_length=255, verbose_name=_('Краткая информация'))
+    info = models.TextField(blank=True, null=True, verbose_name=_('Информация'))
+    patient = models.ForeignKey('core.Patient', on_delete=models.CASCADE, verbose_name=_('Пациент'))
 
     class Meta:
         db_table = 'treatment'
-        verbose_name = _('Treatment')
-        verbose_name_plural = _('Treatments')
+        verbose_name = _('Лечение')
+        verbose_name_plural = _('Лечение')
 
 
 class Medication(AbstractModel):
-    summary = models.CharField(max_length=255)
-    info = models.TextField(blank=True, null=True)
-    drugs = ArrayField(models.CharField(max_length=100))
-    medication_date = models.DateField()
-    patient = models.ForeignKey('core.Patient', on_delete=models.CASCADE)
+    summary = models.CharField(max_length=255, verbose_name=_('Краткая информация'))
+    info = models.TextField(blank=True, null=True, verbose_name=_('Информация'))
+    drugs = ArrayField(models.CharField(max_length=100), verbose_name=_('Лекарства'))
+    medication_date = models.DateField(verbose_name=_('Дата медикаментации'))
+    patient = models.ForeignKey('core.Patient', on_delete=models.CASCADE, verbose_name=_('Пациент'))
 
     class Meta:
         db_table = 'medication'
-        verbose_name = _('Medication')
-        verbose_name_plural = _('Medications')
+        verbose_name = _('Медикаментация')
+        verbose_name_plural = _('Медикаментация')
 
 
 class Diagnosis(AbstractModel):
-    diagnosis = models.TextField()
-    diagnosis_date = models.DateField()
-    patient = models.ForeignKey('core.Patient', on_delete=models.CASCADE)
+    diagnosis = models.TextField(verbose_name=_('Диагноз'))
+    diagnosis_date = models.DateField(verbose_name=_('Дата диагноза'))
+    patient = models.ForeignKey('core.Patient', on_delete=models.CASCADE, verbose_name=_('Пациент'))
 
     class Meta:
         db_table = 'diagnosis'
-        verbose_name = _('Diagnosis')
-        verbose_name_plural = _('Diagnosis')
+        verbose_name = _('Диагноз')
+        verbose_name_plural = _('Диагнозы')
