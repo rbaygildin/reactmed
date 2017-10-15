@@ -73,7 +73,10 @@ class TextIndAdmin(admin.ModelAdmin):
     list_filter = ('med_test__name',)
 
     def _view_values(self, ind):
-        return ', '.join(ind.values)
+        try:
+            return ', '.join(ind.values)
+        except TypeError:
+            return ''
 
     def _view_med_test(self, ind):
         return ind.med_test.name
