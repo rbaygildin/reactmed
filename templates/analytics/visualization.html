@@ -26,19 +26,19 @@
                         </div>
                         <div class="col-xs-4">
                             <label class="control-label">Тип медицинского обследования</label>
-                            <select class="form-control" name="test" id="id_test">
+                            <select class="form-control" name="test" id="id_test" onchange="chooseTest(this);">
                             </select>
                         </div>
                         <div class="col-xs-4">
                             <label class="control-label">Класс</label>
-                            <select class="form-control" name="class" id="id_class">
+                            <select class="form-control" name="class_col" id="id_class">
                             </select>
                         </div>
                     </div>
                     <div class="form-group row">
                         <div class="col-xs-8">
                             <label class="control-label">Показатели</label>
-                            <select class="form-control" name="features" id="id_features"
+                            <select class="form-control" name="feature_cols" id="id_features"
                                     multiple="multiple">
                             </select>
                         </div>
@@ -1225,227 +1225,32 @@
         $('#id_visualization_nav_item').addClass('active');
     </script>
     <script>
-        var visFunctions = {};
+        window.tests = {};
 
-
-        /**
-         * Draw chart
-         */
-        function drawChart(visMethod, image) {
-            $('#id_visualization_panel').attr('hidden', null);
-            $('#id_' + visMethod + '_tab').css('display', '');
-            $('#id_' + visMethod + '_chart').css('display', '');
-            $('#id_' + visMethod + '_chart').empty();
-            var chart = $('<img></img');
-            {#            chart.css("width", "400px");#}
-            {#            chart.css("height", "400px")#}
-            chart.attr("src", "data: image/png; base64, " + image);
-            $('#id_' + visMethod + '_chart').append(chart);
+        function chooseTest(selectedTest){
+            console.log(event);
+            if(selectedTest.value){
+                $('#id_class').empty();
+                var test = window.tests.filter(function (test) {
+                    return test['short_name'] === selectedTest.value;
+                })[0];
+                test['text_inds'].forEach(function(ind){
+                    $('#id_class').append("<option value='" + ind['short_name'] + "'>" + ind['name'] + "</option>");
+                });
+            }
         }
 
-        function returnDrawChart(visMethod) {
+        function drawChart(visMethod) {
             return function (image) {
-                drawChart(visMethod, image);
+                $('#id_visualization_panel').attr('hidden', null);
+                $('#id_' + visMethod + '_tab').css('display', '');
+                $('#id_' + visMethod + '_chart').css('display', '');
+                $('#id_' + visMethod + '_chart').empty();
+                var chart = $('<img></img');
+                chart.attr("src", "data: image/png; base64, " + image);
+                $('#id_' + visMethod + '_chart').append(chart);
             };
         }
-
-        /**
-         * Visualize Andrews Curves
-         */
-        function visualizeAndrewsCurves() {
-            var params = $('#id_andrews_curves_form').serializeObject();
-            params['vis_method'] = 'andrews_curves';
-            params['test'] = 'breastCancerTest';
-            params['class_col'] = 'breastCancerTest.diagnosis';
-            params["out_view"] = "base64";
-            $.ajax({
-                    type: "get",
-                    url: '{% url 'analytics:visualize' %}',
-                    crossDomain: true,
-                    cache: false,
-                    data: $.param(params),
-                    success: returnDrawChart('andrews_curves'),
-                    error: function (xhr, textStatus, errorThrown) {
-                        console.log(errorThrown);
-                        alert(errorThrown);
-                    }
-                }
-            );
-        }
-
-        /**
-         * Visualize PCA
-         */
-        function visualizePCA() {
-            var params = $('#id_pca_form').serializeObject();
-            params['vis_method'] = 'pca';
-            params['test'] = 'breastCancerTest';
-            params['class_col'] = 'breastCancerTest.diagnosis';
-            params["out_view"] = "base64";
-            $.ajax({
-                    type: "get",
-                    url: '{% url 'analytics:visualize' %}',
-                    crossDomain: true,
-                    cache: false,
-                    data: $.param(params),
-                    success: returnDrawChart('pca'),
-                    error: function (xhr, textStatus, errorThrown) {
-                        console.log(errorThrown);
-                        alert(errorThrown);
-                    }
-                }
-            );
-        }
-
-        /**
-         * Visualize RadViz
-         */
-        function visualizeRadViz() {
-            var params = $('#id_radviz_form').serializeObject();
-            params['vis_method'] = 'radviz';
-            params['test'] = 'breastCancerTest';
-            params['class_col'] = 'breastCancerTest.diagnosis';
-            params["out_view"] = "base64";
-            $.ajax({
-                type: "get",
-                url: '{% url 'analytics:visualize' %}',
-                crossDomain: true,
-                cache: false,
-                data: $.param(params),
-                success: returnDrawChart('radviz'),
-                error: function (xhr, textStatus, errorThrown) {
-                    console.log(errorThrown);
-                    alert(errorThrown);
-                }}
-            );
-        }
-
-        /**
-         * Visualize Parallel coords
-         */
-        function visualizeParallelCoords() {
-            var params = $('#id_parallel_coords_form').serializeObject();
-            params['vis_method'] = 'parallel_coords';
-            params['test'] = 'breastCancerTest';
-            params['class_col'] = 'breastCancerTest.diagnosis';
-            params["out_view"] = "base64";
-            $.ajax({
-                type: "get",
-                url: '{% url 'analytics:visualize' %}',
-                crossDomain: true,
-                cache: false,
-                data: $.param(params),
-                success: returnDrawChart('parallel_coords'),
-                error: function (xhr, textStatus, errorThrown) {
-                    console.log(errorThrown);
-                    alert(errorThrown);
-                }}
-            );
-        }
-
-        /**
-         * Visualize hist
-         */
-        function visualizeHist() {
-            var params = $('#id_hist_form').serializeObject();
-            params['vis_method'] = 'hist';
-            params['test'] = 'breastCancerTest';
-            params['class_col'] = 'breastCancerTest.diagnosis';
-            params["out_view"] = "base64";
-            $.ajax({
-                type: "get",
-                url: '{% url 'analytics:visualize' %}',
-                crossDomain: true,
-                cache: false,
-                data: $.param(params),
-                success: returnDrawChart('hist'),
-                error: function (xhr, textStatus, errorThrown) {
-                    console.log(errorThrown);
-                    alert(errorThrown);
-                }}
-            );
-        }
-
-        /**
-         * Visualize dist
-         */
-        function visualizeDist() {
-            var params = $('#id_dist_form').serializeObject();
-            params['vis_method'] = 'dist';
-            params['test'] = 'breastCancerTest';
-            params['class_col'] = 'breastCancerTest.diagnosis';
-            params["out_view"] = "base64";
-            $.ajax({
-                type: "get",
-                url: '{% url 'analytics:visualize' %}',
-                crossDomain: true,
-                cache: false,
-                data: $.param(params),
-                success: returnDrawChart('dist'),
-                error: function (xhr, textStatus, errorThrown) {
-                    console.log(errorThrown);
-                    alert(errorThrown);
-                }}
-            );
-        }
-
-
-        /**
-         * Visualize boxplot
-         */
-        function visualizeBoxplot() {
-            var params = $('#id_boxplot_form').serializeObject();
-            params['vis_method'] = 'boxplot';
-            params['test'] = 'breastCancerTest';
-            params['class_col'] = 'breastCancerTest.diagnosis';
-            params["out_view"] = "base64";
-            $.ajax({
-                type: "get",
-                url: '{% url 'analytics:visualize' %}',
-                crossDomain: true,
-                cache: false,
-                data: $.param(params),
-                success: returnDrawChart('boxplot'),
-                error: function (xhr, textStatus, errorThrown) {
-                    console.log(errorThrown);
-                    alert(errorThrown);
-                }}
-            );
-        }
-
-        /**
-         * Visualize Corr matrix
-         */
-        function visualizeCorrMatrix() {
-            var params = $('#id_corrmatrix_form').serializeObject();
-            params['vis_method'] = 'corrmatrix';
-            params['test'] = 'breastCancerTest';
-            params['class_col'] = 'breastCancerTest.diagnosis';
-            params["out_view"] = "base64";
-            $.ajax({
-                type: "get",
-                url: '{% url 'analytics:visualize' %}',
-                crossDomain: true,
-                cache: false,
-                data: $.param(params),
-                success: returnDrawChart('corrmatrix'),
-                error: function (xhr, textStatus, errorThrown) {
-                    console.log(errorThrown);
-                    alert(errorThrown);
-                }}
-            );
-        }
-
-
-        visFunctions['andrews_curves'] = visualizeAndrewsCurves;
-        visFunctions['pca'] = visualizePCA;
-        visFunctions['radviz'] = visualizeRadViz;
-        visFunctions['parallel_coords'] = visualizeParallelCoords;
-        visFunctions['hist'] = visualizeHist;
-        visFunctions['dist'] = visualizeDist;
-        visFunctions['boxplot'] = visualizeBoxplot;
-        visFunctions['corrmatrix'] = visualizeCorrMatrix;
-
 
         /**
          * Show visualization dialog
@@ -1459,14 +1264,40 @@
          * Return visualization function
          */
         function visualize(visMethod) {
-            return visFunctions[visMethod];
+            return function () {
+                var params = $('#id_' + visMethod + "_form").serializeObject();
+                params['vis_method'] = visMethod;
+                params['test'] = $('#id_test').val();
+                params['class_col'] = $('#id_class').val();
+                params["out_view"] = "base64";
+                $.ajax({
+                        type: "get",
+                        url: '{% url 'analytics:visualize' %}',
+                        crossDomain: true,
+                        cache: false,
+                        data: $.param(params),
+                        success: drawChart(visMethod),
+                        error: function (xhr, textStatus, errorThrown) {
+                            console.log(errorThrown);
+                            alert(errorThrown);
+                        }
+                    }
+                );
+            };
         }
 
         /**
          * Init function after document is ready
          */
         function init() {
-
+            $.get('{% url 'api:tests' %}')
+                .done(function (tests) {
+                    $('#id_test').empty();
+                    window.tests = tests;
+                    tests.forEach(function (test) {
+                        $("#id_test").append($("<option value='" + test['short_name'] + "'>" + test['name'] + "</option>"));
+                    });
+                });
         }
 
         $(document).ready(init());
