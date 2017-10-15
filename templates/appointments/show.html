@@ -1,0 +1,84 @@
+{% extends 'patients/patient_sidebar.html' %}
+{% load staticfiles %}
+{% block header2 %}
+    <style>
+        .readonly-input{
+            background-color: white;
+        }
+    </style>
+{% endblock %}
+{% block main %}
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            Прием
+        </div>
+        <div class="panel-body">
+            <form id="id_form" style="margin-left: 2%; margin-right: 2%">
+                <div class="form-group row">
+                    <label class="col-md-2">
+                        Пациент
+                    </label>
+                    <div class="col-md-4">
+                        <input value="{{ appointment.patient.short_info }}" class="form-control readonly-input" readonly style="background-color: white">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-2">
+                        Время приема
+                    </label>
+                    <div class="col-md-4">
+                        <input value="{{ appointment.appointment_date }}" class="form-control readonly-input" readonly style="background-color: white">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-2">
+                        Статус
+                    </label>
+                    <div class="col-md-4">
+                        <input value="{{ appointment.status }}" class="form-control readonly-input" readonly style="background-color: white">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-2">
+                        Информация
+                    </label>
+                    <div class="col-md-4">
+                        <textarea class="form-control">
+                            {{ appointment.info|default_if_none:"" }}
+                        </textarea>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-2">
+                        Жалобы пациента
+                    </label>
+                    <div class="col-md-4">
+                        <textarea class="form-control">
+                            {{ appointment.complaints|default_if_none:"" }}
+                        </textarea>
+                    </div>
+                </div>
+                <br>
+                <div class="form-group row">
+{#                    <div class="col-md-8"></div>#}
+                    <div class="col-md-2">
+                        <button class="btn btn-success" type="button" onclick="finish();">Завершить прием</button>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-danger" type="button" onclick="cancel();">Отменить прием</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+    <script>
+        function finish() {
+            $('#id_form').attr('action', '{% url 'appointments:finish' appointment_id=appointment.id %}').submit();
+        }
+        function cancel() {
+            $('#id_form').attr('action', '{% url 'appointments:cancel' appointment_id=appointment.id %}').submit();
+        }
+    </script>
+{% endblock %}
