@@ -21,4 +21,23 @@ def create_action(request):
 @login_required
 def show_action(request, appointment_id):
     appointment = Appointment.objects.get(pk=appointment_id)
-    return render(request, 'appointments/show.html', {'appointment': appointment})
+    patient = appointment.patient
+    return render(request, 'appointments/show.html', {'appointment': appointment, 'patient': patient})
+
+
+@login_required
+def finish_action(request, appointment_id):
+    appointment = Appointment.objects.get(pk=appointment_id)
+    appointment.info = request.POST.get('info', None)
+    appointment.complaints = request.POST.get('complaints', None)
+    appointment.status = 'Завершено'
+    appointment.save()
+    return redirect(reverse('patients:appointments'))
+
+
+@login_required
+def cancel_action(request, appointment_id):
+    appointment = Appointment.objects.get(pk=appointment_id)
+    appointment.status = 'Отменено'
+    appointment.save()
+    return redirect(reverse('patients:appointments'))

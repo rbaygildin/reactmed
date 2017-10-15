@@ -38,7 +38,7 @@
                             </a>
                         </td>
                         <td>{{ appointment.appointment_date }}</td>
-                        <td>{{ appointment.info }}</td>
+                        <td>{{ appointment.info|default_if_none:"" }}</td>
                         <td>{{ appointment.status }}</td>
                         <td>
                             <a href="{% url 'appointments:show' appointment_id=appointment.id %}" class="btn btn-success">
