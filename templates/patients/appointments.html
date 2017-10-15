@@ -13,7 +13,7 @@
                 </div>
             </div>
             <div class="col-sm-6">
-                <button class="btn btn-success" onclick="window.location='{% url 'appointments:create' %}'">Создать запись о приеме
+                <button class="btn btn-success" onclick="window.location='{% url 'appointments:create' %}'">Назначить прием
                 </button>
             </div>
         </div>
@@ -32,7 +32,11 @@
             <tbody id="patients-table-body">
                 {% for appointment in appointments %}
                     <tr>
-                        <td>{{ appointment.patient.short_name }} (ОМС № {{ appointment.patient.omi_card }})</td>
+                        <td>
+                            <a href="{% url 'patients:show' patient_id=appointment.patient_id %}">
+                                {{ appointment.patient.short_name }} (ОМС № {{ appointment.patient.omi_card }})
+                            </a>
+                        </td>
                         <td>{{ appointment.appointment_date }}</td>
                         <td>{{ appointment.info }}</td>
                         <td>{{ appointment.status }}</td>

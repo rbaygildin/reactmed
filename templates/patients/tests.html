@@ -33,7 +33,10 @@
             <tbody id="patients-table-body">
                 {% for test in tests %}
                     <tr>
-                        <td>{{ test.patient.name }} {{ test.patient.surname }} (ОМС № {{ test.patient.omi_card }})</td>
+                        <td>
+                            <a href="{% url 'patients:show' patient_id=test.patient_id %}">{{ test.patient.name }} {{ test.patient.surname }} (ОМС № {{ test.patient.omi_card }})
+                            </a>
+                        </td>
                         <td>{{ test.name }}</td>
                         <td>{{ test.test_date }}</td>
                         <td>{{ test.info|default_if_none:"" }}</td>
