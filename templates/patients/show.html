@@ -45,10 +45,17 @@
                                class="form-control">
                     </div>
                     <label class="col-md-2 control-label">Инвалидность</label>
-                    <div class="col-md-2">
-                        <input value="{{ patient.is_disabled }}"
-                               class="form-control">
-                    </div>
+                    {% if patient.is_disabled %}
+                        <div class="col-md-2">
+                            <input value="Имеется"
+                                   class="form-control">
+                        </div>
+                    {% else %}
+                        <div class="col-md-2">
+                            <input value="Не имеется"
+                                   class="form-control">
+                        </div>
+                    {% endif %}
                 </div>
                 <div class="form-group row">
                     <label class="col-md-2 control-label">Адрес</label>
