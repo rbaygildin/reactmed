@@ -22,14 +22,14 @@
                         </div>
                         <div class="form-group col-xs-4">
                             <label class="control-label">Тип медицинского обследования</label>
-                            <select class="form-control" name="med-test-select" id="med-test-select">
+                            <select class="form-control" name="test" id="id_test">
                             </select>
                         </div>
                     </div>
                     <div class="form-group row">
                         <div class="col-xs-8">
                             <label class="control-label">Показатели</label>
-                            <select class="form-control" name="indicators-select" id="indicators-select"
+                            <select class="form-control" name="feature_cols" id="id_feature_cols"
                                     multiple="multiple">
                             </select>
                         </div>
@@ -153,7 +153,7 @@
                 </div>
                 <div class="modal-body">
                     <div style="overflow: auto; height: 300px;">
-                        <form id="id_k_means_fom" class="modal-form">
+                        <form id="id_k_means_form" class="modal-form">
                             <div class="row">
                                 <div class="form-group col-xs-12">
                                     <label>
@@ -312,7 +312,7 @@
                 </div>
                 <div class="modal-body">
                     <div style="overflow: auto; height: 300px;">
-                        <form id="id_mini_batch_k_means_fom" class="modal-form">
+                        <form id="id_mini_batch_k_means_form" class="modal-form">
                             <div class="row">
                                 <div class="form-group col-xs-12">
                                     <label>
@@ -468,7 +468,7 @@
                 </div>
                 <div class="modal-body">
                     <div style="overflow: auto; height: 300px;">
-                        <form id="id_agglomerative_fom" class="modal-form">
+                        <form id="id_agglomerative_form" class="modal-form">
                             <div class="row">
                                 <div class="form-group col-xs-12">
                                     <label>
@@ -638,7 +638,7 @@
                 </div>
                 <div class="modal-body">
                     <div style="overflow: auto; height: 300px;">
-                        <form id="id_mean_shift_fom" class="modal-form">
+                        <form id="id_mean_shift_form" class="modal-form">
                             <div class="row">
                                 <div class="form-group col-xs-12">
                                     <label>
@@ -784,154 +784,78 @@
         $('#id_clustering_nav_item').addClass('active');
     </script>
     <script>
+window.tests = {};
 
-        var visFunctions = {};
-
-
-        /**
-         * Draw chart
-         */
-        function drawChart(clusterMethod, image) {
-            $('#id_clustering_panel').attr('hidden', null);
-            $('#id_' + clusterMethod + '_tab').css('display', '');
-            $('#id_' + clusterMethod + '_chart').css('display', '');
-            $('#id_' + clusterMethod + '_chart').empty();
-            var chart = $('<img></img');
-            {#            chart.css("width", "400px");#}
-            {#            chart.css("height", "400px")#}
-            chart.attr("src", "data: image/png; base64, " + image);
-            $('#id_' + clusterMethod + '_chart').append(chart);
+        function chooseTest(selectedTest){
+            console.log(event);
+            if(selectedTest.value){
+                $('#id_class').empty();
+                var test = window.tests.filter(function (test) {
+                    return test['short_name'] === selectedTest.value;
+                })[0];
+                test['text_inds'].forEach(function(ind){
+                    $('#id_class').append("<option value='" + ind['short_name'] + "'>" + ind['name'] + "</option>");
+                });
+            }
         }
 
-        function returnDrawChart(visMethod) {
+        function drawChart(visMethod) {
             return function (image) {
-                drawChart(visMethod, image);
+                $('#id_clustering_panel').attr('hidden', null);
+                $('#id_' + visMethod + '_tab').css('display', '');
+                $('#id_' + visMethod + '_chart').css('display', '');
+                $('#id_' + visMethod + '_chart').empty();
+                var chart = $('<img></img');
+                chart.attr("src", "data: image/png; base64, " + image);
+                $('#id_' + visMethod + '_chart').append(chart);
             };
         }
 
         /**
-         * Visualize Andrews Curves
-         */
-        function clusterKMeans() {
-            var params = $('#id_k_means_fom').serializeObject();
-            params['cluster_method'] = 'k_means';
-            params['test'] = 'breastCancerTest';
-            params['class_col'] = 'breastCancerTest.diagnosis';
-            params["out_view"] = "base64";
-            $.ajax({
-                    type: "get",
-                    url: '{% url 'analytics:cluster' %}',
-                    crossDomain: true,
-                    cache: false,
-                    data: $.param(params),
-                    success: returnDrawChart('k_means'),
-                    error: function (xhr, textStatus, errorThrown) {
-                        console.log(errorThrown);
-                        alert(errorThrown);
-                    }
-                }
-            );
-        }
-
-        /**
-         * Visualize PCA
-         */
-        function clusterMiniBatchKMeans() {
-            var params = $('#id_mini_batch_k_means_fom').serializeObject();
-            params['cluster_method'] = 'mini_batch_k_means';
-            params['test'] = 'breastCancerTest';
-            params['class_col'] = 'breastCancerTest.diagnosis';
-            params["out_view"] = "base64";
-            $.ajax({
-                    type: "get",
-                    url: '{% url 'analytics:cluster' %}',
-                    crossDomain: true,
-                    cache: false,
-                    data: $.param(params),
-                    success: returnDrawChart('mini_batch_k_means'),
-                    error: function (xhr, textStatus, errorThrown) {
-                        console.log(errorThrown);
-                        alert(errorThrown);
-                    }
-                }
-            );
-        }
-
-        /**
-         * Visualize RadViz
-         */
-        function clusterMeanShift() {
-            var params = $('#id_mean_shift_fom').serializeObject();
-            params['cluster_method'] = 'mean_shift';
-            params['test'] = 'breastCancerTest';
-            params['class_col'] = 'breastCancerTest.diagnosis';
-            params["out_view"] = "base64";
-            $.ajax({
-                    type: "get",
-                    url: '{% url 'analytics:cluster' %}',
-                    crossDomain: true,
-                    cache: false,
-                    data: $.param(params),
-                    success: returnDrawChart('mean_shift'),
-                    error: function (xhr, textStatus, errorThrown) {
-                        console.log(errorThrown);
-                        alert(errorThrown);
-                    }
-                }
-            );
-        }
-
-        /**
-         * Visualize Parallel coords
-         */
-        function clusterAgglomerative() {
-            var params = $('#id_agglomerative_fom').serializeObject();
-            params['cluster_method'] = 'agglomerative';
-            params['test'] = 'breastCancerTest';
-            params['class_col'] = 'breastCancerTest.diagnosis';
-            params["out_view"] = "base64";
-            $.ajax({
-                    type: "get",
-                    url: '{% url 'analytics:cluster' %}',
-                    crossDomain: true,
-                    cache: false,
-                    data: $.param(params),
-                    success: returnDrawChart('agglomerative'),
-                    error: function (xhr, textStatus, errorThrown) {
-                        console.log(errorThrown);
-                        alert(errorThrown);
-                    }
-                }
-            );
-        }
-
-
-        visFunctions['k_means'] = clusterKMeans;
-        visFunctions['mini_batch_k_means'] = clusterMiniBatchKMeans;
-        visFunctions['mean_shift'] = clusterMeanShift;
-        visFunctions['agglomerative'] = clusterAgglomerative;
-
-
-        /**
          * Show visualization dialog
-         * @param clusterMethod
+         * @param visMethod
          */
-        function openClusteringDialog(clusterMethod) {
-            $('#id_' + clusterMethod + "_dialog").modal();
+        function openClusteringDialog(visMethod) {
+            $('#id_' + visMethod + "_dialog").modal();
         }
 
         /**
          * Return visualization function
          */
-        function cluster(clusterMethod) {
-            return visFunctions[clusterMethod];
+        function cluster(visMethod) {
+            return function () {
+                var params = $('#id_' + visMethod + "_form").serializeObject();
+                params['cluster_method'] = visMethod;
+                params['test'] = $('#id_test').val();
+                params["out_view"] = "base64";
+                $.ajax({
+                        type: "get",
+                        url: '{% url 'analytics:cluster' %}',
+                        crossDomain: true,
+                        cache: false,
+                        data: $.param(params),
+                        success: drawChart(visMethod),
+                        error: function (xhr, textStatus, errorThrown) {
+                            console.log(errorThrown);
+                            alert(errorThrown);
+                        }
+                    }
+                );
+            };
         }
 
         /**
          * Init function after document is ready
          */
         function init() {
-
+            $.get('{% url 'api:tests' %}')
+                .done(function (tests) {
+                    $('#id_test').empty();
+                    window.tests = tests;
+                    tests.forEach(function (test) {
+                        $("#id_test").append($("<option value='" + test['short_name'] + "'>" + test['name'] + "</option>"));
+                    });
+                });
         }
 
         $(document).ready(init());
