@@ -1,6 +1,8 @@
 {% extends 'core/analytics_sidebar.html' %}
 {% load staticfiles %}
-
+{#{% block header2 %}#}
+{#    <link rel="stylesheet" href="{% static 'bootstrap-multiselect/dist/css/bootstrap-multiselect.css' %}">#}
+{#{% endblock %}#}
 {% block main %}
     <div id="visualization-tab-pane" class="tab-pane active">
         <div class="panel panel-primary">
@@ -36,23 +38,26 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <div class="col-xs-8">
+                        <div class="col-xs-1">
                             <label class="control-label">Показатели</label>
+                        </div>
+                        <div class="col-xs-4" id="id_features_div">
                             <select class="form-control" name="feature_cols" id="id_features"
-                                    multiple="multiple">
-                            </select>
+                                    multiple="multiple"></select>
                         </div>
                     </div>
                 </form>
                 <!--Patients-->
                 <div class="form-group row">
-                    <div class="col-xs-8">
-                        <div class="form-group">
-                            <label for="patients-textarea">Выбранные пациенты</label>
-                            <textarea class="form-control" name="patients" id="id_patients"
-                                      data-patients="">
-                                            </textarea>
-                        </div>
+                    <div class="col-xs-1">
+                        <label for="patients-textarea">Пациенты</label>
+                    </div>
+                    <div class="col-xs-4" id="id_patients_div">
+                        <select class="form-control" name="patients" id="id_patients" multiple="multiple">
+                            {% for patient in patients %}
+                                <option value="{{ patient.id }}">{{ patient.short_info }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                 </div>
                 <!--Visualization preferences-->
@@ -1227,16 +1232,25 @@
     <script>
         window.tests = {};
 
-        function chooseTest(selectedTest){
+        function chooseTest(selectedTest) {
             console.log(event);
-            if(selectedTest.value){
+            if (selectedTest.value) {
                 $('#id_class').empty();
+                $('#id_features_div').empty();
+                $('#id_features_div').append("<select id='id_features' class='form-control' multiple='multiple'></select>");
                 var test = window.tests.filter(function (test) {
                     return test['short_name'] === selectedTest.value;
                 })[0];
-                test['text_inds'].forEach(function(ind){
+                test['text_inds'].forEach(function (ind) {
                     $('#id_class').append("<option value='" + ind['short_name'] + "'>" + ind['name'] + "</option>");
                 });
+                test['real_inds'].forEach(function (ind) {
+                    $('#id_features').append("<option value='" + ind['short_name'] + "'>" + ind['name'] + "</option>");
+                });
+                $('#id_features').multiselect();
+                $('#id_features_div button').addClass('form-control');
+                $('#id_features_div button').removeClass('btn');
+                $('#id_features_div button').removeClass('btn-default');
             }
         }
 
@@ -1270,6 +1284,8 @@
                 params['test'] = $('#id_test').val();
                 params['class_col'] = $('#id_class').val();
                 params["out_view"] = "base64";
+                params['patients'] = $('#id_patients').val();
+                params['feature_cols'] = $('#id_features').val();
                 $.ajax({
                         type: "get",
                         url: '{% url 'analytics:visualize' %}',
@@ -1290,6 +1306,10 @@
          * Init function after document is ready
          */
         function init() {
+            $('#id_patients').multiselect();
+            $('#id_patients_div button').addClass('form-control');
+            $('#id_patients_div button').removeClass('btn');
+            $('#id_patients_div button').removeClass('btn-default');
             $.get('{% url 'api:tests' %}')
                 .done(function (tests) {
                     $('#id_test').empty();

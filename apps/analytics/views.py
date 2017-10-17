@@ -1,6 +1,7 @@
 import base64
 from io import BytesIO
 
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 from pandas import ExcelWriter
@@ -9,6 +10,7 @@ import apps.analytics.visualizers as vis
 from apps.analytics.analysis import FeaturesSelectionAnalyser, ImputerAnalyser, DescriptiveStatAnalyser
 from apps.analytics.etl import PostgresDataLoader
 from apps.analytics.load import data_load
+from apps.core.models import Patient
 
 PostgresDataLoader.configure_data_source(
     dbname='laksmimed_db',
@@ -25,7 +27,7 @@ def visualize_action(request):
     try:
         test = request.GET.get('test')
         class_col = request.GET.get('class_col')
-        feature_cols = request.GET.getlist('feature_cols', None)
+        feature_cols = request.GET.getlist('feature_cols[]', None)
         vis_method = request.GET.get("vis_method")
         alpha = request.GET.get('alpha', 1.0)
         width = request.GET.get('width', 8)
@@ -34,7 +36,7 @@ def visualize_action(request):
         out_view = request.GET.get('out_view')
         n_features = request.GET.get('n_features', 0)
         select_method = request.GET.get('select_method', 'none')
-        patients = request.GET.getlist('patients', None)
+        patients = request.GET.getlist('patients[]', None)
 
         if test is None or test == '':
             raise ValueError('Медицинское обследование должно быть задано!')
@@ -49,10 +51,13 @@ def visualize_action(request):
             patients = None
 
         if patients is not None:
-            patients = PostgresDataLoader().load_data(
-                query="SELECT patient_id, last_name || ' ' || first_name AS full_name "
-                      "FROM patients "
-                      "WHERE patient_id in (%s)" % " ,".join(patients))
+            patients = Patient.objects.filter(pk__in=map(lambda p: int(p), patients))
+            patients_temp = {}
+            for p in patients:
+                patients_temp[p.id] = {
+                    'full_name': p.full_name
+                }
+            patients = patients_temp
 
         df, class_col = data_load(test=test, class_col=class_col, feature_cols=feature_cols, load_pattern='fc',
                                   normalize="std")
@@ -264,13 +269,19 @@ def features_stat_action(request):
     return HttpResponse(stat.to_json(orient=orient), content_type='application/json')
 
 
+@login_required
 def datasets_page_action(request):
-    return render(request, 'analytics/data_sets.html', {})
+    patients = request.user.patients.all()
+    return render(request, 'analytics/data_sets.html', {'patients': patients})
 
 
+@login_required
 def visualize_page_action(request):
-    return render(request, 'analytics/visualization.html', {})
+    patients = request.user.patients.all()
+    return render(request, 'analytics/visualization.html', {'patients': patients})
 
 
+@login_required
 def clustering_page_action(request):
-    return render(request, 'analytics/clustering.html', {})
+    patients = request.user.patients.all()
+    return render(request, 'analytics/clustering.html', {'patients': patients})
