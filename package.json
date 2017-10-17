@@ -23,6 +23,7 @@
     "bootstrap-datepicker": "^1.7.1",
     "bootstrap-datetime-picker": "^2.4.4",
     "bootstrap-datetimepicker-npm": "^4.17.37-npm",
+    "bootstrap-multiselect": "^0.9.13-1",
     "d3": "^4.11.0",
     "form-serializer": "^2.5.0",
     "jquery": "^3.2.1",

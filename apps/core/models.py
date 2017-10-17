@@ -109,7 +109,7 @@ class Patient(AbstractModel):
                                    null=True)
     rh_factor = models.CharField(verbose_name=_('Резус-фактор'), max_length=20, choices=RH_FACTOR, blank=True, null=True)
     is_disabled = models.BooleanField(verbose_name=_('Инвалидность'), default=False)
-    omi_card = models.CharField(verbose_name=_('ОМС'), max_length=16, blank=True, null=True)
+    omi_card = models.CharField(verbose_name=_('ОМС'), max_length=30, blank=True, null=True)
     address = models.CharField(verbose_name=_('Адрес проживания'), max_length=255, blank=True, null=True)
     occupation = models.CharField(verbose_name=_('Род деятельности'), max_length=100, blank=True, null=True)
     doctor = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='patients', on_delete=models.CASCADE)
