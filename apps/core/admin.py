@@ -8,7 +8,6 @@ from django.utils.translation import ugettext_lazy as _
 from django_json_widget.widgets import JSONEditorWidget
 
 
-
 @admin.register(User)
 class CustomUserAdmin(UserAdmin):
     fieldsets = (
@@ -115,6 +114,18 @@ class AppointmentAdmin(admin.ModelAdmin):
     list_display = ('appointment_date', 'info', 'status', '_view_patient')
     ordering = ('appointment_date',)
     list_filter = ('status',)
+
+    def _view_patient(self, appointment):
+        return appointment.patient.short_info
+
+    _view_patient.short_description = _('Пациент')
+
+
+@admin.register(Diagnosis)
+class DiagnosisAdmin(admin.ModelAdmin):
+    list_display = ('diagnosis_date', 'diagnosis_type', 'diagnosis', '_view_patient')
+    ordering = ('diagnosis_date',)
+    list_filter = ('diagnosis_type',)
 
     def _view_patient(self, appointment):
         return appointment.patient.short_info

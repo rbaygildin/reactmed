@@ -20,7 +20,7 @@ def rec_to_row(class_col=None, feature_cols=None):
     def mapper(rec):
         row = {}
         for ind_id, ind in rec['real_inds'].items():
-            if feature_cols is not None and ind_id in feature_cols:
+            if feature_cols is not None and ind_id not in feature_cols:
                 continue
             row[rec['real_inds'][ind_id]['name']] = ind['value']
         row['patient_id'] = rec['patient_id']

@@ -30,6 +30,9 @@
             </div>
         </div>
     </div>
+    <div class="alert alert-warning alert-dismissible" role="alert" id="id_alert" style="display: none">
+        У пациента нет динамики по данному виду обследования за данный период
+    </div>
     <div id="id_charts">
 
     </div>
@@ -71,15 +74,15 @@
                     unit: ind['unit']
                 };
             });
-            testRecords.sort(function(rec1, rec2){
-               var d1 = Date.parse(rec1['test_date']);
-               var d2 = Date.parse(rec2['test_date']);
-               var c = d1 - d2;
-               if(c < 0)
-                   return -1;
-               if(c > 0)
-                   return 1;
-               return 0;
+            testRecords.sort(function (rec1, rec2) {
+                var d1 = Date.parse(rec1['test_date']);
+                var d2 = Date.parse(rec2['test_date']);
+                var c = d1 - d2;
+                if (c < 0)
+                    return -1;
+                if (c > 0)
+                    return 1;
+                return 0;
             });
             testRecords.forEach(function (record, i, arr) {
                 var realInds = record['real_inds'];
@@ -165,7 +168,14 @@
                 .done(function (testRecords) {
                     console.log(new Date() + ': Got test records for patient with id {{ patient.id }}');
                     console.log(testRecords);
-                    makeCharts(testRecords);
+                    if (testRecords && testRecords.length <= 0) {
+                        $('#id_charts').empty();
+                        $('#id_alert').css('display', '');
+                    }
+                    else {
+                        $('#id_alert').css('display', 'none');
+                        makeCharts(testRecords);
+                    }
                 });
         }
 

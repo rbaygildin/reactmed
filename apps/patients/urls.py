@@ -11,5 +11,7 @@ urlpatterns = [
     url(r'^show/(?P<patient_id>\d+)$', show_action, name='show'),
     url(r'^delete/(?P<patient_id>\d+)$', delete_action, name='delete'),
     url(r'(?P<patient_id>\d+)/tests$', patient_test_action, name='patient_tests'),
-    url(r'(?P<patient_id>\d+)/dynamics$', patient_dynamics_action, name='patient_dynamics')
+    url(r'(?P<patient_id>\d+)/dynamics$', patient_dynamics_action, name='patient_dynamics'),
+    url(r'(?P<patient_id>\d+)/appointments$', patient_appointments_action, name='patient_appointments'),
+    url(r'(?P<patient_id>\d+)/diagnosis$', patient_diagnosis_action, name='patient_diagnosis'),
 ]

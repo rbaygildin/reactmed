@@ -35,6 +35,12 @@ APPOINTMENT_STATUS = (
     ('Отменено', 'Отменено')
 )
 
+DIAGNOSIS_TYPE = (
+    ('Предварительный', 'Предварительный'),
+    ('Клинический', 'Клинический'),
+    ('Окончательный', 'Окончательный')
+)
+
 USER_ROLES = (
     ('ADMIN', 'ADMIN'),
     ('DOCTOR', 'DOCTOR')
@@ -313,9 +319,14 @@ class Medication(AbstractModel):
 
 
 class Diagnosis(AbstractModel):
-    diagnosis = models.TextField(verbose_name=_('Диагноз'))
+    diagnosis = models.CharField(max_length=300, verbose_name=_('Диагноз'))
+    diagnosis_type = models.CharField(max_length=30, verbose_name=_('Вид диагноза по времени'), default='Предварительный', choices=DIAGNOSIS_TYPE)
+    other_diseases = models.TextField(verbose_name=_('Сопуствующие заболевания'), blank=True, null=True)
+    summary = models.TextField(max_length=120, blank=True, null=True)
+    info = models.TextField(verbose_name=_('Информация'), blank=True, null=True)
+    complications = models.TextField(verbose_name=_('Осложнения'), blank=True, null=True)
     diagnosis_date = models.DateField(verbose_name=_('Дата диагноза'))
-    patient = models.ForeignKey('core.Patient', on_delete=models.CASCADE, verbose_name=_('Пациент'))
+    patient = models.ForeignKey('core.Patient', on_delete=models.CASCADE, verbose_name=_('Пациент'), related_name='diagnosis')
 
     class Meta:
         db_table = 'diagnosis'

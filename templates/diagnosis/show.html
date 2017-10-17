@@ -1,0 +1,83 @@
+{% extends 'core/base_menu.html' %}
+{% load staticfiles %}
+{% block header %}
+    <style>
+        body {
+            padding-top: 90px;
+        }
+
+        .panel-body {
+            padding-left: 30px;
+            padding-right: 30px;
+        }
+
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            Диагноз пациента
+        </div>
+        <div class="panel-body">
+            <form id="id_diagnosis">
+                <div class="form-group row">
+                    <label class="col-md-2 control-label">Пациент</label>
+                    <div class="col-md-3">
+                        <input class="form-control" value="{{ diagnosis.patient.short_name }}" readonly
+                               style="background-color: white">
+                    </div>
+                    <label class="col-md-2 control-label">Пол</label>
+                    <div class="col-md-2">
+                        <input class="form-control" value="{{ diagnosis.patient.gender }}" readonly
+                               style="background-color: white">
+                    </div>
+                    <label class="col-md-1 control-label">Возраст</label>
+                    <div class="col-md-1">
+                        <input class="form-control" value="{{ diagnosis.patient.age }}" readonly
+                               style="background-color: white">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-2 control-label">Дата диагноза</label>
+                    <div class="col-md-3">
+                        <input class="form-control" name="diagnosis_date" id="id_diagnosis_date"
+                               value="{{ diagnosis.diagnosis_date }}" readonly style="background-color: white">
+                    </div>
+                    <label class="col-md-2 control-label">Вид диагноза</label>
+                    <div class="col-md-3">
+                        <input class="form-control" name="diagnosis_type" value="{{ diagnosis.diagnosis_type }}"
+                               readonly style="background-color: white">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-2 control-label">Краткая информация</label>
+                    <div class="col-md-10">
+                        <input class="form-control" name="summary" value="{{ diagnosis.summary }}" readonly
+                               style="background-color: white">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-2 control-label">Информация</label>
+                    <div class="col-md-10">
+                        <textarea class="form-control" name="info" readonly
+                                  style="background-color: white">{{ diagnosis.info }}</textarea>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-2 control-label">Осложнения</label>
+                    <div class="col-md-10">
+                        <input class="form-control" name="complications" value="{{ diagnosis.complications }}" readonly
+                               style="background-color: white">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-2 control-label">Диагноз</label>
+                    <div class="col-md-10">
+                        <textarea class="form-control" name="diagnosis" readonly
+                                  style="background-color: white">{{ diagnosis.diagnosis }}</textarea>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

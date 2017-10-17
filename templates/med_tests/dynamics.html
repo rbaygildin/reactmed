@@ -43,6 +43,12 @@
             </div>
         </div>
     </div>
+    <div class="alert alert-warning alert-dismissible" role="alert" id="id_alert" style="display: none">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
+        У пациента нет ни одного диагноза. <a href="{% url 'diagnosis:create' patient_id=patient.id %}">Добавить
+        диагноз?</a>
+    </div>
     <div id="id_charts">
 
     </div>
@@ -166,7 +172,14 @@
                 .done(function (testRecords) {
                     console.log(new Date() + ': Got test records for patient with id {{ patient.id }}');
                     console.log(testRecords);
-                    makeCharts(testRecords);
+                    if (testRecords && testRecords.length <= 0) {
+                        $('#id_charts').empty();
+                        $('#id_alert').css('display', '');
+                    }
+                    else {
+                        $('#id_alert').css('display', 'none');
+                        makeCharts(testRecords);
+                    }
                 });
         }
 

@@ -4,13 +4,13 @@
     <div class="row">
         <div class="col-sm-2">
             <a class="btn btn-success"
-               href="{% url 'med_tests:create' patient_id=patient.id %}">
-                Добавить обследование
+               href="{% url 'appointments:create' %}">
+                Назначить прием
             </a>
         </div>
     </div>
     <br/>
-    {% if patient.test_recs.count != 0 %}
+    {% if patient.appointments.count != 0 %}
         <table class="table table-bordered" cellpadding="0">
             <thead>
                 <tr>
@@ -22,20 +22,15 @@
                 </tr>
             </thead>
             <tbody>
-                {% for test in patient.test_recs.all %}
+                {% for appointment in patient.appointments.all %}
                     <tr>
-                        <td>{{ test.name }}</td>
-                        <td>{{ test.test_date }}</td>
-                        <td>{{ test.summary|default_if_none:"" }}</td>
-                        <td>{{ test.info|default_if_none:"" }}</td>
+                        <td>{{ appointment.appointment_date }}</td>
+                        <td>{{ appointment.status }}</td>
+                        <td>{{ appointment.info|default_if_none:"" }}</td>
                         <td>
-                            <a href="{% url 'med_tests:show' test_id=test.id %}"
+                            <a href="{% url 'appointments:show' appointment_id=appointment.id %}"
                                class="btn btn-success">
                                 <span class="glyphicon glyphicon-edit"></span>
-                            </a>
-                            <a onclick="deleteTest('{% url 'med_tests:delete' test_id=test.id %}');"
-                               class="btn btn-danger">
-                                <span class="glyphicon glyphicon-remove"></span>
                             </a>
                         </td>
 
@@ -47,12 +42,12 @@
         <div class="alert alert-warning alert-dismissible" role="alert">
             <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
                     aria-hidden="true">&times;</span></button>
-            У пациента нет ни одного обследования. <a href="{% url 'med_tests:create' patient_id=patient.id %}">Добавить обследование?</a>
+            У пациента нет ни одного приема. <a href="{% url 'appointments:create' %}">Назначить прием?</a>
         </div>
     {% endif %}
     <script src="{% static 'bootbox/bootbox.js' %}"></script>
     <script>
-        $('#id_tests_nav_item').addClass('active');
+        $('#id_appointments_nav_item').addClass('active');
     </script>
     <script>
 
