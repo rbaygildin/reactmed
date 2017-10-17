@@ -12,6 +12,7 @@ urlpatterns = (
     # Users
     url(r'^users$', UserListView.as_view(), name='users'),
     url(r'^user/(?P<pk>\d+)$', UserView.as_view(), name='user'),
+    url(r'^user/check_login', check_login, name='check_login'),
 
     # Areas
     url(r'^areas$', MedAreaListView.as_view(), name='areas'),

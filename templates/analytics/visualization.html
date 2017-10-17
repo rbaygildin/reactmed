@@ -1,8 +1,9 @@
 {% extends 'core/analytics_sidebar.html' %}
 {% load staticfiles %}
-{#{% block header2 %}#}
-{#    <link rel="stylesheet" href="{% static 'bootstrap-multiselect/dist/css/bootstrap-multiselect.css' %}">#}
-{#{% endblock %}#}
+{% block header2 %}
+    <style>
+    </style>
+{% endblock %}
 {% block main %}
     <div id="visualization-tab-pane" class="tab-pane active">
         <div class="panel panel-primary">
@@ -60,15 +61,17 @@
                         </select>
                     </div>
                 </div>
-                <!--Visualization preferences-->
+            </div>
+            <div class="panel-footer">
                 <div class="form-group row">
+                    <div class="col-xs-8"></div>
                     <div class="col-xs-2">
-                        <button type="button" class="form-control btn btn-success"
+                        <button type="button" class="form-control btn btn-success" style="width: 100%"
                                 onclick="openVisualizationDialog($('#id_vis_method').val());">Визуализировать
                         </button>
                     </div>
                     <div class="col-xs-2">
-                        <button class="btn btn-success" id="dataset-clear-btn">
+                        <button class="btn btn-success" id="dataset-clear-btn" style="width: 100%">
                             Очистить
                         </button>
                     </div>

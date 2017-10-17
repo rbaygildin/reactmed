@@ -48,20 +48,23 @@
                             </select>
                         </div>
                     </div>
-                    <!--Controls-->
-                    <div class="form-group row">
-                        <div class="col-xs-2">
-                            <button type="button" class="form-control btn btn-success"
-                                    onclick="openClusteringDialog($('#id_cluster_method').val());">Кластеризовать
-                            </button>
-                        </div>
-                        <div class="col-xs-2">
-                            <button class="btn btn-success" id="dataset-clear-btn">
-                                Очистить
-                            </button>
-                        </div>
-                    </div>
                 </form>
+            </div>
+            <div class="panel-footer">
+                <!--Controls-->
+                <div class="form-group row">
+                    <div class="col-xs-8"></div>
+                    <div class="col-xs-2">
+                        <button type="button" class="form-control btn btn-success" style="width: 100%"
+                                onclick="openClusteringDialog($('#id_cluster_method').val());">Кластеризовать
+                        </button>
+                    </div>
+                    <div class="col-xs-2">
+                        <button class="btn btn-success" id="dataset-clear-btn" style="width: 100%">
+                            Очистить
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
         <div id="id_clustering_panel" hidden>
@@ -830,13 +833,14 @@
 
         function validateParams(params) {
             var val = true;
-            if(params['feature_cols'] && params['feature_cols'].length <= 1) {
+            if (params['feature_cols'] && params['feature_cols'].length <= 1) {
                 bootbox.alert({
                     message: 'Количество выбранных показателей не дожно быть меньше, 2'
                 });
                 return false;
             }
         }
+
         /**
          * Return visualization function
          */
@@ -848,7 +852,7 @@
                 params["out_view"] = "base64";
                 params['patients'] = $('#id_patients').val();
                 params['feature_cols'] = $('#id_features').val();
-                if(!validateParams(params))
+                if (!validateParams(params))
                     return;
                 $.ajax({
                         type: "get",
@@ -861,7 +865,7 @@
                             console.log(xhr.responseText);
                             var json = $.parseJSON(xhr.responseText);
                             bootbox.alert({
-                               message: json.message
+                                message: json.message
                             });
                         }
                     }

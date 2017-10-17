@@ -15,13 +15,14 @@
                         <div class="navbar-brand">ReactMed</div>
                     </div>
                     <ul class="nav navbar-nav">
+                        <li><a href="{% url 'main:about' %}">О сайте</a></li>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
                                aria-haspopup="true"
-                               aria-expanded="false">Сайт <span class="caret"></span></a>
+                               aria-expanded="false">Справочная информация <span class="caret"></span></a>
                             <ul class="dropdown-menu">
-                                <li><a href="{% url 'main:about' %}">О сайте</a></li>
                                 <li><a href="{% url 'main:help' %}">Помощь</a></li>
+                                 <li><a href="{% url 'main:med_tests_help' %}">Медицинские обследования</a></li>
                             </ul>
                         </li>
                         <li><a href="{% url 'patients:list' %}">Пациенты</a></li>

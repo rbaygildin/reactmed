@@ -1,6 +1,9 @@
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.urls import reverse
+
+from apps.core.models import MedTest
 
 
 def index_view(request):
@@ -29,3 +32,15 @@ def login_view(request):
                     return redirect(reverse('admin:index'))
                 return redirect(reverse('patients:list'))
     return redirect(reverse('main:index'))
+
+
+@login_required
+def med_tests_help(request):
+    med_tests = MedTest.objects.all()
+    return render(request, 'main/med_tests_help.html', {'med_tests': med_tests})
+
+
+@login_required
+def show_med_test_help(request, test_id):
+    med_test = MedTest.objects.get(pk=test_id)
+    return render(request, 'main/med_test_help.html', {'med_test': med_test})

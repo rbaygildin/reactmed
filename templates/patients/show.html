@@ -6,7 +6,8 @@
             Пациент {{ patient.surname }} {{ patient.name }} {{ patient.patronymic|default_if_none:'' }}
         </div>
         <div class="panel-body">
-            <form>
+            <form action="{% url 'patients:update' %}" method="post">
+                {% csrf_token %}
                 <div class="form-group row">
                     <label class="col-md-2 control-label">ФИО</label>
                     <div class="col-md-4">
@@ -65,15 +66,34 @@
                 </div>
             </form>
         </div>
+        <div class="panel-footer">
+            <div class="form-group row">
+                <div class="col-md-8">
+
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-success" type="button" style="width: 100%" onclick="updatePatient();">
+                        Обновить
+                    </button>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-danger" type="button" style="width: 100%" onclick="deletePatient();">
+                        Удалить
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
     <script src="{% static 'bootbox/bootbox.js' %}"></script>
     <script>
         $('#id_patient_nav_item').addClass('active');
     </script>
     <script>
-        /*
-        Delete patient
-         */
+
+        function updatePatient() {
+            $('#id_patient').submit();
+        }
+
         function deletePatient() {
             $.post('{% url 'patients:delete' patient_id=patient.id %}', {'csrfmiddlewaretoken': '{{ csrf_token }}'})
                 .done(function () {
