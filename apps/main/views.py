@@ -25,5 +25,7 @@ def login_view(request):
         if user is not None:
             if user.is_active:
                 login(request=request, user=user)
+                if user.is_superuser and user.role == 'ADMIN':
+                    return redirect(reverse('admin:index'))
                 return redirect(reverse('patients:list'))
     return redirect(reverse('main:index'))

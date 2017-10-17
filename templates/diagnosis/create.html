@@ -1,0 +1,112 @@
+{% extends 'core/base_menu.html' %}
+{% load staticfiles %}
+{% block header %}
+    <style>
+        body {
+            padding-top: 90px;
+        }
+
+        .panel-body {
+            padding-left: 30px;
+            padding-right: 30px;
+        }
+
+        .btn {
+            padding: 6px 51px;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            Диагноз пациента
+        </div>
+        <div class="panel-body">
+            <form id="id_diagnosis" method="post">
+                {% csrf_token %}
+                <input name="patient" type="hidden" value="{{ patient.id }}">
+                <div class="form-group row">
+                    <label class="col-md-2 control-label">Пациент</label>
+                    <div class="col-md-3">
+                        <input class="form-control" value="{{ patient.short_name }}" readonly
+                               style="background-color: white">
+                    </div>
+                    <label class="col-md-2 control-label">Пол</label>
+                    <div class="col-md-2">
+                        <input class="form-control" value="{{ patient.gender }}" readonly
+                               style="background-color: white">
+                    </div>
+                    <label class="col-md-1 control-label">Возраст</label>
+                    <div class="col-md-1">
+                        <input class="form-control" value="{{ patient.age }}" readonly style="background-color: white">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-2 control-label">Дата диагноза</label>
+                    <div class="col-md-3">
+                        <input class="form-control" name="diagnosis_date" id="id_diagnosis_date">
+                    </div>
+                    <label class="col-md-2 control-label">Вид диагноза</label>
+                    <div class="col-md-3">
+                        <select class="form-control" name="diagnosis_type">
+                            <option value="Предварительный">Предварительный</option>
+                            <option value="Клинический">Клинический</option>
+                            <option value="Окончательный">Окончательный</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-2 control-label">Краткая информация</label>
+                    <div class="col-md-10">
+                        <input class="form-control" name="summary">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-2 control-label">Информация</label>
+                    <div class="col-md-10">
+                        <textarea class="form-control" name="info"></textarea>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-2 control-label">Осложнения</label>
+                    <div class="col-md-10">
+                        <input class="form-control" name="complications">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-2 control-label">Диагноз</label>
+                    <div class="col-md-10">
+                        <textarea class="form-control" name="diagnosis"></textarea>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="panel-footer">
+            <div class="form-group row">
+                <div class="col-md-8">
+
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-success" onclick="$('#id_diagnosis').submit();">Сохранить</button>
+                </div>
+                <div class="col-md-2">
+                    <button class="btn btn-danger"
+                            onclick="window.location='{% url 'patients:patient_diagnosis' patient_id=patient.id %}'">
+                        Отменить
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static 'bootstrap-datepicker/js/bootstrap-datepicker.min.js' %}"></script>
+    <script>
+        $('#id_diagnosis_date').datepicker({
+            format: 'yyyy-mm-dd',
+            language: 'ru',
+            orientation: 'bottom'
+        });
+    </script>
+{% endblock %}

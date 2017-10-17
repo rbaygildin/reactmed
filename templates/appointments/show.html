@@ -74,6 +74,10 @@
 {% endblock %}
 {% block scripts %}
     <script>
+        $('#id_appointments_nav_item').addClass('active');
+    </script>
+    <script>
+
         function finish() {
             $('#id_form').attr('action', '{% url 'appointments:finish' appointment_id=appointment.id %}').submit();
         }

@@ -137,7 +137,7 @@ def visualize_action(request):
 def cluster_action(request):
     cluster_method = request.GET.get("cluster_method")
     test = request.GET.get('test')
-    feature_cols = request.GET.get('feature_cols')
+    feature_cols = request.GET.getlist('feature_cols[]', None)
     n_features = int(request.GET.get('n_features') or 0)
     select_method = request.GET.get('select_method', 'none')
     res = data_load(test=test, feature_cols=feature_cols, load_pattern='f', normalize="std")
@@ -156,13 +156,17 @@ def cluster_action(request):
     patients = request.GET.getlist('patients[]', None)
     print(patients)
 
-    if patients is not None and len(patients) > 0:
-        patients = PostgresDataLoader().load_data(
-            query="SELECT patient_id, last_name || ' ' || first_name AS full_name "
-                  "FROM patients "
-                  "WHERE patient_id in (%s)" % " ,".join(patients))
-    else:
+    if patients is not None and len(patients) == 0:
         patients = None
+
+    if patients is not None:
+        patients = Patient.objects.filter(pk__in=map(lambda p: int(p), patients))
+        patients_temp = {}
+        for p in patients:
+            patients_temp[p.id] = {
+                'full_name': p.full_name
+            }
+        patients = patients_temp
 
     if select_method != 'none':
         selector = FeaturesSelectionAnalyser()

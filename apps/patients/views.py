@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
-from apps.core.models import Patient, TestRec, Appointment
+from apps.core.models import Patient, TestRec, Appointment, Diagnosis
 from apps.patients.forms import PatientForm
 
 User = get_user_model()
@@ -79,18 +79,32 @@ def appointments_action(request):
     )
 
 
-# @login_required
-# def patient_appointments_action(request):
-#     patients_count = request.user.patients.count()
-#     appointments = Appointment.objects.filter(patient__doctor_id=request.user.id)
-#     return render(
-#         request,
-#         'patients/appointments.html',
-#         {
-#             'patients_count': patients_count,
-#             'appointments': appointments
-#         }
-#     )
+@login_required
+def patient_appointments_action(request, patient_id):
+    patients_count = request.user.patients.count()
+    patient = Patient.objects.get(pk=patient_id)
+    return render(
+        request,
+        'patients/patient_appointments.html',
+        {
+            'patients_count': patients_count,
+            'patient': patient
+        }
+    )
+
+
+@login_required
+def patient_diagnosis_action(request, patient_id):
+    patients_count = request.user.patients.count()
+    patient = Patient.objects.get(pk=patient_id)
+    return render(
+        request,
+        'patients/patient_diagnosis.html',
+        {
+            'patients_count': patients_count,
+            'patient': patient
+        }
+    )
 
 
 @login_required

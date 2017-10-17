@@ -22,27 +22,30 @@
                         </div>
                         <div class="form-group col-xs-4">
                             <label class="control-label">Тип медицинского обследования</label>
-                            <select class="form-control" name="test" id="id_test">
+                            <select class="form-control" name="test" id="id_test" onchange="chooseTest(this);">
                             </select>
                         </div>
                     </div>
                     <div class="form-group row">
-                        <div class="col-xs-8">
+                        <div class="col-xs-1">
                             <label class="control-label">Показатели</label>
-                            <select class="form-control" name="feature_cols" id="id_feature_cols"
-                                    multiple="multiple">
-                            </select>
+                        </div>
+                        <div class="col-xs-4" id="id_features_div">
+                            <select class="form-control" name="feature_cols" id="id_features"
+                                    multiple="multiple"></select>
                         </div>
                     </div>
                     <!--Patients-->
-                    <div class="row">
-                        <div class="col-xs-8">
-                            <div class="form-group">
-                                <label for="patients-textarea">Выбранные пациенты</label>
-                                <textarea class="form-control" name="patients" id="patients-textarea"
-                                          data-patients="">
-                                            </textarea>
-                            </div>
+                    <div class="form-group row">
+                        <div class="col-xs-1">
+                            <label for="patients-textarea">Пациенты</label>
+                        </div>
+                        <div class="col-xs-4" id="id_patients_div">
+                            <select class="form-control" name="patients" id="id_patients" multiple="multiple">
+                                {% for patient in patients %}
+                                    <option value="{{ patient.id }}">{{ patient.short_info }}</option>
+                                {% endfor %}
+                            </select>
                         </div>
                     </div>
                     <!--Controls-->
@@ -202,7 +205,7 @@
                                         <label>
                                             Минимум кластеров
                                         </label>
-                                        <input class="form-control" type="text" name="n_clusters[]">
+                                        <input class="form-control" type="text" name="n_clusters[]" value="2">
                                     </div>
                                 </div>
                                 <div class="col-xs-6">
@@ -210,7 +213,7 @@
                                         <label>
                                             Максимум кластеров
                                         </label>
-                                        <input class="form-control" type="text" name="n_clusters[]">
+                                        <input class="form-control" type="text" name="n_clusters[]" value="2">
                                     </div>
                                 </div>
                             </div>
@@ -279,13 +282,13 @@
                                     <label class="control-label">
                                         Ширина
                                     </label>
-                                    <input class="form-control" name="width">
+                                    <input class="form-control" name="width" value="8">
                                 </div>
                                 <div class="form-group col-xs-6">
                                     <label class="control-label">
                                         Длина
                                     </label>
-                                    <input class="form-control" name="height">
+                                    <input class="form-control" name="height" value="8">
                                 </div>
                             </div>
                         </form>
@@ -358,7 +361,7 @@
                                         <label>
                                             Минимум кластеров
                                         </label>
-                                        <input class="form-control" type="text" name="n_clusters[]">
+                                        <input class="form-control" type="text" name="n_clusters[]" value="2">
                                     </div>
                                 </div>
                                 <div class="col-xs-6">
@@ -366,7 +369,7 @@
                                         <label>
                                             Максимум кластеров
                                         </label>
-                                        <input class="form-control" type="text" name="n_clusters[]">
+                                        <input class="form-control" type="text" name="n_clusters[]" value="2">
                                     </div>
                                 </div>
                             </div>
@@ -435,13 +438,13 @@
                                     <label class="control-label">
                                         Ширина
                                     </label>
-                                    <input class="form-control" name="width">
+                                    <input class="form-control" name="width" value="8">
                                 </div>
                                 <div class="form-group col-xs-6">
                                     <label class="control-label">
                                         Длина
                                     </label>
-                                    <input class="form-control" name="height">
+                                    <input class="form-control" name="height" value="8">
                                 </div>
                             </div>
                         </form>
@@ -528,7 +531,7 @@
                                         <label>
                                             Минимум кластеров
                                         </label>
-                                        <input class="form-control" type="text" name="n_clusters[]">
+                                        <input class="form-control" type="text" name="n_clusters[]" value="2">
                                     </div>
                                 </div>
                                 <div class="col-xs-6">
@@ -536,7 +539,7 @@
                                         <label>
                                             Максимум кластеров
                                         </label>
-                                        <input class="form-control" type="text" name="n_clusters[]">
+                                        <input class="form-control" type="text" name="n_clusters[]" value="2">
                                     </div>
                                 </div>
                             </div>
@@ -605,13 +608,13 @@
                                     <label class="control-label">
                                         Ширина
                                     </label>
-                                    <input class="form-control" name="width">
+                                    <input class="form-control" name="width" value="8">
                                 </div>
                                 <div class="form-group col-xs-6">
                                     <label class="control-label">
                                         Длина
                                     </label>
-                                    <input class="form-control" name="height">
+                                    <input class="form-control" name="height" value="8">
                                 </div>
                             </div>
                         </form>
@@ -751,13 +754,13 @@
                                     <label class="control-label">
                                         Ширина
                                     </label>
-                                    <input class="form-control" name="width">
+                                    <input class="form-control" name="width" value="8">
                                 </div>
                                 <div class="form-group col-xs-6">
                                     <label class="control-label">
                                         Длина
                                     </label>
-                                    <input class="form-control" name="height">
+                                    <input class="form-control" name="height" value="8">
                                 </div>
                             </div>
                         </form>
@@ -779,23 +782,29 @@
     </script>
     <script src="{% static 'react-dom/react.development.js' %}"></script>
     <script src="{% static 'react-dom/react-dom.development.js' %}"></script>
+    <script src="{% static 'bootbox/bootbox.js' %}"></script>
     <script src="{% static 'jquery-serializer/jquery.serialize-object.min.js' %}"></script>
     <script>
         $('#id_clustering_nav_item').addClass('active');
     </script>
     <script>
-window.tests = {};
+        window.tests = {};
 
-        function chooseTest(selectedTest){
+        function chooseTest(selectedTest) {
             console.log(event);
-            if(selectedTest.value){
-                $('#id_class').empty();
+            if (selectedTest.value) {
+                $('#id_features_div').empty();
+                $('#id_features_div').append("<select id='id_features' class='form-control' multiple='multiple'></select>");
                 var test = window.tests.filter(function (test) {
                     return test['short_name'] === selectedTest.value;
                 })[0];
-                test['text_inds'].forEach(function(ind){
-                    $('#id_class').append("<option value='" + ind['short_name'] + "'>" + ind['name'] + "</option>");
+                test['real_inds'].forEach(function (ind) {
+                    $('#id_features').append("<option value='" + ind['short_name'] + "'>" + ind['name'] + "</option>");
                 });
+                $('#id_features').multiselect();
+                $('#id_features_div button').addClass('form-control');
+                $('#id_features_div button').removeClass('btn');
+                $('#id_features_div button').removeClass('btn-default');
             }
         }
 
@@ -819,6 +828,15 @@ window.tests = {};
             $('#id_' + visMethod + "_dialog").modal();
         }
 
+        function validateParams(params) {
+            var val = true;
+            if(params['feature_cols'] && params['feature_cols'].length <= 1) {
+                bootbox.alert({
+                    message: 'Количество выбранных показателей не дожно быть меньше, 2'
+                });
+                return false;
+            }
+        }
         /**
          * Return visualization function
          */
@@ -828,6 +846,10 @@ window.tests = {};
                 params['cluster_method'] = visMethod;
                 params['test'] = $('#id_test').val();
                 params["out_view"] = "base64";
+                params['patients'] = $('#id_patients').val();
+                params['feature_cols'] = $('#id_features').val();
+                if(!validateParams(params))
+                    return;
                 $.ajax({
                         type: "get",
                         url: '{% url 'analytics:cluster' %}',
@@ -836,8 +858,11 @@ window.tests = {};
                         data: $.param(params),
                         success: drawChart(visMethod),
                         error: function (xhr, textStatus, errorThrown) {
-                            console.log(errorThrown);
-                            alert(errorThrown);
+                            console.log(xhr.responseText);
+                            var json = $.parseJSON(xhr.responseText);
+                            bootbox.alert({
+                               message: json.message
+                            });
                         }
                     }
                 );
@@ -848,6 +873,10 @@ window.tests = {};
          * Init function after document is ready
          */
         function init() {
+            $('#id_patients').multiselect();
+            $('#id_patients_div button').addClass('form-control');
+            $('#id_patients_div button').removeClass('btn');
+            $('#id_patients_div button').removeClass('btn-default');
             $.get('{% url 'api:tests' %}')
                 .done(function (tests) {
                     $('#id_test').empty();

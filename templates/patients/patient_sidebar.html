@@ -117,10 +117,10 @@
                     <a data-target="#" href="#" onclick="window.location='{% url 'patients:patient_dynamics' patient_id=patient.id %}'" class="link">Динамика</a>
                 </li>
                 <li id="id_diagnosis_nav_item">
-                    <a data-target="#" href="#" class="link">Диагнозы</a>
+                    <a data-target="#" href="#" onclick="window.location='{% url 'patients:patient_diagnosis' patient_id=patient.id %}'" class="link">Диагнозы</a>
                 </li>
                 <li id="id_appointments_nav_item">
-                    <a data-target="#" href="#" class="link">Приемы</a>
+                    <a data-target="#" href="#" onclick="window.location='{% url 'patients:patient_appointments' patient_id=patient.id %}'" class="link">Приемы</a>
                 </li>
             </ul>
         </nav>
