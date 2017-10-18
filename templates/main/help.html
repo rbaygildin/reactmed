@@ -5,12 +5,30 @@
         body {
             padding-top: 40px;
         }
-        .screenshot{
+
+        .screenshot {
             margin: 30px auto;
         }
     </style>
 {% endblock %}
 {% block content %}
+    <h2 class="page-header">
+        Ознакомительные видео
+    </h2>
+    <h3>
+        Как пользоваться сайтом
+    </h3>
+    <div class="embed-responsive embed-responsive-16by9">
+        <iframe class="embed-responsive-item" src="https://youtube.com/embed/QLOjVrzF7qQ?rel=0"
+                allowfullscreen></iframe>
+    </div>
+    <h3>
+        Как пользоваться панелью администратора
+    </h3>
+    <div class="embed-responsive embed-responsive-16by9">
+        <iframe class="embed-responsive-item" src="https://youtube.com/embed/BV7iwj9mZZI?rel=0"
+                allowfullscreen></iframe>
+    </div>
     <h2 class="page-header">
         Работа с картами пациентов
     </h2>
@@ -23,15 +41,17 @@
         нажать на кнопку "Добавить пациента" и перейти на новую страницу.
     </p>
     <img class="screenshot" src="{% static 'img/core/help_add_patient.png' %}" style="width: 100%; height: auto;">
-    <p class="lead">На данной странице Вам необходимо ввести ФИО пациента, пол и дату рождения. Поля "Адрес" и "Род деятельности"
-        необязательны для заполнения. Также необходимо указать номер полиса обязательного медицинского страхования (ОМС), чтобы
+    <p class="lead">На данной странице Вам необходимо ввести ФИО пациента, пол и дату рождения. Поля "Адрес" и "Род
+        деятельности"
+        необязательны для заполнения. Также необходимо указать номер полиса обязательного медицинского страхования
+        (ОМС), чтобы
         уникально идентифицировать пациента в базе данных.
     </p>
     <img class="screenshot" src="{% static 'img/core/help_save_patient.png' %}" style="width: 100%; height: auto;">
     <p class="lead">
-    После нажатия на "Сохранить медкарту пациента" запись о пациенте создается в БД и Вы можете
-    посмотреть ее. Для этого Вам нужно нажать на главном меню "Пациенты", выбрать в боком меню "Пациенты"
-    и нажать на кнопку "Открыть" в виде зеленого квадрата с пером в строке интересующего пациента
+        После нажатия на "Сохранить медкарту пациента" запись о пациенте создается в БД и Вы можете
+        посмотреть ее. Для этого Вам нужно нажать на главном меню "Пациенты", выбрать в боком меню "Пациенты"
+        и нажать на кнопку "Открыть" в виде зеленого квадрата с пером в строке интересующего пациента
     </p>
     <img class="screenshot" src="{% static 'img/core/help_open_patient.png' %}">
 {% endblock %}

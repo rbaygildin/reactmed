@@ -70,8 +70,8 @@
                                         <li class="active"><a href="#login" data-toggle="tab">Войти</a></li>
                                     </ul>
                                     <div class="tab-content">
-                                        <div class="tab-pane active" id="login">
-                                            <form id="login-form" action="{% url 'main:login' %}"
+                                        <div class="tab-pane active">
+                                            <form id="id_login_form" action="{% url 'main:login' %}"
                                                   class="form-horizontal" method="post">
                                                 {% csrf_token %}
                                                 <div class="form-group">
@@ -81,7 +81,7 @@
                                                     <span class="input-group-addon">
                                                         <i class="glyphicon glyphicon-user"></i>
                                                     </span>
-                                                            <input class="form-control" placeholder="Логин"
+                                                            <input id="id_login" class="form-control" placeholder="Логин"
                                                                    name="username"/>
                                                         </div>
                                                     </div>
@@ -94,13 +94,13 @@
                                                         <i class="glyphicon glyphicon-lock"></i>
                                                     </span>
                                                             <input type="password" class="form-control"
-                                                                   id="exampleInputPassword1" placeholder="Пароль"
+                                                                   id="id_password" placeholder="Пароль"
                                                                    name="password"/>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="row pull-right">
-                                                    <button id="login-btn" class="btn btn-primary btn-sm">
+                                                    <button id="login-btn" type="button" onclick="tryLogin();" class="btn btn-primary btn-sm">
                                                         Войти
                                                     </button>
                                                     <a id="sign-up-btn" type="button" class="btn btn-primary btn-sm"
@@ -171,8 +171,28 @@
         </header>
         <script type="text/javascript" src="{% static 'jquery/jquery.js' %}"></script>
         <script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+        <script type="text/javascript" src="{% static 'bootbox/bootbox.js' %}"></script>
         <script type="text/javascript">
 {#            $("#slideShow").carousel({interval: 5000});#}
+        </script>
+        <script>
+            function tryLogin() {
+                var username = $('#id_login').val();
+                var password = $('#id_password').val();
+                $.get('{% url 'api:check_login' %}', {
+                    username: username,
+                    password: password
+                }, function (resp) {
+                   if(resp && resp.error){
+                       bootbox.alert({
+                          message: resp.error
+                       });
+                   }
+                   else{
+                       $('#id_login_form').submit();
+                   }
+                });
+            }
         </script>
     </body>
 </html>

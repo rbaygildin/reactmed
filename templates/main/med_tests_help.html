@@ -1,0 +1,31 @@
+{% extends 'core/base_menu.html' %}
+{% load staticfiles %}
+{% block header %}
+    <style>
+        body{
+            padding-top: 90px;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Тип обследования</th>
+                <th>Медицинская область</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for test in med_tests %}
+                <tr>
+                    <td>{{ test.name }}</td>
+                    <td>{{ test.med_area.name }}</td>
+                    <td>
+                        <button class="btn btn-success" onclick="window.location='{% url 'main:show_med_test_help' test_id=test.id %}'">Открыть справку</button>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
