@@ -142,6 +142,12 @@ class Patient(AbstractModel):
         else:
             return '%s %s' % (self.surname, self.name)
 
+    def __str__(self):
+        return self.short_info
+
+    def __repr__(self):
+        return self.short_info
+
     class Meta:
         db_table = 'patient'
         verbose_name = _('Пациент')
@@ -168,6 +174,9 @@ class MedArea(BaseMedType):
             self.short_name = translit(self.name, 'ru', reversed=True).lower().replace(' ', '_')
         super(MedArea, self).save(*args, **kwargs)
 
+    def __str__(self):
+        return self.name
+
     class Meta:
         db_table = 'med_area'
         verbose_name = _('Медицинская область')
@@ -181,6 +190,9 @@ class MedTest(BaseMedType):
         if self.short_name is None or self.short_name == '':
             self.short_name = self.med_area.short_name + '_' + translit(self.name, 'ru', reversed=True).lower().replace(' ', '_')
         super(MedTest, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
 
     class Meta:
         db_table = 'med_test'
@@ -297,6 +309,7 @@ class Treatment(AbstractModel):
     finish_date = models.DateField(verbose_name=_('Конец лечения'))
     summary = models.CharField(max_length=255, verbose_name=_('Краткая информация'))
     info = models.TextField(blank=True, null=True, verbose_name=_('Информация'))
+    diagnosis = models.ForeignKey('core.Diagnosis', on_delete=models.CASCADE, verbose_name=_('Диагноз'), blank=True, null=True)
     patient = models.ForeignKey('core.Patient', on_delete=models.CASCADE, verbose_name=_('Пациент'))
 
     class Meta:

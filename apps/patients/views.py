@@ -12,7 +12,9 @@ User = get_user_model()
 
 @login_required
 def list_action(request):
+    search_full_name = request.GET.get('search_full_name', '')
     patients = request.user.patients.all()
+    patients = [patient for patient in patients if search_full_name in patient.full_name]
     return render(
         request,
         'patients/list.html',

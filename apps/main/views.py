@@ -44,3 +44,7 @@ def med_tests_help(request):
 def show_med_test_help(request, test_id):
     med_test = MedTest.objects.get(pk=test_id)
     return render(request, 'main/med_test_help.html', {'med_test': med_test})
+
+
+def on_fail_login(request):
+    return render(request, 'main/login.html', {})
