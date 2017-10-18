@@ -6,9 +6,9 @@
         <div class="row">
             <div class="col-xs-4">
                 <div class="input-group">
-                    <input class="form-control" placeholder="ФИО пациента">
+                    <input id="id_search" name="search_full_name" class="form-control" placeholder="ФИО пациента">
                     <span class="input-group-btn">
-                                <button class="btn btn-success" type="button">Найти</button>
+                                <button class="btn btn-success" type="button" onclick="search();">Найти</button>
                             </span>
                 </div>
             </div>
@@ -57,5 +57,8 @@
 {% block scripts %}
     <script>
         $('#id_patients_nav_item').addClass('active');
+        function search() {
+            window.location = '{% url 'patients:list' %}' + '?' + 'search_full_name=' + $('#id_search').val();
+        }
     </script>
 {% endblock %}

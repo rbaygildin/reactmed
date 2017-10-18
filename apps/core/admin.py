@@ -127,7 +127,24 @@ class DiagnosisAdmin(admin.ModelAdmin):
     ordering = ('diagnosis_date',)
     list_filter = ('diagnosis_type',)
 
-    def _view_patient(self, appointment):
-        return appointment.patient.short_info
+    def _view_patient(self, diagnosis):
+        return diagnosis.patient.short_info
 
     _view_patient.short_description = _('Пациент')
+
+
+@admin.register(Treatment)
+class TreatmentAdmin(admin.ModelAdmin):
+    list_display = ('start_date', 'finish_date', 'summary', '_view_diagnosis', '_view_patient')
+    ordering = ('start_date',)
+
+    def _view_diagnosis(self, treatment):
+        if treatment.diagnosis is not None:
+            return treatment.diagnosis.diagnosis
+        return '-'
+
+    def _view_patient(self, treatment):
+        return treatment.patient.short_info
+
+    _view_patient.short_description = _('Пациент')
+    _view_diagnosis.short_description = _('Диагноз')
