@@ -6,62 +6,77 @@
             Пациент {{ patient.surname }} {{ patient.name }} {{ patient.patronymic|default_if_none:'' }}
         </div>
         <div class="panel-body">
-            <form action="{% url 'patients:update' %}" method="post">
+            <form id="id_patient" action="{% url 'patients:update' %}" method="post">
                 {% csrf_token %}
+                <input type="hidden" name="patient_id" value="{{ patient.id }}">
                 <div class="form-group row">
-                    <label class="col-md-2 control-label">ФИО</label>
-                    <div class="col-md-4">
-                        <input value="{{ patient.surname }} {{ patient.name }} {{ patient.patronymic|default_if_none:'' }}"
+                    <label class="col-md-2 control-label">Фамилия</label>
+                    <div class="col-md-2">
+                        <input name="surname" value="{{ patient.surname }}"
                                class="form-control">
                     </div>
-                    <label class="col-md-1 control-label">Пол</label>
+                    <label class="col-md-2 control-label">Имя</label>
                     <div class="col-md-2">
-                        <input value="{{ patient.gender }}"
+                        <input name="name" value="{{ patient.name }}"
+                               class="form-control">
+                    </div>
+                    <label class="col-md-2 control-label">Отчество</label>
+                    <div class="col-md-2">
+                        <input name="patronymic" value="{{ patient.patronymic|default_if_none:'' }}"
                                class="form-control">
                     </div>
                 </div>
                 <div class="form-group row">
+                    <label class="col-md-2 control-label">Пол</label>
+                    <div class="col-md-2">
+                        <select id="id_gender" name="gender" class="form-control">
+                            <option value="Мужской">Мужской</option>
+                            <option value="Женский">Женский</option>
+                        </select>
+                    </div>
                     <label class="col-md-2 control-label">Дата рождения</label>
-                    <div class="col-md-3">
-                        <input value="{{ patient.birthday }} ({{ patient.age }} лет)"
+                    <div class="col-md-4">
+                        <input id="id_birthday" name="birthday" value="{{ patient.birthday }}"
                                class="form-control">
                     </div>
                 </div>
                 <div class="form-group row">
                     <label class="col-md-2 control-label">ОМС</label>
                     <div class="col-md-3">
-                        <input value="{{ patient.omi_card }}"
+                        <input id="id_omi_card" name="omi_card" value="{{ patient.omi_card }}"
                                class="form-control">
                     </div>
                 </div>
                 <div class="form-group row">
                     <label class="col-md-2 control-label">Группа крови</label>
                     <div class="col-md-2">
-                        <input value="{{ patient.blood_group }}"
-                               class="form-control">
+                        <select name="blood_group" class="form-control">
+                            <option value="I">I</option>
+                            <option value="II">II</option>
+                            <option value="III">III</option>
+                            <option value="IV">IV</option>
+                        </select>
                     </div>
                     <label class="col-md-2 control-label">Резус-фактор</label>
                     <div class="col-md-2">
-                        <input value="{{ patient.rh_factor }}"
-                               class="form-control">
+                        <select name="rh_factor" class="form-control">
+                            <option value="Rh+">Положительный</option>
+                            <option value="Rh-">Отрицательный</option>
+                        </select>
                     </div>
                     <label class="col-md-2 control-label">Инвалидность</label>
-                    {% if patient.is_disabled %}
-                        <div class="col-md-2">
-                            <input value="Имеется"
-                                   class="form-control">
-                        </div>
-                    {% else %}
-                        <div class="col-md-2">
-                            <input value="Не имеется"
-                                   class="form-control">
-                        </div>
-                    {% endif %}
+                    <div class="col-md-2">
+                        <select name="is_disabled" class="form-control">
+                            <option value="false">Не имеется</option>
+                            <option value="true">Имеется</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="form-group row">
                     <label class="col-md-2 control-label">Адрес</label>
                     <div class="col-md-6">
-                        <textarea class="form-control">{{ patient.address|default_if_none:"" }}</textarea>
+                        <textarea name="address"
+                                  class="form-control">{{ patient.address|default_if_none:"" }}</textarea>
                     </div>
                 </div>
             </form>
@@ -85,20 +100,54 @@
         </div>
     </div>
     <script src="{% static 'bootbox/bootbox.js' %}"></script>
+    <script src="{% static 'bootstrap-datepicker/js/bootstrap-datepicker.min.js' %}"></script>
     <script>
         $('#id_patient_nav_item').addClass('active');
     </script>
     <script>
+
+        $(document).ready(function () {
+            var gender = '{{ patient.gender }}';
+            $('#id_gender option[value="' + gender + '"]').prop('selected', true);
+            var rhFactor = '{{ patient.rh_factor }}';
+            $('select option[value="' + rhFactor + '"]').prop('selected', true);
+            var bloodGroup = '{{ patient.blood_group }}';
+            $('select option[value="' + bloodGroup + '"]').prop('selected', true);
+            var isDisabled = '{{ patient.is_disabled }}';
+            $('select option[value="' + isDisabled + '"]').prop('selected', true);
+            $('#id_birthday').datepicker({
+                format: 'yyyy-mm-dd',
+                language: 'ru-RU',
+                orientation: 'bottom'
+            });
+        });
 
         function updatePatient() {
             $('#id_patient').submit();
         }
 
         function deletePatient() {
-            $.post('{% url 'patients:delete' patient_id=patient.id %}', {'csrfmiddlewaretoken': '{{ csrf_token }}'})
-                .done(function () {
-                    window.location = "{% url 'patients:list' %}";
-                });
+            bootbox.confirm({
+                message: "Вы действительно хотите удалить запись о пациете?",
+                buttons: {
+                    confirm: {
+                        label: 'Да',
+                        className: 'btn-success'
+                    },
+                    cancel: {
+                        label: 'Нет',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result) {
+                    if (result) {
+                        $.post('{% url 'patients:delete' patient_id=patient.id %}', {'csrfmiddlewaretoken': '{{ csrf_token }}'})
+                            .done(function () {
+                                window.location = "{% url 'patients:list' %}";
+                            });
+                    }
+                }
+            });
         }
 
         /*

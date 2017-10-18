@@ -33,7 +33,6 @@ class PatientForm(ModelForm):
         patient.birthday = self.cleaned_data['birthday']
         patient.omi_card = self.cleaned_data['omi_card']
         patient.address = self.cleaned_data['address']
-        patient.occupation = self.cleaned_data['occupation']
         patient.blood_group = self.cleaned_data['blood_group']
         patient.rh_factor = self.cleaned_data['rh_factor']
         patient.save()

@@ -833,12 +833,13 @@
 
         function validateParams(params) {
             var val = true;
-            if (params['feature_cols'] && params['feature_cols'].length <= 1) {
+            if (params['feature_cols'] && params['feature_cols'].length === 1) {
                 bootbox.alert({
                     message: 'Количество выбранных показателей не дожно быть меньше, 2'
                 });
                 return false;
             }
+            return true;
         }
 
         /**
