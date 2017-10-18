@@ -28,6 +28,8 @@ def visualize_action(request):
         test = request.GET.get('test')
         class_col = request.GET.get('class_col')
         feature_cols = request.GET.getlist('feature_cols[]', None)
+        if feature_cols is not None and len(feature_cols) == 0:
+            feature_cols = None
         vis_method = request.GET.get("vis_method")
         alpha = request.GET.get('alpha', 1.0)
         width = request.GET.get('width', 8)
@@ -138,6 +140,8 @@ def cluster_action(request):
     cluster_method = request.GET.get("cluster_method")
     test = request.GET.get('test')
     feature_cols = request.GET.getlist('feature_cols[]', None)
+    if feature_cols is not None and len(feature_cols) == 0:
+        feature_cols = None
     n_features = int(request.GET.get('n_features') or 0)
     select_method = request.GET.get('select_method', 'none')
     res = data_load(test=test, feature_cols=feature_cols, load_pattern='f', normalize="std")

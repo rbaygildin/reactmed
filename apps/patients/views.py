@@ -20,7 +20,7 @@ def list_action(request):
         'patients/list.html',
         {
             'patients': patients,
-            'patients_count': patients.count
+            'patients_count': len(patients)
         }
     )
 

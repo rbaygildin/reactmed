@@ -10,7 +10,7 @@ import sklearn.decomposition as decomp
 import time
 from sklearn.metrics import silhouette_score
 
-from apps.analytics.visualizers.base_visualizer import Visualizer
+from apps.analytics.visualizers.base_visualizer import *
 
 
 class AgglomerativeClusteringVisualizer(Visualizer):
