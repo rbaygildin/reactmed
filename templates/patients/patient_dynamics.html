@@ -24,8 +24,14 @@
                     </div>
                 </div>
                 <br/>
-                <div class="form-group row pull-right">
-                    <button class="btn btn-success" onclick="showDynamics();">Посмотреть динамику</button>
+            </div>
+        </div>
+        <div class="panel-footer">
+            <div class="form-group row">
+                <div class="col-md-10"></div>
+                <div class="col-md-2">
+                    <button class="btn btn-success" onclick="showDynamics();" style="width: 100%">Показать динамику
+                    </button>
                 </div>
             </div>
         </div>
@@ -47,6 +53,14 @@
 
         const testRecordsUrl = '/api/test_recs/{{ patient.id }}';
         window.testType = {};
+
+        Array.prototype.max = function () {
+            return Math.max.apply(null, this);
+        };
+
+        Array.prototype.min = function () {
+            return Math.min.apply(null, this);
+        };
 
         /**
          * Prepare data suitable for drawing charts
@@ -108,18 +122,65 @@
             console.log(indData);
             indData.type = 'scatter';
             indData.mode = 'lines+markers';
-            Plotly.newPlot(
-                chartId,
-                [indData], {
-                    title: indData.name,
-                    xaxis: {
-                        title: 'Дата проведения'
-                    },
-                    yaxis: {
-                        title: 'Значение' + (indData.unit ? ' (' + indData.unit + ')' : '')
-                    }
+            if (indData.minNorm && indData.maxNorm) {
+                var min = indData.y.min();
+                var max = indData.y.max();
+                if (min <= indData.minNorm || max >= indData.maxNorm) {
+                    Plotly.newPlot(
+                        chartId,
+                        [indData],
+                        {
+                            title: indData.name,
+                            xaxis: {
+                                title: 'Дата проведения'
+                            },
+                            yaxis: {
+                                title: 'Значение' + (indData.unit ? ' (' + indData.unit + ')' : '')
+                            },
+                            shapes: [
+                                {
+                                    'type': 'line',
+                                    'x0': indData.x[0],
+                                    'y0': min,
+                                    'x1': indData.x[indData.x.length - 1],
+                                    'y1': min,
+                                    'line': {
+                                        'color': 'red',
+                                        'width': 4,
+                                        'dash': 'dashdot'
+                                    }
+                                },
+                                {
+                                    'type': 'line',
+                                    'x0': indData.x[0],
+                                    'y0': max,
+                                    'x1': indData.x[indData.x.length - 1],
+                                    'y1': max,
+                                    'line': {
+                                        'color': 'red',
+                                        'width': 4,
+                                        'dash': 'dashdot'
+                                    }
+                                }
+                            ]
+                        }
+                    );
                 }
-            );
+            }
+            else {
+                Plotly.newPlot(
+                    chartId,
+                    [indData], {
+                        title: indData.name,
+                        xaxis: {
+                            title: 'Дата проведения'
+                        },
+                        yaxis: {
+                            title: 'Значение' + (indData.unit ? ' (' + indData.unit + ')' : '')
+                        }
+                    }
+                );
+            }
         }
 
         /**
