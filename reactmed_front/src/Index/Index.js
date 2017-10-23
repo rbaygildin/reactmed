@@ -1,11 +1,14 @@
 import React from 'react';
-import LoginForm from "./LoginForm.component";
+import './index.css';
+import Menu from "./Menu.component";
+import LoginDialog from "./LoginDialog.component";
 
 class Index extends React.Component{
     render(){
         return (
             <div className="container">
-                <LoginForm/>
+                <Menu/>
+                <LoginDialog/>
             </div>
         );
     }
