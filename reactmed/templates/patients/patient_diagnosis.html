@@ -14,6 +14,7 @@
         <table class="table table-bordered" cellpadding="0">
             <thead>
                 <tr>
+                    <th>Диагноз</th>
                     <th>Дата диагноза</th>
                     <th>Вид диагноза</th>
                     <th>Краткая информация</th>
@@ -23,6 +24,7 @@
             <tbody>
                 {% for diagnosis in patient.diagnosis.all %}
                     <tr>
+                        <td>{{ diagnosis.diagnosis }}</td>
                         <td>{{ diagnosis.diagnosis_date }}</td>
                         <td>{{ diagnosis.diagnosis_type }}</td>
                         <td>{{ diagnosis.summary|default_if_none:"-" }}</td>

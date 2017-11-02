@@ -121,64 +121,83 @@
         function drawLineChart(chartId, indData) {
             console.log(indData);
             indData.type = 'scatter';
-            indData.mode = 'lines+markers';
+            indData.mode = 'markers';
+            indData.marker = {
+                size: 20
+            };
+            var layout = {
+                title: indData.name,
+                xaxis: {
+                    title: 'Дата проведения'
+                },
+                yaxis: {
+                    title: 'Значение' + (indData.unit ? ' (' + indData.unit + ')' : '')
+                }
+            };
+            var annotations = [];
+            for (var i = 0; i < indData.x.length; i++) {
+                annotations.push({
+                    x: indData.x[i],
+                    y: indData.y[i],
+                    xref: 'x',
+                    yref: 'y',
+                    text: indData.name + '=' + indData.y[i],
+                    showarrow: true,
+                    font: {
+                        family: 'Courier New, monospace',
+                        size: 16,
+                        color: '#ffffff'
+                    },
+                    align: 'center',
+                    arrowhead: 2,
+                    arrowsize: 1,
+                    arrowwidth: 2,
+                    arrowcolor: '#636363',
+                    ax: 20,
+                    ay: -30,
+                    bordercolor: '#c7c7c7',
+                    borderwidth: 2,
+                    borderpad: 4,
+                    bgcolor: '#ff7f0e',
+                    opacity: 0.8
+                });
+            }
+            layout.annotations = annotations;
             if (indData.minNorm && indData.maxNorm) {
                 var min = indData.y.min();
                 var max = indData.y.max();
                 if (min <= indData.minNorm || max >= indData.maxNorm) {
-                    Plotly.newPlot(
-                        chartId,
-                        [indData],
+                    layout.shapes = [
                         {
-                            title: indData.name,
-                            xaxis: {
-                                title: 'Дата проведения'
-                            },
-                            yaxis: {
-                                title: 'Значение' + (indData.unit ? ' (' + indData.unit + ')' : '')
-                            },
-                            shapes: [
-                                {
-                                    'type': 'line',
-                                    'x0': indData.x[0],
-                                    'y0': indData.minNorm,
-                                    'x1': indData.x[indData.x.length - 1],
-                                    'y1': indData.minNorm,
-                                    'line': {
-                                        'color': 'red',
-                                        'width': 4,
-                                        'dash': 'dashdot'
-                                    }
-                                },
-                                {
-                                    'type': 'line',
-                                    'x0': indData.x[0],
-                                    'y0': indData.maxNorm,
-                                    'x1': indData.x[indData.x.length - 1],
-                                    'y1': indData.maxNorm,
-                                    'line': {
-                                        'color': 'red',
-                                        'width': 4,
-                                        'dash': 'dashdot'
-                                    }
-                                }
-                            ]
+                            'type': 'line',
+                            'x0': indData.x[0],
+                            'y0': indData.minNorm,
+                            'x1': indData.x[indData.x.length - 1],
+                            'y1': indData.minNorm,
+                            'line': {
+                                'color': 'red',
+                                'width': 4,
+                                'dash': 'dashdot'
+                            }
+                        },
+                        {
+                            'type': 'line',
+                            'x0': indData.x[0],
+                            'y0': indData.maxNorm,
+                            'x1': indData.x[indData.x.length - 1],
+                            'y1': indData.maxNorm,
+                            'line': {
+                                'color': 'red',
+                                'width': 4,
+                                'dash': 'dashdot'
+                            }
                         }
-                    );
+                    ];
                 }
-            }
-            else {
                 Plotly.newPlot(
                     chartId,
-                    [indData], {
-                        title: indData.name,
-                        xaxis: {
-                            title: 'Дата проведения'
-                        },
-                        yaxis: {
-                            title: 'Значение' + (indData.unit ? ' (' + indData.unit + ')' : '')
-                        }
-                    }
+                    [indData],
+                    layout
                 );
             }
         }
