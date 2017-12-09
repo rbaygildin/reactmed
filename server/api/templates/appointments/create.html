@@ -1,0 +1,85 @@
+{% extends 'core/base_menu.html' %}
+{% load staticfiles %}
+{% block header %}
+    <style>
+        body {
+            padding-top: 100px;
+        }
+
+        .form-group.required .form-control-label:after {
+            content: "*";
+            color: red;
+        }
+    </style>
+    <link href="{% static 'bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css' %}">
+{% endblock %}
+{% block content %}
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            Новый прием
+        </div>
+        <div class="panel-body">
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group row required">
+                    <label for="id_patient" class="col-md-2 form-control-label">Пациент: </label>
+                    <div class="col-md-4">
+                        <input id="id_patient" class="form-control">
+                    </div>
+                </div>
+                <div>
+                    <input id="id_patient_id" type="hidden" name="patient_id">
+                </div>
+                <div class="form-group row required">
+                    <label for="id_appointment_date" class="col-md-2 form-control-label form_datetime">Дата приема: </label>
+                    <div class="col-md-4">
+                        <input id="id_appointment_date" name="appointment_date" class="form-control"
+                               style="background-color: #ffffff"/>
+                    </div>
+                </div>
+                <div class="row pull-right">
+                    <div class="col-md-4">
+                        <button class="btn btn-success">Назначить прием</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+{% block scripts %}
+    <script src="{% static 'bootstrap-typeahead/bootstrap3-typeahead.js' %}"></script>
+    <script src="{% static 'bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js' %}"></script>
+    <script>
+
+        function selectPatient(selectedItem) {
+            $('#id_patient_id').val(selectedItem['id']);
+            return selectedItem['name'];
+        }
+
+        function init() {
+            $('#id_appointment_date').datetimepicker({
+                format: 'yyyy-mm-dd hh:ii'
+            });
+            $.get("{% url 'api:patients' %}").done(
+                function (patients) {
+                    patients = patients.map(function (patient) {
+                        return {
+                            'id': patient.id,
+                            'name': patient['short_info']
+                        };
+                    });
+                    $('#id_patient').typeahead({
+                        order: 'asc',
+                        display: 'short_info',
+                        source: patients,
+                        updater: selectPatient
+                    });
+                }
+            );
+        }
+
+        $(document).ready(function () {
+            init();
+        });
+    </script>
+{% endblock %}

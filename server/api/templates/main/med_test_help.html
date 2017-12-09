@@ -1,0 +1,115 @@
+{% extends 'core/base_menu.html' %}
+{% load staticfiles %}
+{% block header %}
+    <style>
+        body {
+            padding-top: 90px;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            Основная информация
+        </div>
+        <div class="panel-body">
+            <form>
+                <div class="form-group row">
+                    <label class="col-md-2 control-label">Тип обследования</label>
+                    <div class="col-md-4">
+                        <input class="form-control" value="{{ med_test.name }}">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label class="col-md-2 control-label">Медицинская область</label>
+                    <div class="col-md-4">
+                        <input class="form-control" value="{{ med_test.med_area.name }}">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% if med_test.real_inds.count != 0 %}
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                Вещественные показатели
+            </div>
+            <div class="panel-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Показатель</th>
+                            <th>Минимальная норма</th>
+                            <th>Максимальная норма</th>
+                            <th>Единица измерения</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ind in med_test.real_inds.all %}
+                            <tr>
+                                <td>{{ ind.name }}</td>
+                                <td>{{ ind.min_norm|default_if_none:"-" }}</td>
+                                <td>{{ ind.max_norm|default_if_none:"-" }}</td>
+                                <td>{{ ind.unit|default_if_none:"-" }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endif %}
+    {% if med_test.int_inds.count != 0 %}
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                Целые показатели
+            </div>
+            <div class="panel-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Показатель</th>
+                            <th>Минимальная норма</th>
+                            <th>Максимальная норма</th>
+                            <th>Единица измерения</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ind in med_test.int_inds.all %}
+                            <tr>
+                                <td>{{ ind.name }}</td>
+                                <td>{{ ind.min_norm|default_if_none:"-" }}</td>
+                                <td>{{ ind.max_norm|default_if_none:"-" }}</td>
+                                <td>{{ ind.unit|default_if_none:"-" }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endif %}
+    {% if med_test.text_inds.count != 0 %}
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                Строковые показатели
+            </div>
+            <div class="panel-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Показатель</th>
+                            <th>Принимаемые значения</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for ind in med_test.text_inds.all %}
+                            <tr>
+                                <td>{{ ind.name }}</td>
+                                <td>{{ ind.values|default_if_none:"-"|join:", " }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends 'patients/patient_sidebar.html' %}
+{% load staticfiles %}
+{% block main %}
+    <div class="row">
+        <div class="col-sm-2">
+            <a class="btn btn-success"
+               href="{% url 'med_tests:create' patient_id=patient.id %}">
+                Добавить обследование
+            </a>
+        </div>
+    </div>
+    <br/>
+    {% if patient.test_recs.count != 0 %}
+        <table class="table table-bordered" cellpadding="0">
+            <thead>
+                <tr>
+                    <th>Тип обследования</th>
+                    <th>Дата проведения</th>
+                    <th>Краткая информация</th>
+                    <th>Информация</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for test in patient.test_recs.all %}
+                    <tr>
+                        <td>{{ test.name }}</td>
+                        <td>{{ test.test_date }}</td>
+                        <td>{{ test.summary|default_if_none:"" }}</td>
+                        <td>{{ test.info|default_if_none:"" }}</td>
+                        <td>
+                            <a href="{% url 'med_tests:show' test_id=test.id %}"
+                               class="btn btn-success">
+                                <span class="glyphicon glyphicon-edit"></span>
+                            </a>
+                            <a onclick="deleteTest('{% url 'med_tests:delete' test_id=test.id %}');"
+                               class="btn btn-danger">
+                                <span class="glyphicon glyphicon-remove"></span>
+                            </a>
+                        </td>
+
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-warning alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span
+                    aria-hidden="true">&times;</span></button>
+            У пациента нет ни одного обследования. <a href="{% url 'med_tests:create' patient_id=patient.id %}">Добавить обследование?</a>
+        </div>
+    {% endif %}
+    <script src="{% static 'bootbox/bootbox.js' %}"></script>
+    <script>
+        $('#id_tests_nav_item').addClass('active');
+    </script>
+    <script>
+
+    </script>
+{% endblock %}

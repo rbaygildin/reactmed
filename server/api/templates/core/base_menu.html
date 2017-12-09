@@ -1,0 +1,57 @@
+{% load staticfiles %}
+<html>
+    <head>
+        <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}"/>
+        <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap-theme.min.css' %}"/>
+        {% block header %}
+        {% endblock %}
+    </head>
+    <body>
+        <script type="text/javascript" src="{% static 'jquery/jquery.js' %}"></script>
+        <div class="container">
+            <nav class="navbar navbar-inverse navbar-fixed-top">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <div class="navbar-brand">ReactMed</div>
+                    </div>
+                    <ul class="nav navbar-nav">
+                        <li><a href="{% url 'main:about' %}">О сайте</a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                               aria-haspopup="true"
+                               aria-expanded="false">Справочная информация <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{% url 'main:help' %}">Помощь</a></li>
+                                 <li><a href="{% url 'main:med_tests_help' %}">Медицинские обследования</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="{% url 'patients:list' %}">Пациенты</a></li>
+                        <li><a href="{% url 'analytics:visualization' %}">Анализ данных</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="dropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                               aria-expanded="false">
+                                <span class="glyphicon glyphicon-user"></span>
+                                Профиль <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{% url 'users:show' %}">Личная страница</a></li>
+                                <li><a href="#">Настройки</a></li>
+                                <li><a href="#">Помощь</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="{% url 'users:logout' %}">Выйти</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <div class="clearfix"></div>
+                </div>
+            </nav>
+            {% block content %}
+            {% endblock content %}
+        </div>
+        <script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+        {% block scripts %}
+        {% endblock %}
+    </body>
+</html>

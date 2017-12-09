@@ -1,0 +1,149 @@
+{% extends 'core/base_menu.html' %}
+{% load staticfiles %}
+{% block header %}
+    <style>
+        body {
+            padding-top: 90px;
+        }
+
+        .form-group.required .form-control-label:after {
+            content: "*";
+            color: red;
+        }
+
+        .btn {
+            width: 100%;
+        }
+    </style>
+    <link rel="stylesheet" href="{% static 'bootstrap-datepicker/css/bootstrap-datepicker.min.css' %}">
+    <link rel="stylesheet" href="{% static 'bootstrap-datepicker/css/bootstrap-datepicker.css.map' %}">
+{% endblock %}
+{% block content %}
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            Создание медкарты пациента
+        </div>
+        <div class="panel-body">
+            <form class="form-horizontal" method="post" id="id_patient">
+                {% csrf_token %}
+                <fieldset>
+                    <legend>ФИО</legend>
+                    <div class="form-group row required">
+                        <label for="id_name" class="col-sm-2 form-control-label">Имя: </label>
+                        <div class="col-sm-4">
+                            <input id="id_name" name="name" class="form-control" style="background-color: #ffffff"/>
+                        </div>
+                        <label for="id_surname" class="col-sm-2 form-control-label">Фамилия: </label>
+                        <div class="col-md-4">
+                            <input id="id_surname" name="surname" class="form-control"
+                                   style="background-color: #ffffff"/>
+                        </div>
+                    </div>
+                    <div class="form-group row required">
+                        <label for="id_patronymic" class="col-sm-2 form-control-label">Отчество: </label>
+                        <div class="col-md-4">
+                            <input id="id_patronymic" name="patronymic" class="form-control"
+                                   style="background-color: #ffffff"/>
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>Основные сведения о пациенте</legend>
+                    <div class="form-group row required">
+                        <label for="id_gender" class="col-sm-2 form-control-label">Пол: </label>
+                        <div class="col-sm-4">
+                            <select id="id_gender" class="form-control" name="gender">
+                                <option value="Мужской">мужской</option>
+                                <option value="Женский">женский</option>
+                            </select>
+                        </div>
+                        <label for="id_birthday" class="col-sm-2 form-control-label">Дата рождения: </label>
+                        <div class="col-sm-4">
+                            <input id="id_birthday" name="birthday" class="form-control"
+                                   style="background-color: #ffffff"/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="id_address" class="col-sm-2 form-control-label">Адрес проживания: </label>
+                        <div class="col-sm-4">
+                            <textarea id="id_address" name="address" class="form-control"></textarea>
+                        </div>
+                        <label for="id_occupation" class="col-sm-2 form-control-label">Род деятельности: </label>
+                        <div class="col-sm-4">
+                            <input id="id_occupation" name="occupation" class="form-control"
+                                   style="background-color: #ffffff"/>
+                        </div>
+                    </div>
+                </fieldset>
+                <fieldset>
+                    <legend>Медицинские данные</legend>
+                    <div class="form-group row required">
+                        <label for="id_omi_card" class="col-sm-2 form-control-label">ОМС: </label>
+                        <div class="col-sm-4">
+                            <input id="id_omi_card" data-mask="9999-9999-9999-9999" name="omi_card" class="form-control"
+                                   style="background-color: #ffffff"/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="id_disabled" class="col-sm-2 form-control-label">Инвалидность: </label>
+                        <div class="col-sm-2">
+                            <select id="id_disabled" name="is_disabled" class="form-control"
+                                    style="background-color: #ffffff">
+                                <option value="False">Не имеется</option>
+                                <option value="True">Имеется</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="id_blood_group" class="col-sm-2 form-control-label">Группа крови: </label>
+                        <div class="col-sm-2">
+                            <select id="id_blood_group" name="blood_group" class="form-control">
+                                <option value="I">I</option>
+                                <option value="II">II</option>
+                                <option value="III">III</option>
+                                <option value="IV">IV</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="id_rh_factor" class="col-sm-2 form-control-label">Резус-фактор: </label>
+                        <div class="col-sm-2">
+                            <select id="id_rh_factor" name="rh_factor" class="form-control">
+                                <option value="Rh+">положительный</option>
+                                <option value="Rh-">отрицательный</option>
+                            </select>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+        <div class="panel-footer">
+            <div class="form-group row">
+                <div class="col-md-9">
+
+                </div>
+                <div class="col-md-3">
+                    <button class="btn btn-success" type="button" onclick="$('#id_patient').submit();">Создать медкарту
+                        пациента
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <link rel="stylesheet" href="{% static 'jasny-bootstrap/css/jasny-bootstrap.min.css' %}">
+    <script src="{% static 'jasny-bootstrap/js/jasny-bootstrap.min.js' %}"></script>
+    <script src="{% static 'bootstrap-datepicker/js/bootstrap-datepicker.min.js' %}"></script>
+    <script>
+        $('.omi_card').inputmask({
+            mask: '9999-9999-9999-9999'
+        });
+        $('#id_birthday').datepicker({
+            format: 'yyyy-mm-dd',
+            language: 'ru',
+            orientation: 'bottom'
+        });
+    </script>
+{% endblock %}

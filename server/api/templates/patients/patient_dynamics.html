@@ -1,0 +1,303 @@
+{% extends 'patients/patient_sidebar.html' %}
+{% load staticfiles %}
+{% block main %}
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            Динамика показателей
+        </div>
+        <div class="panel-body">
+            <div class="form-horizontal">
+                <div class="form-group row">
+                    <label for="id_test_type" class="col-md-2 control-label">Тип обследования</label>
+                    <div class="col-md-4">
+                        <input id="id_test_type" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="id_start_date" class="col-md-2 control-label">Начальная дата</label>
+                    <div class="col-md-4">
+                        <input id="id_start_date" class="form-control">
+                    </div>
+                    <label for="id_end_date" class="col-md-2 control-label">Конечная дата</label>
+                    <div class="col-md-4">
+                        <input id="id_end_date" class="form-control">
+                    </div>
+                </div>
+                <br/>
+            </div>
+        </div>
+        <div class="panel-footer">
+            <div class="form-group row">
+                <div class="col-md-10"></div>
+                <div class="col-md-2">
+                    <button class="btn btn-success" onclick="showDynamics();" style="width: 100%">Показать динамику
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="alert alert-warning alert-dismissible" role="alert" id="id_alert" style="display: none">
+        У пациента нет динамики по данному виду обследования за данный период
+    </div>
+    <div id="id_charts">
+
+    </div>
+    <script src="{% static 'bootbox/bootbox.js' %}"></script>
+    <script>
+        $('#id_dynamics_nav_item').addClass('active');
+    </script>
+    <script src="{% static 'bootstrap-typeahead/bootstrap3-typeahead.js' %}"></script>
+    <script src="{% static 'bootstrap-datepicker/js/bootstrap-datepicker.min.js' %}"></script>
+    <script src="{% static 'plotly/plotly-latest.min.js' %}"></script>
+    <script type="application/javascript">
+
+        const testRecordsUrl = '/api/test_recs/{{ patient.id }}';
+        window.testType = {};
+
+        Array.prototype.max = function () {
+            return Math.max.apply(null, this);
+        };
+
+        Array.prototype.min = function () {
+            return Math.min.apply(null, this);
+        };
+
+        /**
+         * Prepare data suitable for drawing charts
+         * Data should be dict of type ind: {x: [], y: [], minNorm: <>, maxNorm: <>}
+         */
+        function prepareData(testRecords) {
+            var chartsData = {};
+            window.testType['real_inds'].forEach(function (ind, i, arr) {
+                chartsData[ind['short_name']] = {
+                    x: [],
+                    y: [],
+                    name: ind.name,
+                    minNorm: ind['min_norm'],
+                    maxNorm: ind['max_norm'],
+                    unit: ind['unit']
+                };
+            });
+            window.testType['real_inds'].forEach(function (ind, i, arr) {
+                chartsData[ind['short_name']] = {
+                    x: [],
+                    y: [],
+                    name: ind.name,
+                    minNorm: ind['min_norm'],
+                    maxNorm: ind['max_norm'],
+                    unit: ind['unit']
+                };
+            });
+            testRecords.sort(function (rec1, rec2) {
+                var d1 = Date.parse(rec1['test_date']);
+                var d2 = Date.parse(rec2['test_date']);
+                var c = d1 - d2;
+                if (c < 0)
+                    return -1;
+                if (c > 0)
+                    return 1;
+                return 0;
+            });
+            testRecords.forEach(function (record, i, arr) {
+                var realInds = record['real_inds'];
+                var intInds = record['int_inds'];
+                if (realInds)
+                    Object.keys(realInds).forEach(function (ind) {
+                        chartsData[ind].x.push(record['test_date']);
+                        chartsData[ind].y.push(realInds[ind].value);
+                    });
+                if (intInds)
+                    Object.keys(intInds).forEach(function (ind) {
+                        chartsData[ind].x.push(record['test_date']);
+                        chartsData[ind].y.push(intInds[ind].value);
+                    });
+            });
+            return chartsData;
+        }
+
+        /**
+         * Draw line chart which represents dynamics of test indicators
+         */
+        function drawLineChart(chartId, indData) {
+            console.log(indData);
+            indData.type = 'scatter';
+            indData.mode = 'markers';
+            indData.marker = {
+                size: 20
+            };
+            var layout = {
+                title: indData.name,
+                xaxis: {
+                    title: 'Дата проведения'
+                },
+                yaxis: {
+                    title: 'Значение' + (indData.unit ? ' (' + indData.unit + ')' : '')
+                }
+            };
+            var annotations = [];
+            for (var i = 0; i < indData.x.length; i++) {
+                annotations.push({
+                    x: indData.x[i],
+                    y: indData.y[i],
+                    xref: 'x',
+                    yref: 'y',
+                    text: indData.name + '=' + indData.y[i],
+                    showarrow: true,
+                    font: {
+                        family: 'Courier New, monospace',
+                        size: 16,
+                        color: '#ffffff'
+                    },
+                    align: 'center',
+                    arrowhead: 2,
+                    arrowsize: 1,
+                    arrowwidth: 2,
+                    arrowcolor: '#636363',
+                    ax: 20,
+                    ay: -30,
+                    bordercolor: '#c7c7c7',
+                    borderwidth: 2,
+                    borderpad: 4,
+                    bgcolor: '#ff7f0e',
+                    opacity: 0.8
+                });
+            }
+            layout.annotations = annotations;
+            if (indData.minNorm && indData.maxNorm) {
+                var min = indData.y.min();
+                var max = indData.y.max();
+                if (min <= indData.minNorm || max >= indData.maxNorm) {
+                    layout.shapes = [
+                        {
+                            'type': 'line',
+                            'x0': indData.x[0],
+                            'y0': indData.minNorm,
+                            'x1': indData.x[indData.x.length - 1],
+                            'y1': indData.minNorm,
+                            'line': {
+                                'color': 'red',
+                                'width': 4,
+                                'dash': 'dashdot'
+                            }
+                        },
+                        {
+                            'type': 'line',
+                            'x0': indData.x[0],
+                            'y0': indData.maxNorm,
+                            'x1': indData.x[indData.x.length - 1],
+                            'y1': indData.maxNorm,
+                            'line': {
+                                'color': 'red',
+                                'width': 4,
+                                'dash': 'dashdot'
+                            }
+                        }
+                    ];
+                }
+                Plotly.newPlot(
+                    chartId,
+                    [indData],
+                    layout
+                );
+            }
+        }
+
+        /**
+         * Draw indicators dynamics
+         */
+        function makeCharts(testRecords) {
+            var chartsData = prepareData(testRecords);
+            $('#id_charts').empty();
+            var makeChartPanel = function (ind) {
+                if (chartsData[ind['short_name']].x.length > 0) {
+                    var chartPanel = $("<div class='panel panel-default' style='margin-bottom: 40px;'></div>");
+                    var chartPanelHeading = $("<div class='panel-heading'>" + ind['name'] + "</div>");
+                    var chartId = ind['short_name'];
+                    var chartPanelBody = $("<div class='panel-body'></div>");
+                    var chart = $("<div id='" + chartId + "'></div>");
+                    chartPanelBody.append(chart);
+                    chartPanel.append(chartPanelHeading, chartPanelBody);
+                    $('#id_charts').append(chartPanel);
+                    drawLineChart(chartId, chartsData[chartId]);
+                }
+            };
+
+            //Real indicators
+            window.testType['real_inds'].forEach(function (ind, i, arr) {
+                makeChartPanel(ind);
+            });
+
+            //Integer indicators
+            window.testType['int_inds'].forEach(function (ind, i, arr) {
+                makeChartPanel(ind);
+            });
+
+        }
+
+        /**
+         * Show test dynamics over period from specific start date until end date
+         */
+        function showDynamics() {
+            var postParams = {};
+            if ($('#id_start_date').val() !== null && !$('#id_start_date').empty())
+                postParams['start_date'] = $('#id_start_date');
+            if ($('#id_end_date').val() !== null && !$('#id_end_date').empty())
+                postParams['end_date'] = $('#id_end_date');
+            $.get(
+                testRecordsUrl + '/' + window.testType['short_name'], postParams)
+                .done(function (testRecords) {
+                    console.log(new Date() + ': Got test records for patient with id {{ patient.id }}');
+                    console.log(testRecords);
+                    if (testRecords && testRecords.length <= 0) {
+                        $('#id_charts').empty();
+                        $('#id_alert').css('display', '');
+                    }
+                    else {
+                        $('#id_alert').css('display', 'none');
+                        makeCharts(testRecords);
+                    }
+                });
+        }
+
+        /**
+         * Handle selecting test type
+         */
+        function selectTestType(selectedItem) {
+            window.testType = selectedItem;
+            return selectedItem;
+        }
+
+        /**
+         * This function handles DOM of pre loading document
+         */
+        function init() {
+            $('#id_start_date').datepicker(
+                {
+                    format: 'yyyy-mm-dd',
+                    language: 'ru',
+                    orientation: 'bottom'
+                }
+            );
+            $('#id_end_date').datepicker(
+                {
+                    format: 'yyyy-mm-dd',
+                    language: 'ru',
+                    orientation: 'bottom'
+                }
+            );
+            $.get('{% url "api:tests" %}').done(
+                function (data) {
+                    console.log(data);
+                    $('#id_test_type').typeahead({
+                        order: 'asc',
+                        display: 'name',
+                        source: data,
+                        updater: selectTestType
+                    });
+                }
+            );
+        }
+
+        $(document).ready(init());
+    </script>
+{% endblock %}

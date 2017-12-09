@@ -1,0 +1,126 @@
+{% extends 'core/base_menu.html' %}
+{% load staticfiles %}
+{% block header %}
+    <style rel="stylesheet">
+        body {
+            padding-top: 90px;
+        }
+
+        .nav-tabs > li.active > a, .nav-tabs > li.active > a:focus, .nav-tabs > li.active > a:hover {
+            border-color: #e36209 #e1e4e8 transparent;
+            border-top-width: 4px;
+        }
+
+        .tab-content {
+            padding-top: 0px;
+        }
+
+    </style>
+{% endblock %}
+{% block content %}
+    <ul class="nav nav-tabs">
+        <li class="active">
+            <a data-toggle="tab" href="#id_profile">Профиль пользователя
+
+            </a>
+        </li>
+        <li>
+            <a data-toggle="tab" href="#id_security">Безопасность</a>
+        </li>
+        <li>
+            <a data-toggle="tab" href="#id_delete_account">Удаление аккаунта</a>
+        </li>
+    </ul>
+    <div class="tab-content">
+        <div class="tab-pane active" id="id_profile">
+            <h2 class="page-header">Профиль пользователя</h2>
+            <div class="row">
+                <div class="col-sm-4 col-md-4 col-xs-12">
+                    <div class="text-center">
+                        <img src="" class="img-responsive"/>
+                    </div>
+                    <input type="file" class="text-right center-block well well-sm"/>
+                </div>
+                <div class="col-sm-6 col-md-8 col-sx-12">
+                    <form action="{% url 'users:update' %}" class="form-horizontal" method="post">
+                        {% csrf_token %}
+                        <div class="form-group row">
+                            <label class="col-sm-2 form-control-label">Имя: </label>
+                            <div class="col-sm-10">
+                                <input class="form-control" value="{{ user.name }}" name="name"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-sm-2 form-control-label">Фамилия: </label>
+                            <div class="col-sm-10">
+                                <input class="form-control" value="{{ user.surname }}" name="surname"/>
+                            </div>
+                        </div>
+                        <div class="row pull-right">
+                            <button class="btn btn-success">Обновить</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane" id="id_security">
+            <h2 class="page-header">Безопасность</h2>
+            <div class="row">
+                <div class="col-sm-6 col-md-4 col-sx-12">
+                </div>
+                <div class="col-sm-6 col-md-8 col-sx-12">
+                    <form action="{% url 'users:change_password' %}" class="form-horizontal" method="post">
+                        {% csrf_token %}
+                        <div class="form-group row">
+                            <label for="id_current_password" class="col-sm-2 form-control-label">Текущий
+                                пароль: </label>
+                            <div class="col-sm-10">
+                                <input id="id_current_password" type="password" class="form-control"
+                                       name="current_password"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="id_new_password" class="col-sm-2 form-control-label">Новый пароль: </label>
+                            <div class="col-sm-10">
+                                <input id="id_new_password" type="password" class="form-control" name="new_password"/>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="id_confirm_new_password" class="col-sm-2 form-control-label">Подтвердите новый
+                                пароль: </label>
+                            <div class="col-sm-10">
+                                <input id="id_confirm_new_password" type="password" class="form-control"
+                                       name="confirm_new_password"/>
+                            </div>
+                        </div>
+                        <div class="row pull-right">
+                            <button id="id_update_password_btn" class="btn btn-success">Обновить пароль</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane" id="id_delete_account">
+            <h2 class="page-header">Удаление аккаунта</h2>
+            <div class="row">
+                <div class="col-sm-6 col-md-4 col-sx-12">
+                </div>
+                <div class="col-sm-6 col-md-8 col-sx-12">
+                    <form action="{% url 'users:delete' %}" class="form-horizontal" method="post">
+                        {% csrf_token %}
+                        <div class="form-group row">
+                            <label class="col-sm-2 form-control-label">Текущий пароль: </label>
+                            <div class="col-sm-10">
+                                <input type="password" class="form-control" name="current_password"/>
+                            </div>
+                        </div>
+                        <div class="row pull-right">
+                            <button class="btn btn-danger">Удалить аккаунт</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

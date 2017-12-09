@@ -1,0 +1,39 @@
+.carousel-caption {
+    display: inline-block;
+    vertical-align: middle;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.nav-tabs {
+    margin-bottom: 15px;
+}
+
+code {
+    font-size: 80%;
+}
+
+.marketing h2 {
+    font-weight: normal;
+}
+
+.marketing .span4 p {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+body {
+    padding-bottom: 40px;
+    color: #5a5a5a;
+    min-width: 100%;
+    width: auto !important;
+}
+
+.login-dialog{
+    padding-right: 30px;
+    padding-left: 5px;
+}
+
+.horizontal-btn{
+    margin-right: 10px;
+}

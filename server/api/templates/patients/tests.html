@@ -1,0 +1,59 @@
+{% extends 'patients/sidebar.html' %}
+{% load staticfiles %}
+
+{% block main %}
+    <div class="tab-pane active" id="id_tests">
+{#        <div class="row">#}
+{#            <div class="col-xs-4">#}
+{#                <div class="input-group">#}
+{#                    <input class="form-control" placeholder="ФИО пациента">#}
+{#                    <span class="input-group-btn">#}
+{#                                <button class="btn btn-success" type="button">Найти</button>#}
+{#                            </span>#}
+{#                </div>#}
+{#            </div>#}
+{#            <div class="col-sm-6">#}
+{#                <button class="btn btn-success" onclick="window.location='{% url 'patients:create' %}'">Добавить#}
+{#                    обследование#}
+{#                </button>#}
+{#            </div>#}
+{#        </div>#}
+        <br/>
+        <table id="patients-table" class="table table-striped table-bordered table-hover" cellpadding="0"
+               style="width: 100%; ">
+            <thead>
+                <tr>
+                    <th>Пациент</th>
+                    <th>Тип обследования</th>
+                    <th>Дата проведения</th>
+                    <th>Информация</th>
+                    <th>Действия</th>
+                </tr>
+            </thead>
+            <tbody id="patients-table-body">
+                {% for test in tests %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'patients:show' patient_id=test.patient_id %}">{{ test.patient.name }} {{ test.patient.surname }} (ОМС № {{ test.patient.omi_card }})
+                            </a>
+                        </td>
+                        <td>{{ test.name }}</td>
+                        <td>{{ test.test_date }}</td>
+                        <td>{{ test.info|default_if_none:"" }}</td>
+                        <td>
+                            <a href="{% url 'med_tests:show' test_id=test.id %}" class="btn btn-success">
+                                <span class="glyphicon glyphicon-edit"></span>
+                            </a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        $('#id_tests_nav_item').addClass('active');
+    </script>
+{% endblock %}

@@ -1,0 +1,244 @@
+{% extends 'core/base_menu.html' %}
+{% load staticfiles %}
+{% block header %}
+    <style>
+        body {
+            padding-top: 80px;
+        }
+
+        .panel-body .row {
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+    </style>
+    <link rel="stylesheet" href="{% static 'bootstrap-datepicker/css/bootstrap-datepicker.min.css' %}">
+{% endblock %}
+{% block content %}
+    <form id="id_test_record">
+        {% csrf_token %}
+        <div class="panel panel-primary">
+            <div class="panel-heading" style="margin-bottom: 20px;">
+                Основные данные обследования
+            </div>
+            <div class="panel-body">
+                <div class="form-group row">
+                    <label for="id_test" class="col-md-2 control-label">Тип обследования</label>
+                    <div class="col-md-6">
+                        <input id="id_test" class="form-control" name="name" autocomplete="off">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="id_test_date" class="col-md-2 control-label">Дата проведения</label>
+                    <div class="col-md-6">
+                        <input id="id_test_date" name="test_date" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="id_summary" class="col-md-2 control-label">Краткое описание</label>
+                    <div class="col-md-6">
+                        <input id="id_summary" name="summary" class="form-control">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="id_info" class="col-md-2 control-label">Информация</label>
+                    <div class="col-md-6">
+                        <textarea id="id_info" name="info" class="form-control"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="id_real_inds_panel">
+
+        </div>
+        <div id="id_text_inds_panel">
+
+        </div>
+        <div class="row pull-right">
+            <button class="btn btn-success" type="button" onclick="saveTestRecord();">Сохранить</button>
+        </div>
+    </form>
+{% endblock %}
+{% block scripts %}
+    <script src="{% static 'bootstrap-typeahead/bootstrap3-typeahead.js' %}"></script>
+    <script src="{% static 'jquery-serializer/serializer.js' %}"></script>
+    <script src="{% static 'bootstrap-datepicker/locales/bootstrap-datepicker.ru.min.js' %}"></script>
+    <script src="{% static 'bootstrap-datepicker/js/bootstrap-datepicker.min.js' %}"></script>
+    <script src="{% static 'babel/babel.min.js' %}"></script>
+    <script src="{% static 'react-dom/react.development.js' %}"></script>
+    <script src="{% static 'react-dom/react-dom.development.js' %}"></script>
+    <script type="text/babel">
+        window.testType = {};
+
+        /**
+         * Select test type
+         * @param selectedItem
+         * @returns {*}
+         */
+        function selectTestType(selectedItem) {
+            $('#id_real_inds_panel').empty();
+            $('#id_text_inds_panel').empty();
+            window.testType['short_name'] = selectedItem['short_name'];
+            window.testType['real_inds'] = {};
+            window.testType['int_inds'] = {};
+            window.testType['text_inds'] = {};
+
+            let realInds = selectedItem['real_inds'];
+            let textInds = selectedItem['text_inds'];
+            let inputRows = [];
+
+            //Real indicators
+            for (let i = 1; i < realInds.length; i += 2) {
+                let ind = realInds[i - 1];
+                let ind2 = realInds[i];
+                window.testType['real_inds'][ind['short_name']] = ind;
+                window.testType['real_inds'][ind2['short_name']] = ind2;
+                let inputName = "real_inds[" + ind['short_name'] + "]";
+                let inputName2 = "real_inds[" + ind2['short_name'] + "]";
+                let inputId = "id_" + ind["short_name"];
+                let inputId2 = "id_" + ind2["short_name"];
+                inputRows.push(<div className="form-group row">
+                    <label className="col-md-3 control-label">{ind['name'] + (ind['unit'] ? ' (' + ind['unit'] + ')' : '')}</label>
+                    <div className="col-md-2">
+                        <input id={inputId} className="form-control" name={inputName}/>
+                    </div>
+                    <label className="col-md-3 control-label">{ind2['name'] + (ind2['unit'] ? ' (' + ind2['unit'] + ')' : '')}</label>
+                    <div className="col-md-2">
+                        <input id={inputId2} className="form-control" name={inputName2}/>
+                    </div>
+                </div>);
+            }
+
+            if (realInds.length % 2 !== 0) {
+                let ind = realInds[realInds.length - 1];
+                window.testType['real_inds'][ind['short_name']] = ind;
+                let inputName = "real_inds[" + ind['short_name'] + "]";
+                let inputId = "id_" + ind["short_name"];
+                inputRows.push(<div className="form-group row">
+                    <label className="col-md-3 control-label">{ind['name'] + (ind['unit'] ? ' (' + ind['unit'] + ')' : '')}</label>
+                    <div className="col-md-2">
+                        <input id={inputId} className="form-control" name={inputName}/>
+                    </div>
+                </div>);
+            }
+
+            if (realInds.length !== 0)
+                ReactDOM.render(
+                        <div className="panel panel-primary">
+                            <div className="panel-heading">
+                                Числовые показатели
+                            </div>
+                            <div className="panel-body">
+                                {inputRows}
+                            </div>
+                        </div>,
+                    document.getElementById('id_real_inds_panel')
+                );
+
+            //Text indicators
+            inputRows = [];
+
+            textInds.forEach(function (ind) {
+                window.testType['text_inds'][ind['short_name']] = ind;
+                let inputName = "text_inds[" + ind['short_name'] + "]";
+                let inputId = "id_" + ind["short_name"];
+                if (ind['values']) {
+                    let indValues = ind['values'];
+                    let options = [];
+                    indValues.forEach(function (indValue) {
+                        options.push(<option value={indValue}>{indValue}</option>);
+                    });
+                    inputRows.push(<div className="form-group row">
+                        <label className="col-md-3 control-label">{ind['name']}</label>
+                        <div className="col-md-4">
+                            <select id={inputId} className="form-control" name={inputName}>
+                                {options}
+                            </select>
+                        </div>
+                    </div>);
+                }
+                else {
+                    inputRows.push(<div className="form-group row">
+                        <label className="col-md-3 control-label">{ind['name']}</label>
+                        <div className="col-md-4">
+                            <input id={inputId} className="form-control" name={inputName}/>
+                        </div>
+                    </div>);
+                }
+            });
+
+            if (textInds.length !== 0)
+                ReactDOM.render(
+                        <div className="panel panel-primary">
+                            <div className="panel-heading">
+                                Текстовые показатели
+                            </div>
+                            <div className="panel-body">
+                                {inputRows}
+                            </div>
+                        </div>,
+                    document.getElementById('id_text_inds_panel')
+                );
+            return selectedItem['name'];
+        }
+
+        /**
+         * Save test record
+         */
+        function saveTestRecord() {
+            var testRecord = $('#id_test_record').serializeObject();
+            testRecord['short_name'] = window.testType['short_name'];
+            //Foreach over real indicators
+            if (testRecord['real_inds'])
+                Object.keys(testRecord['real_inds']).forEach(function (ind, i, arr) {
+                    testRecord['real_inds'][ind] = {
+                        name: window.testType['real_inds'][ind]['name'],
+                        value: parseFloat(testRecord['real_inds'][ind])
+                    };
+                });
+            //Foreach over int indicators
+            if (testRecord['int_inds'])
+                Object.keys(testRecord['int_inds']).forEach(function (ind, i, arr) {
+                    testRecord['int_inds'][ind] = {
+                        name: window.testType['int_inds'][ind]['name'],
+                        value: parseInt(testRecord['int_inds'][ind])
+                    };
+                });
+            //Foreach over text indicators
+            if (testRecord['text_inds'])
+                Object.keys(testRecord['text_inds']).forEach(function (ind, i, arr) {
+                    testRecord['text_inds'][ind] = {
+                        name: window.testType['text_inds'][ind]['name'],
+                        value: testRecord['text_inds'][ind]
+                    };
+                });
+            testRecord['csrfmiddlewaretoken'] = '{{ csrf_token }}';
+            $.post('{{ request.path }}', JSON.stringify(testRecord)).done(function () {
+                window.location = "{% url 'patients:show' patient_id=patient_id %}";
+            });
+        }
+
+        /**
+         * Invokes when document is ready
+         */
+        function init() {
+            $('#id_test_date').datepicker({
+                format: 'yyyy-mm-dd',
+                language: 'ru-RU',
+                orientation: 'bottom'
+            });
+            $.get('{% url "api:tests" %}').done(
+                function (data) {
+                    console.log(data);
+                    $('#id_test').typeahead({
+                        order: 'asc',
+                        display: 'name',
+                        source: data,
+                        updater: selectTestType
+                    });
+                }
+            );
+        }
+
+        $(document).ready(init());
+    </script>
+{% endblock %}
