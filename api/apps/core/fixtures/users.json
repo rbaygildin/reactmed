@@ -1,0 +1,38 @@
+[
+  {
+    "model": "core.User",
+    "pk": 1,
+    "fields": {
+      "name": "Admin Name",
+      "surname": "Admin Surname",
+      "email": "admin@mail.ru",
+      "password": "pbkdf2_sha256$36000$gZdB8M64r5XN$SNxb8l/Cl1Ci8kmibejKfk6x0A5CzuzDbEXBgzYVS/4=",
+      "role": "ADMIN",
+      "is_staff": true
+    }
+  },
+  {
+    "model": "core.User",
+    "pk": 2,
+    "fields": {
+      "name": "Doctor Name",
+      "surname": "Doctor Surname",
+      "email": "doctor@mail.ru",
+      "password": "pbkdf2_sha256$36000$B8mTg4MUkB1X$hwQTvMMHstH0BL+yS/xASgZJQEo3rdqOjUMZ4USB+hY=",
+      "role": "DOCTOR",
+      "is_staff": false
+    }
+  },
+  {
+    "model": "core.User",
+    "pk": 3,
+    "fields": {
+      "name": "Doctor Name 2",
+      "surname": "Doctor Surname 2",
+      "email": "doctor2@mail.ru",
+      "password": "pbkdf2_sha256$36000$B8mTg4MUkB1X$hwQTvMMHstH0BL+yS/xASgZJQEo3rdqOjUMZ4USB+hY=",
+      "role": "DOCTOR",
+      "is_staff": false
+    }
+  }
+]
