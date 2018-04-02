@@ -84,20 +84,12 @@ WSGI_APPLICATION = 'api.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'reactmed',
+        'NAME': 'reactmed_test',
         'USER': 'reactmed',
         'PASSWORD': 'reactmed95root',
-        'HOST': 'db',
+        'HOST': 'localhost',
         'PORT': '5432'
     },
-    # 'test': {
-    #     'ENGINE': 'django.db.backends.postgresql_psycopg2',
-    #     'NAME': 'reactmed_test',
-    #     'USER': 'reactmed',
-    #     'PASSWORD': 'reactmed95root',
-    #     'HOST': 'localhost',
-    #     'PORT': '5432'
-    # }
 }
 
 # Password validation

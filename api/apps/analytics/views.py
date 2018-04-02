@@ -31,12 +31,12 @@ def visualize_action(request):
         if feature_cols is not None and len(feature_cols) == 0:
             feature_cols = None
         vis_method = request.GET.get("vis_method")
-        alpha = request.GET.get('alpha', 1.0)
-        width = request.GET.get('width', 8)
-        height = request.GET.get('height', 8)
+        alpha = float(request.GET.get('alpha', 1.0))
+        width = int(request.GET.get('width', 8))
+        height = int(request.GET.get('height', 8))
         color_map = request.GET.get('color_map', 'brg')
         out_view = request.GET.get('out_view')
-        n_features = request.GET.get('n_features', 0)
+        n_features = int(request.GET.get('n_features', 0))
         select_method = request.GET.get('select_method', 'none')
         patients = request.GET.getlist('patients[]', None)
 
