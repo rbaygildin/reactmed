@@ -9,6 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 from transliterate import translit
 from datetime import date, timedelta
 from django.conf import settings
+import os
 
 from apps.core.managers import UserManager
 
@@ -45,6 +46,10 @@ USER_ROLES = (
     ('ADMIN', 'ADMIN'),
     ('DOCTOR', 'DOCTOR')
 )
+
+
+def attachment_file_path(instance, filename):
+    return os.path.join('attachments', instance.id, filename)
 
 
 class AbstractModel(models.Model):
@@ -113,7 +118,8 @@ class Patient(AbstractModel):
     birthday = models.DateField(verbose_name=_('Дата рождения'))
     blood_group = models.CharField(verbose_name=_('Группа крови'), max_length=20, choices=BLOOD_GROUP, blank=True,
                                    null=True)
-    rh_factor = models.CharField(verbose_name=_('Резус-фактор'), max_length=20, choices=RH_FACTOR, blank=True, null=True)
+    rh_factor = models.CharField(verbose_name=_('Резус-фактор'), max_length=20, choices=RH_FACTOR, blank=True,
+                                 null=True)
     is_disabled = models.BooleanField(verbose_name=_('Инвалидность'), default=False)
     omi_card = models.CharField(verbose_name=_('ОМС'), max_length=30, blank=True, null=True)
     address = models.CharField(verbose_name=_('Адрес проживания'), max_length=255, blank=True, null=True)
@@ -188,7 +194,8 @@ class MedTest(BaseMedType):
 
     def save(self, *args, **kwargs):
         if self.short_name is None or self.short_name == '':
-            self.short_name = self.med_area.short_name + '_' + translit(self.name, 'ru', reversed=True).lower().replace(' ', '_')
+            self.short_name = self.med_area.short_name + '_' + translit(self.name, 'ru', reversed=True).lower().replace(
+                ' ', '_')
         super(MedTest, self).save(*args, **kwargs)
 
     def __str__(self):
@@ -219,7 +226,8 @@ class RealInd(BaseMedType):
         elif self.min_norm > self.max_norm:
             raise ValidationError("Min norm must be less than max norm")
         if self.short_name is None or self.short_name == '':
-            self.short_name = self.med_test.short_name + '_' + translit(self.name, 'ru', reversed=True).lower().replace(' ', '_')
+            self.short_name = self.med_test.short_name + '_' + translit(self.name, 'ru', reversed=True).lower().replace(
+                ' ', '_')
         super(RealInd, self).save(*args, **kwargs)
 
 
@@ -242,7 +250,8 @@ class IntInd(BaseMedType):
         elif self.min_norm > self.max_norm:
             raise ValidationError("Min norm must be less than max norm")
         if self.short_name is None or self.short_name == '':
-            self.short_name = self.med_test.short_name + '_' + translit(self.name, 'ru', reversed=True).lower().replace(' ', '_')
+            self.short_name = self.med_test.short_name + '_' + translit(self.name, 'ru', reversed=True).lower().replace(
+                ' ', '_')
         super(IntInd, self).save(*args, **kwargs)
 
 
@@ -257,7 +266,8 @@ class TextInd(BaseMedType):
 
     def save(self, *args, **kwargs):
         if self.short_name is None or self.short_name == '':
-            self.short_name = self.med_test.short_name + '_' + translit(self.name, 'ru', reversed=True).lower().replace(' ', '_')
+            self.short_name = self.med_test.short_name + '_' + translit(self.name, 'ru', reversed=True).lower().replace(
+                ' ', '_')
         super(TextInd, self).save(*args, **kwargs)
 
 
@@ -271,7 +281,8 @@ class TestRec(AbstractModel):
     summary = models.CharField(max_length=100, blank=True, null=True, verbose_name=_('Краткая информация'))
     info = models.TextField(blank=True, null=True, verbose_name=_('Информация'))
     test_date = models.DateField(verbose_name=_('Дата проведения'))
-    patient = models.ForeignKey('core.Patient', on_delete=models.CASCADE, related_name='test_recs', verbose_name=_('Пациент'))
+    patient = models.ForeignKey('core.Patient', on_delete=models.CASCADE, related_name='test_recs',
+                                verbose_name=_('Пациент'))
 
     class Meta:
         db_table = 'test_rec'
@@ -280,15 +291,13 @@ class TestRec(AbstractModel):
 
 
 class Attachment(AbstractModel):
-    name = models.CharField(max_length=200, verbose_name=_('Название'))
-    description = models.CharField(max_length=255, blank=True, null=True, verbose_name=_('Описание'))
-    content = models.BinaryField(verbose_name=_('Содержимое'))
+    attachment_file = models.FileField(verbose_name=_('Приложение'), upload_to=attachment_file_path)
     test_record = models.ForeignKey('core.TestRec', verbose_name=_('Обследование'))
 
     class Meta:
         db_table = 'attachment'
-        verbose_name = _('Файл')
-        verbose_name_plural = _('Файлы')
+        verbose_name = _('Приложение к тесту')
+        verbose_name_plural = _('Приложения к тестам')
 
 
 class Appointment(AbstractModel):
@@ -296,7 +305,8 @@ class Appointment(AbstractModel):
     info = models.TextField(blank=True, null=True, verbose_name=_('Информация'))
     complaints = models.TextField(blank=True, null=True, verbose_name=_('Жалобы пациента'))
     status = models.CharField(max_length=30, choices=APPOINTMENT_STATUS, default='Назначено', verbose_name=_('Статус'))
-    patient = models.ForeignKey('core.Patient', related_name='appointments', on_delete=models.CASCADE, verbose_name=_('Пациент'))
+    patient = models.ForeignKey('core.Patient', related_name='appointments', on_delete=models.CASCADE,
+                                verbose_name=_('Пациент'))
 
     class Meta:
         db_table = 'appointment'
@@ -309,7 +319,8 @@ class Treatment(AbstractModel):
     finish_date = models.DateField(verbose_name=_('Конец лечения'))
     summary = models.CharField(max_length=255, verbose_name=_('Краткая информация'))
     info = models.TextField(blank=True, null=True, verbose_name=_('Информация'))
-    diagnosis = models.ForeignKey('core.Diagnosis', on_delete=models.CASCADE, verbose_name=_('Диагноз'), blank=True, null=True)
+    diagnosis = models.ForeignKey('core.Diagnosis', on_delete=models.CASCADE, verbose_name=_('Диагноз'), blank=True,
+                                  null=True)
     patient = models.ForeignKey('core.Patient', on_delete=models.CASCADE, verbose_name=_('Пациент'))
 
     class Meta:
@@ -333,13 +344,15 @@ class Medication(AbstractModel):
 
 class Diagnosis(AbstractModel):
     diagnosis = models.CharField(max_length=300, verbose_name=_('Диагноз'))
-    diagnosis_type = models.CharField(max_length=30, verbose_name=_('Вид диагноза по времени'), default='Предварительный', choices=DIAGNOSIS_TYPE)
+    diagnosis_type = models.CharField(max_length=30, verbose_name=_('Вид диагноза по времени'),
+                                      default='Предварительный', choices=DIAGNOSIS_TYPE)
     other_diseases = models.TextField(verbose_name=_('Сопуствующие заболевания'), blank=True, null=True)
     summary = models.TextField(max_length=120, blank=True, null=True)
     info = models.TextField(verbose_name=_('Информация'), blank=True, null=True)
     complications = models.TextField(verbose_name=_('Осложнения'), blank=True, null=True)
     diagnosis_date = models.DateField(verbose_name=_('Дата диагноза'))
-    patient = models.ForeignKey('core.Patient', on_delete=models.CASCADE, verbose_name=_('Пациент'), related_name='diagnosis')
+    patient = models.ForeignKey('core.Patient', on_delete=models.CASCADE, verbose_name=_('Пациент'),
+                                related_name='diagnosis')
 
     class Meta:
         db_table = 'diagnosis'

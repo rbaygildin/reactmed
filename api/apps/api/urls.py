@@ -3,7 +3,6 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 
 from apps.api.views import *
-from apps.api.views.patients_views import PatientListView
 
 urlpatterns = (
     # Create account

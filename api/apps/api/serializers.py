@@ -25,7 +25,7 @@ class SignupSerializer(Serializer):
 class UserSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'name', 'surname', 'patronymic', 'username', 'password')
+        fields = ('id', 'name', 'surname', 'patronymic', 'email', 'password')
         ordering = ('name', 'surname', 'patronymic',)
 
 
@@ -101,4 +101,45 @@ class TestRecSerializer(ModelSerializer):
             'info', 'test_date', 'real_inds',
             'int_inds', 'text_inds'
         )
-        ordering = ('test_date', )
+        ordering = ('test_date',)
+
+
+class AttachmentSerializer(ModelSerializer):
+    class Meta:
+        model = Attachment
+        fields = (
+            'id', 'name', 'description', 'attachment_file'
+        )
+
+
+class AppointmentSerializer(ModelSerializer):
+    class Meta:
+        model = Appointment
+        fields = (
+            'id', 'appointment_date', 'info', 'complaints', 'status'
+        )
+
+
+class TreatmentSerializer(ModelSerializer):
+    class Meta:
+        model = Treatment
+        fields = (
+            'id', 'start_date', 'finish_date', 'summary', 'info'
+        )
+
+
+class MedicationSerializer(ModelSerializer):
+    class Meta:
+        model = Medication
+        fields = (
+            'id', 'summary', 'info', 'drugs', 'medication_date'
+        )
+
+
+class DiagnosisSerializer(ModelSerializer):
+    class Meta:
+        model = Diagnosis
+        fields = (
+            'id', 'diagnosis', 'diagnosis_type', 'other_diseases', 'summary',
+            'info', 'complications', 'diagnosis_date'
+        )

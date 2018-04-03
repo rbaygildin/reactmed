@@ -25,7 +25,7 @@ scikit-learn==0.19.0
 scipy==0.19.1
 six==1.11.0
 sklearn==0.0
-tornado==4.5.3
+tornado==5.0.1
 transliterate==1.10
 webencodings==0.5.1
 wkhtmltopdf==0.2
