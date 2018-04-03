@@ -21,11 +21,8 @@
                                 <option value="pca">PCA</option>
                                 <option value="radviz">RadViz</option>
                                 <option value="parallel_coords">Параллельные прямые</option>
-                                <option value="hist">Гистограмма</option>
                                 <option value="dist">Плотность распределения</option>
-                                <option value="boxplot">Boxplot</option>
-                                <option value="corrmatrix">Тепловая карта</option>
-                                <option value="pairwise">Корреляция "показатель-показатель"</option>
+                                <option value="pairwise">Парная диаграмма</option>
                             </select>
                         </div>
                         <div class="col-xs-4">
@@ -103,24 +100,14 @@
                                 Параллельные координаты
                             </a>
                         </li>
-                        <li id="id_hist_tab" style="display: none">
-                            <a href="#id_hist_chart" data-toggle="tab">
-                                Гистограмма
-                            </a>
-                        </li>
                         <li id="id_dist_tab" style="display: none">
                             <a href="#id_dist_chart" data-toggle="tab">
                                 Плотность распределения
                             </a>
                         </li>
-                        <li id="id_boxplot_tab" style="display: none">
-                            <a href="#id_boxplot_chart" data-toggle="tab">
-                                Boxplot
-                            </a>
-                        </li>
-                        <li id="id_corrmatrix_tab" style="display: none">
-                            <a href="#id_corrmatrix_chart" data-toggle="tab">
-                                Тепловая карта
+                        <li id="id_pairwise_tab" style="display: none">
+                            <a href="#id_pairwise_chart" data-toggle="tab">
+                                Парная диаграмма
                             </a>
                         </li>
                     </ul>
@@ -141,16 +128,10 @@
                         <div class="tab-pane fade in" id="id_radviz_chart" style="overflow: auto; display: none">
 
                         </div>
-                        <div class="tab-pane fade in" id="id_hist_chart" style="overflow: auto; display: none">
-
-                        </div>
                         <div class="tab-pane fade in" id="id_dist_chart" style="overflow: auto; display: none">
 
                         </div>
-                        <div class="tab-pane fade in" id="id_boxplot_chart" style="overflow: auto; display: none">
-
-                        </div>
-                        <div class="tab-pane fade in" id="id_corrmatrix_chart" style="overflow: auto; display: none">
+                        <div class="tab-pane fade in" id="id_pairwise_chart" style="overflow: auto; display: none">
 
                         </div>
                     </div>
@@ -171,11 +152,11 @@
                     <div style="overflow: auto; height: 300px;">
                         <table id="patients-table" class="table table-responsive">
                             <thead>
-                                <tr>
-                                    <th>ID</th>
-                                    <th>ФИО</th>
-                                    <th></th>
-                                </tr>
+                            <tr>
+                                <th>ID</th>
+                                <th>ФИО</th>
+                                <th></th>
+                            </tr>
                             </thead>
                             <tbody>
 
@@ -212,10 +193,7 @@
                                     <select class="form-control" name="select_method">
                                         <option value="none">Не снижать размерность</option>
                                         <option value="pca">PCA</option>
-                                        <option value="kernel_pca">Kernel PCA</option>
                                         <option value="logit">Логистическая регрессия</option>
-                                        <option value="chi2">Хи-квадрат статистика</option>
-                                        <option value="svc">SVC</option>
                                     </select>
                                 </div>
                             </div>
@@ -225,25 +203,6 @@
                                         Количество показателей
                                     </label>
                                     <input type="text" class="form-control" name="n_features">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-xs-12">
-                                    <label>
-                                        Ядро
-                                    </label>
-                                    <select class="form-control" name="kernel">
-                                        <option value="poly">Полиномиальное</option>
-                                        <option value="sigmoid">Сигмоида</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-xs-12">
-                                    <label>
-                                        Степень (Kernel PCA)
-                                    </label>
-                                    <input type="text" class="form-control" name="degree">
                                 </div>
                             </div>
                             <div class="row">
@@ -340,10 +299,7 @@
                                         <select class="form-control" name="select_method">
                                             <option value="none">Не снижать размерность</option>
                                             <option value="pca">PCA</option>
-                                            <option value="kernel_pca">Kernel PCA</option>
                                             <option value="logit">Логистическая регрессия</option>
-                                            <option value="chi2">Хи-квадрат статистика</option>
-                                            <option value="svc">SVC</option>
                                         </select>
                                     </div>
                                 </div>
@@ -353,25 +309,6 @@
                                             Количество показателей
                                         </label>
                                         <input type="text" class="form-control" name="n_features">
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="form-group col-xs-12">
-                                        <label>
-                                            Ядро
-                                        </label>
-                                        <select class="form-control" name="kernel">
-                                            <option value="poly">Полиномиальное</option>
-                                            <option value="sigmoid">Сигмоида</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="form-group col-xs-12">
-                                        <label>
-                                            Степень (Kernel PCA)
-                                        </label>
-                                        <input type="text" class="form-control" name="degree">
                                     </div>
                                 </div>
                                 <div class="row">
@@ -469,10 +406,7 @@
                                         <select class="form-control" name="select_method">
                                             <option value="none">Не снижать размерность</option>
                                             <option value="pca">PCA</option>
-                                            <option value="kernel_pca">Kernel PCA</option>
                                             <option value="logit">Логистическая регрессия</option>
-                                            <option value="chi2">Хи-квадрат статистика</option>
-                                            <option value="svc">SVC</option>
                                         </select>
                                     </div>
                                 </div>
@@ -482,25 +416,6 @@
                                             Количество показателей
                                         </label>
                                         <input type="text" class="form-control" name="n_features">
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="form-group col-xs-12">
-                                        <label>
-                                            Ядро
-                                        </label>
-                                        <select class="form-control" name="kernel">
-                                            <option value="poly">Полиномиальное</option>
-                                            <option value="sigmoid">Сигмоида</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="form-group col-xs-12">
-                                        <label>
-                                            Степень (Kernel PCA)
-                                        </label>
-                                        <input type="text" class="form-control" name="degree">
                                     </div>
                                 </div>
                                 <div class="row">
@@ -598,10 +513,7 @@
                                         <select class="form-control" name="select_method">
                                             <option value="none">Не снижать размерность</option>
                                             <option value="pca">PCA</option>
-                                            <option value="kernel_pca">Kernel PCA</option>
                                             <option value="logit">Логистическая регрессия</option>
-                                            <option value="chi2">Хи-квадрат статистика</option>
-                                            <option value="svc">SVC</option>
                                         </select>
                                     </div>
                                 </div>
@@ -611,25 +523,6 @@
                                             Количество показателей
                                         </label>
                                         <input type="text" class="form-control" name="n_features">
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="form-group col-xs-12">
-                                        <label>
-                                            Ядро
-                                        </label>
-                                        <select class="form-control" name="kernel">
-                                            <option value="poly">Полиномиальное</option>
-                                            <option value="sigmoid">Сигмоида</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="form-group col-xs-12">
-                                        <label>
-                                            Степень (Kernel PCA)
-                                        </label>
-                                        <input type="text" class="form-control" name="degree">
                                     </div>
                                 </div>
                                 <div class="row">
@@ -705,135 +598,6 @@
             </div>
         </div>
     </div>
-    <!--Hist dialog-->
-    <div class="modal fade" id="id_hist_dialog" role="dialog">
-        <div class="modal-dialog">
-            <!-- Modal content-->
-            <div class="modal-dialog">
-                <!-- Modal content-->
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                        <h4 class="modal-title">Гистограмма</h4>
-                    </div>
-                    <div class="modal-body">
-                        <div style="overflow: auto; height: 300px;">
-                            <form id="id_hist_form" class="modal-form">
-                                <div class="row">
-                                    <div class="form-group col-xs-12">
-                                        <label>
-                                            Метод отбора показателей
-                                        </label>
-                                        <select class="form-control" name="select_method">
-                                            <option value="none">Не снижать размерность</option>
-                                            <option value="pca">PCA</option>
-                                            <option value="kernel_pca">Kernel PCA</option>
-                                            <option value="logit">Логистическая регрессия</option>
-                                            <option value="chi2">Хи-квадрат статистика</option>
-                                            <option value="svc">SVC</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="form-group col-xs-12">
-                                        <label>
-                                            Количество показателей
-                                        </label>
-                                        <input type="text" class="form-control" name="n_features">
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="form-group col-xs-12">
-                                        <label>
-                                            Ядро
-                                        </label>
-                                        <select class="form-control" name="kernel">
-                                            <option value="poly">Полиномиальное</option>
-                                            <option value="sigmoid">Сигмоида</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="form-group col-xs-12">
-                                        <label>
-                                            Степень (Kernel PCA)
-                                        </label>
-                                        <input type="text" class="form-control" name="degree">
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="form-group col-xs-9">
-                                        <label>
-                                            Прозрачность
-                                        </label>
-                                        <input id="hst-alpha-ranger1" type="range" min="0.05" max="1.0" step="0.05"
-                                               class="form-control"
-                                               name="alpha" onchange="$('#hst-alpha-ranger2').val($(this).val())">
-                                    </div>
-                                    <div class="col-xs-3">
-                                        <label class="form"></label>
-                                        <input id="hst-alpha-ranger2" class="form-control"
-                                               onchange="$('#hst-alpha-ranger1').val($(this).val())"/>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="form-group col-xs-12">
-                                        <label class="control-label">
-                                            Цветовая гамма
-                                        </label>
-                                        <select class="form-control" name="color_map">
-                                            <option value="brg">RGB</option>
-                                            <option value="hsv">HSV</option>
-                                            <option value="rainbow">Радуга</option>
-                                            <option value="summer">Лето</option>
-                                            <option value="autumn">Осень</option>
-                                            <option value="winter">Зима</option>
-                                            <option value="spring">Весна</option>
-                                            <option value="gnuplot">GNU Plot</option>
-                                            <option value="jet">Jet</option>
-                                            <option value="gist_rainbow">Gist Rainbow</option>
-                                            <option value="nipy_spectral">Nipy Spectral</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="form-group col-xs-12">
-                                        <label class="control-label">
-                                            Формат
-                                        </label>
-                                        <select class="form-control" name="format">
-                                            <option value="png">png</option>
-                                            <option value="svg">svg</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="form-group col-xs-6">
-                                        <label class="control-label">
-                                            Ширина
-                                        </label>
-                                        <input class="form-control" name="width">
-                                    </div>
-                                    <div class="form-group col-xs-6">
-                                        <label class="control-label">
-                                            Длина
-                                        </label>
-                                        <input class="form-control" name="height">
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-success" data-dismiss="modal"
-                                onclick="visualize('hist')();">Визуализировать
-                        </button>
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Отмена</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
     <!--Dist dialog-->
     <div class="modal fade" id="id_dist_dialog" role="dialog">
         <div class="modal-dialog">
@@ -854,10 +618,7 @@
                                     <select class="form-control" name="select_method">
                                         <option value="none">Не снижать размерность</option>
                                         <option value="pca">PCA</option>
-                                        <option value="kernel_pca">Kernel PCA</option>
                                         <option value="logit">Логистическая регрессия</option>
-                                        <option value="chi2">Хи-квадрат статистика</option>
-                                        <option value="svc">SVC</option>
                                     </select>
                                 </div>
                             </div>
@@ -867,25 +628,6 @@
                                         Количество показателей
                                     </label>
                                     <input type="text" class="form-control" name="n_features">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-xs-12">
-                                    <label>
-                                        Ядро
-                                    </label>
-                                    <select class="form-control" name="kernel">
-                                        <option value="poly">Полиномиальное</option>
-                                        <option value="sigmoid">Сигмоида</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-xs-12">
-                                    <label>
-                                        Степень (Kernel PCA)
-                                    </label>
-                                    <input type="text" class="form-control" name="degree">
                                 </div>
                             </div>
                             <div class="row">
@@ -970,257 +712,6 @@
             </div>
         </div>
     </div>
-    <!--Boxplot dialog-->
-    <div class="modal fade" id="id_boxplot_dialog" role="dialog">
-        <div class="modal-dialog">
-            <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Boxplot</h4>
-                </div>
-                <div class="modal-body">
-                    <div style="overflow: auto; height: 300px;">
-                        <form id="id_boxplot_form" class="modal-form">
-                            <div class="row">
-                                <div class="form-group col-xs-12">
-                                    <label>
-                                        Метод отбора показателей
-                                    </label>
-                                    <select class="form-control" name="select_method">
-                                        <option value="none">Не снижать размерность</option>
-                                        <option value="pca">PCA</option>
-                                        <option value="kernel_pca">Kernel PCA</option>
-                                        <option value="logit">Логистическая регрессия</option>
-                                        <option value="chi2">Хи-квадрат статистика</option>
-                                        <option value="svc">SVC</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-xs-12">
-                                    <label>
-                                        Количество показателей
-                                    </label>
-                                    <input type="text" class="form-control" name="n_features">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-xs-12">
-                                    <label>
-                                        Ядро
-                                    </label>
-                                    <select class="form-control" name="kernel">
-                                        <option value="poly">Полиномиальное</option>
-                                        <option value="sigmoid">Сигмоида</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-xs-12">
-                                    <label>
-                                        Степень (Kernel PCA)
-                                    </label>
-                                    <input type="text" class="form-control" name="degree">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-xs-9">
-                                    <label>
-                                        Прозрачность
-                                    </label>
-                                    <input id="bplt-alpha-ranger1" type="range" min="0.05" max="1.0" step="0.05"
-                                           class="form-control"
-                                           name="alpha" onchange="$('#bplt-alpha-ranger2').val($(this).val())">
-                                </div>
-                                <div class="col-xs-3">
-                                    <label class="form"></label>
-                                    <input id="bplt-alpha-ranger2" class="form-control"
-                                           onchange="$('#bplt-alpha-ranger1').val($(this).val())"/>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-xs-12">
-                                    <label class="control-label">
-                                        Цветовая гамма
-                                    </label>
-                                    <select class="form-control" name="color_map">
-                                        <option value="brg">RGB</option>
-                                        <option value="hsv">HSV</option>
-                                        <option value="rainbow">Радуга</option>
-                                        <option value="summer">Лето</option>
-                                        <option value="autumn">Осень</option>
-                                        <option value="winter">Зима</option>
-                                        <option value="spring">Весна</option>
-                                        <option value="gnuplot">GNU Plot</option>
-                                        <option value="jet">Jet</option>
-                                        <option value="gist_rainbow">Gist Rainbow</option>
-                                        <option value="nipy_spectral">Nipy Spectral</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-xs-12">
-                                    <label class="control-label">
-                                        Формат
-                                    </label>
-                                    <select class="form-control" name="format">
-                                        <option value="png">png</option>
-                                        <option value="svg">svg</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-xs-6">
-                                    <label class="control-label">
-                                        Ширина
-                                    </label>
-                                    <input class="form-control" name="width">
-                                </div>
-                                <div class="form-group col-xs-6">
-                                    <label class="control-label">
-                                        Длина
-                                    </label>
-                                    <input class="form-control" name="height">
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success" data-dismiss="modal"
-                            onclick="visualize('boxplot')();">Визуализировать
-                    </button>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Отмена</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade" id="id_corrmatrix_dialog" role="dialog">
-        <div class="modal-dialog">
-            <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Тепловая карта</h4>
-                </div>
-                <div class="modal-body">
-                    <div style="overflow: auto; height: 300px;">
-                        <form id="id_corrmatrix_form" class="modal-form">
-                            <div class="row">
-                                <div class="form-group col-xs-12">
-                                    <label>
-                                        Метод отбора показателей
-                                    </label>
-                                    <select class="form-control" name="select_method">
-                                        <option value="none">Не снижать размерность</option>
-                                        <option value="pca">PCA</option>
-                                        <option value="kernel_pca">Kernel PCA</option>
-                                        <option value="logit">Логистическая регрессия</option>
-                                        <option value="chi2">Хи-квадрат статистика</option>
-                                        <option value="svc">SVC</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-xs-12">
-                                    <label>
-                                        Количество показателей
-                                    </label>
-                                    <input type="text" class="form-control" name="n_features">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-xs-12">
-                                    <label>
-                                        Ядро
-                                    </label>
-                                    <select class="form-control" name="kernel">
-                                        <option value="poly">Полиномиальное</option>
-                                        <option value="sigmoid">Сигмоида</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-xs-12">
-                                    <label>
-                                        Степень (Kernel PCA)
-                                    </label>
-                                    <input type="text" class="form-control" name="degree">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-xs-9">
-                                    <label>
-                                        Прозрачность
-                                    </label>
-                                    <input id="cm-alpha-ranger1" type="range" min="0.05" max="1.0" step="0.05"
-                                           class="form-control"
-                                           name="alpha" onchange="$('#cm-alpha-ranger2').val($(this).val())">
-                                </div>
-                                <div class="col-xs-3">
-                                    <label class="form"></label>
-                                    <input id="cm-alpha-ranger2" class="form-control"
-                                           onchange="$('#cm-alpha-ranger1').val($(this).val())"/>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-xs-12">
-                                    <label class="control-label">
-                                        Цветовая гамма
-                                    </label>
-                                    <select class="form-control" name="color_map">
-                                        <option value="brg">RGB</option>
-                                        <option value="hsv">HSV</option>
-                                        <option value="rainbow">Радуга</option>
-                                        <option value="summer">Лето</option>
-                                        <option value="autumn">Осень</option>
-                                        <option value="winter">Зима</option>
-                                        <option value="spring">Весна</option>
-                                        <option value="gnuplot">GNU Plot</option>
-                                        <option value="jet">Jet</option>
-                                        <option value="gist_rainbow">Gist Rainbow</option>
-                                        <option value="nipy_spectral">Nipy Spectral</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-xs-12">
-                                    <label class="control-label">
-                                        Формат
-                                    </label>
-                                    <select class="form-control" name="format">
-                                        <option value="png">png</option>
-                                        <option value="svg">svg</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-xs-6">
-                                    <label class="control-label">
-                                        Ширина
-                                    </label>
-                                    <input class="form-control" name="width">
-                                </div>
-                                <div class="form-group col-xs-6">
-                                    <label class="control-label">
-                                        Длина
-                                    </label>
-                                    <input class="form-control" name="height">
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success" data-dismiss="modal"
-                            onclick="visualize('corrmatrix')();">Визуализировать
-                    </button>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Отмена</button>
-                </div>
-            </div>
-        </div>
-    </div>
     <div class="modal fade" id="id_pairwise_dialog" role="dialog">
         <div class="modal-dialog">
             <!-- Modal content-->
@@ -1267,48 +758,6 @@
                                     <input class="form-control" name="degree">
                                 </div>
                             </div>
-                            <div class="row">
-                                <div class="form-group col-xs-12">
-                                    <label>
-                                        Метод отбора показателей
-                                    </label>
-                                    <select class="form-control" name="select_method">
-                                        <option value="none">Не снижать размерность</option>
-                                        <option value="pca">PCA</option>
-                                        <option value="kernel_pca">Kernel PCA</option>
-                                        <option value="logit">Логистическая регрессия</option>
-                                        <option value="chi2">Хи-квадрат статистика</option>
-                                        <option value="f_regression">F-тест</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-xs-12">
-                                    <label>
-                                        Количество показателей
-                                    </label>
-                                    <input type="text" class="form-control" name="n_features">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-xs-12">
-                                    <label>
-                                        Ядро
-                                    </label>
-                                    <select class="form-control" name="kernel">
-                                        <option value="poly">Полиномиальное</option>
-                                        <option value="sigmoid">Сигмоида</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <!--<div class="row">-->
-                            <!--<div class="form-group col-xs-12">-->
-                            <!--<label>-->
-                            <!--Степень (Kernel PCA)-->
-                            <!--</label>-->
-                            <!--<input type="text" class="form-control" name="degree">-->
-                            <!--</div>-->
-                            <!--</div>-->
                             <div class="row">
                                 <div class="form-group col-xs-9">
                                     <label>
@@ -1385,10 +834,6 @@
 {% endblock %}
 
 {% block scripts %}
-    <script src="{% static 'babel/babel.min.js' %}">
-    </script>
-    <script src="{% static 'react-dom/react.development.js' %}"></script>
-    <script src="{% static 'react-dom/react-dom.development.js' %}"></script>
     <script src="{% static 'bootstrap-typeahead/bootstrap3-typeahead.js' %}"></script>
     <script src="{% static 'jquery-serializer/jquery.serialize-object.min.js' %}"></script>
     <script>
@@ -1411,6 +856,8 @@
                 });
                 test['real_inds'].forEach(function (ind) {
                     $('#id_features').append("<option value='" + ind['short_name'] + "'>" + ind['name'] + "</option>");
+                    $('#f1-select').append("<option value='" + ind['short_name'] + "'>" + ind['name'] + "</option>");
+                    $('#f2-select').append("<option value='" + ind['short_name'] + "'>" + ind['name'] + "</option>");
                 });
                 $('#id_features').multiselect();
                 $('#id_features_div button').addClass('form-control');
@@ -1450,7 +897,7 @@
                 params['class_col'] = $('#id_class').val();
                 params["out_view"] = "base64";
                 params['patients'] = $('#id_patients').val();
-                params['feature_cols'] = $('#id_features').val();
+                params['feature_cols[]'] = $('#id_features').val();
                 $.ajax({
                         type: "get",
                         url: '{% url 'analytics:visualize' %}',

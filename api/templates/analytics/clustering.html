@@ -15,7 +15,6 @@
                             <select class="form-control" name="cluster_method"
                                     id="id_cluster_method">
                                 <option value="k_means">K Means</option>
-                                <option value="mini_batch_k_means">Mini Batch K Means</option>
                                 <option value="agglomerative">Agglomerative</option>
                                 <option value="mean_shift">Mean Shift</option>
                             </select>
@@ -76,11 +75,6 @@
                                 K Means
                             </a>
                         </li>
-                        <li id="id_mini_batch_k_means_tab" style="display: none;">
-                            <a href="#id_mini_batch_k_means_chart" data-toggle="tab">
-                                Mini Batch K Means
-                            </a>
-                        </li>
                         <li id="id_agglomerative_tab" style="display: none;">
                             <a href="#id_agglomerative_chart" data-toggle="tab">
                                 Agglomerative
@@ -96,10 +90,6 @@
                 <div class="panel-body">
                     <div class="tab-content" id="dataset-panel-content">
                         <div class="tab-pane fade in" id="id_k_means_chart" style="overflow: auto; display: none;">
-
-                        </div>
-                        <div class="tab-pane fade in" id="id_mini_batch_k_means_chart"
-                             style="overflow: auto; display: none;">
 
                         </div>
                         <div class="tab-pane fade in" id="id_agglomerative_chart"
@@ -308,160 +298,6 @@
     </div>
     <!--K Means: end-->
     <!--Mini Batch K Means-->
-    <div class="modal fade" id="id_mini_batch_k_means_dialog" role="dialog">
-        <div class="modal-dialog">
-            <!-- Modal content-->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Mini Batch K Means</h4>
-                </div>
-                <div class="modal-body">
-                    <div style="overflow: auto; height: 300px;">
-                        <form id="id_mini_batch_k_means_form" class="modal-form">
-                            <div class="row">
-                                <div class="form-group col-xs-12">
-                                    <label>
-                                        Метод отбора показателей
-                                    </label>
-                                    <select class="form-control" name="select_method">
-                                        <option value="none">Не снижать размерность</option>
-                                        <option value="pca">PCA</option>
-                                        <option value="kernel_pca">Kernel PCA</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-xs-12">
-                                    <label>
-                                        Количество показателей
-                                    </label>
-                                    <input type="text" class="form-control" name="n_features">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-xs-12">
-                                    <label>
-                                        Ядро
-                                    </label>
-                                    <select class="form-control" name="kernel">
-                                        <option value="poly">Полиномиальное</option>
-                                        <option value="sigmoid">Сигмоида</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-xs-12">
-                                    <label>
-                                        Степень (Kernel PCA)
-                                    </label>
-                                    <input type="text" class="form-control" name="degree">
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-xs-6">
-                                    <div class="form-group">
-                                        <label>
-                                            Минимум кластеров
-                                        </label>
-                                        <input class="form-control" type="text" name="n_clusters[]" value="2">
-                                    </div>
-                                </div>
-                                <div class="col-xs-6">
-                                    <div class="form-group">
-                                        <label>
-                                            Максимум кластеров
-                                        </label>
-                                        <input class="form-control" type="text" name="n_clusters[]" value="2">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-xs-12">
-                                    <div class="form-group">
-                                        <label>
-                                            Оценка качества кластеризации
-                                        </label>
-                                        <select class="form-control" name="perf_method">
-                                            <option value="none">Не производить</option>
-                                            <option value="elbow">Elbow method</option>
-                                            <option value="silhouette">Silhouette method</option>
-                                        </select>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-xs-9">
-                                    <label>
-                                        Прозрачность
-                                    </label>
-                                    <input id="mbkmeans-alpha-ranger1" type="range" min="0.05" max="1.0" step="0.05"
-                                           class="form-control"
-                                           name="alpha" onchange="$('#mbkmeans-alpha-ranger2').val($(this).val())">
-                                </div>
-                                <div class="col-xs-3">
-                                    <label class="form"></label>
-                                    <input id="mbkmeans-alpha-ranger2" class="form-control"
-                                           onchange="$('#mbkmeans-alpha-ranger1').val($(this).val())"/>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-xs-12">
-                                    <label class="control-label">
-                                        Цветовая гамма
-                                    </label>
-                                    <select class="form-control" name="color_map">
-                                        <option value="brg">RGB</option>
-                                        <option value="hsv">HSV</option>
-                                        <option value="rainbow">Радуга</option>
-                                        <option value="summer">Лето</option>
-                                        <option value="autumn">Осень</option>
-                                        <option value="winter">Зима</option>
-                                        <option value="spring">Весна</option>
-                                        <option value="gnuplot">GNU Plot</option>
-                                        <option value="jet">Jet</option>
-                                        <option value="gist_rainbow">Gist Rainbow</option>
-                                        <option value="nipy_spectral">Nipy Spectral</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-xs-12">
-                                    <label class="control-label">
-                                        Формат
-                                    </label>
-                                    <select class="form-control" name="format">
-                                        <option value="png">png</option>
-                                        <option value="svg">svg</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-xs-6">
-                                    <label class="control-label">
-                                        Ширина
-                                    </label>
-                                    <input class="form-control" name="width" value="8">
-                                </div>
-                                <div class="form-group col-xs-6">
-                                    <label class="control-label">
-                                        Длина
-                                    </label>
-                                    <input class="form-control" name="height" value="8">
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-success" data-dismiss="modal"
-                            onclick="cluster('mini_batch_k_means')();">Кластеризовать
-                    </button>
-                    <button type="button" class="btn btn-danger" data-dismiss="modal">Отмена</button>
-                </div>
-            </div>
-        </div>
-    </div>
     <!--Mini Batch K Means: end-->
     <!--Agglomerative-->
     <div class="modal fade" id="id_agglomerative_dialog" role="dialog">

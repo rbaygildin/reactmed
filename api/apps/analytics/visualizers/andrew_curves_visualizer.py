@@ -23,7 +23,7 @@ class AndrewsCurvesVisualizer(Visualizer):
                 x1 = ampl[0]
                 y = x1 / np.sqrt(2.0)
                 coeff = np.delete(np.copy(ampl), 0)
-                coeff.resize(int((coeff.size + 1) / 2), 2)
+                coeff.resize((int((coeff.size + 1) / 2), 2), refcheck=False)
 
                 harmonics = np.arange(0, coeff.shape[0]) + 1
                 trg_args = np.outer(harmonics, t0)

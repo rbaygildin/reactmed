@@ -81,7 +81,7 @@ def visualize_action(request):
             if out_format == "svg":
                 response['Content-Type'] = 'image/svg+xml'
             elif out_format == "png":
-                response['Content-Type'] = 'image/img'
+                response['Content-Type'] = 'image/png'
         elif out_view == 'base64':
             out = BytesIO()
 
@@ -99,7 +99,8 @@ def visualize_action(request):
             "format": out_format,
             "patients": patients,
             "width": int(width),
-            "height": int(height)
+            "height": int(height),
+            'feature_cols': feature_cols
         }
 
         if vis_method.lower() == "andrews_curves":
@@ -110,15 +111,9 @@ def visualize_action(request):
             visualizer = vis.ParallelCoordinatesVisualizer(**kwargs)
         elif vis_method.lower() == "radviz":
             visualizer = vis.RadVizVisualizer(**kwargs)
-        elif vis_method.lower() == "hist":
-            visualizer = vis.HistVisualizer(**kwargs)
-        elif vis_method.lower() == "corrmatrix":
-            visualizer = vis.CorrHeatMapVisualizer(**kwargs)
         elif vis_method.lower() == "dist":
             kwargs["bins"] = int(request.GET.get('bins'))
             visualizer = vis.DistVisualizer(**kwargs)
-        elif vis_method.lower() == "boxplot":
-            visualizer = vis.BoxplotVisualizer(**kwargs)
         elif vis_method.lower() == "pairwise":
             kwargs["reg_type"] = request.GET.get('reg_type')
             # kwargs["degree"] = int(request.args.get('degree'))
@@ -186,7 +181,7 @@ def cluster_action(request):
         if out_format == "svg":
             response['Content-Type'] = 'image/svg+xml'
         elif out_format == "png":
-            response['Content-Type'] = 'image/img'
+            response['Content-Type'] = 'image/png'
     elif out_view == 'base64':
         out = BytesIO()
 
@@ -204,8 +199,6 @@ def cluster_action(request):
 
     if cluster_method == "k_means":
         visualizer = vis.KMeansClusteringVisualizer(**kwargs)
-    elif cluster_method == "mini_batch_k_means":
-        visualizer = vis.MiniBatchKMeansClusteringVisualizer(**kwargs)
     elif cluster_method == "agglomerative":
         linkage = request.GET.get('linkage')
         kwargs["linkage"] = linkage
@@ -261,20 +254,6 @@ def data_action(request):
     elif out_format == 'text/html':
         return HttpResponse(df.reset_index().to_html(), content_type=out_format)
     return HttpResponse(df.reset_index().to_csv(), content_type='text/csv')
-
-
-def features_stat_action(request):
-    kwargs = {
-        'test': request.GET.get('test'),
-        'feature_cols': request.GET.getlist('feature_cols'),
-        'class_col': request.GET.get('class_col'),
-        'normalize': request.GET.get('normalize'),
-        'load_pattern': request.GET.get('load_pattern')
-    }
-    df, class_col = data_load(**kwargs)
-    stat = DescriptiveStatAnalyser().perform_analysis(df, class_col=class_col)
-    orient = request.GET.get("orient")
-    return HttpResponse(stat.to_json(orient=orient), content_type='application/json')
 
 
 @login_required

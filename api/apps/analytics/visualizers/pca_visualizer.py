@@ -9,7 +9,7 @@ import sklearn.decomposition as decomp
 from apps.analytics.visualizers.base_visualizer import *
 
 
-#Changed
+# Changed
 class PCAVisualizer(Visualizer):
     def visualize(self, df, **kwargs):
         res = {}
@@ -45,11 +45,11 @@ class PCAVisualizer(Visualizer):
             patients = {df.index.get_loc(p['patient_id']): p for p in patients.to_dict('records')}
         fig = plt.figure(figsize=figsize)
         ax = fig.add_subplot(1, 1, 1)
-        pca = decomp.PCA(n_components=2)
+        # pca = decomp.PCA(n_components=2)
         kls_ser = df[class_col]
-        del df[class_col]
-        pca.fit(df)
-        df = pca.transform(df)
+        # del df[class_col]
+        # pca.fit(df)
+        # df = pca.transform(df)
         for kls in classes:
             kls_df = df[kls_ser == kls]
             i2p_id = {kls_df.index.get_loc(p_id): p_id for p_id in kls_df.index.values}

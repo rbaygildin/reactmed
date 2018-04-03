@@ -17,8 +17,9 @@ from apps.analytics.visualizers.base_visualizer import *
 
 class PairWiseVisualizer(Visualizer):
     def __init__(self, **kwargs):
-        self.feature1 = kwargs.get('feature1', None)
-        self.feature2 = kwargs.get('feature2', None)
+        feature_cols = kwargs.get('feature_cols', [])
+        self.feature1 = feature_cols[0]
+        self.feature2 = feature_cols[1]
         self.reg_type = kwargs.get('reg_type', 'linear')
         self.degree = kwargs.get('degree', 2)
         super().__init__(**kwargs)
@@ -85,14 +86,14 @@ class PairWiseVisualizer(Visualizer):
         ax_histx.xaxis.set_major_formatter(nullfmt)
         ax_histy.yaxis.set_major_formatter(nullfmt)
 
-        if feature1 is not None and feature2 is not None:
-            df = df[[feature1, feature2, class_col]]
+        # if feature1 is not None and feature2 is not None:
+        #     df = df[[feature1, feature2, class_col]]
         for kls in classes:
             kls_df = df[df[class_col] == kls]
             # i2p_id = {kls_df.index.get_loc(p_id): p_id for p_id in kls_df.index.values}
             del kls_df[class_col]
             m = kls_df.shape[0]
-            points, = ax_scatter.plot(kls_df[[0]], kls_df[[1]], 'o', label=kls, alpha=alpha, c=cmap(kls))
+            points, = ax_scatter.plot(kls_df[kls_df.columns[0]], kls_df[kls_df.columns[1]], 'o', label=kls, alpha=alpha, c=cmap(kls))
             kls_color = points.get_color()
             for i in range(m):
                 if patients is not None:
@@ -110,9 +111,10 @@ class PairWiseVisualizer(Visualizer):
                                             arrowprops=dict(facecolor='black'),
                                             zorder=7
                                             )
+        del df[class_col]
+        X = df[df.columns[0]].reshape((-1, 1))
+        Y = df[df.columns[1]]
         if reg_type == 'linear':
-            X = df[[0]]
-            Y = df[[1]]
             sample_size = df.shape[0]
             reg = LinearRegression()
             reg.fit(X, Y)
@@ -132,10 +134,9 @@ class PairWiseVisualizer(Visualizer):
             x_med = (x_max + x_min) / 2
             y_med = (y_max + y_min) / 2
             # slope = np.degrees(np.arctan(y_step / x_step))
-            ax_scatter.annotate("R^2=%.2f" % r2, xy=(x_med, y_med), xytext=(x_med, y_med + 0.5), rotation=slope, fontsize=12)
+            ax_scatter.annotate("R^2=%.2f" % r2, xy=(x_med, y_med), xytext=(x_med, y_med + 0.5), rotation=slope,
+                                fontsize=12)
         elif reg_type == 'poly':
-            X = df[[0]]
-            Y = df[[1]]
             sample_size = df.shape[0]
             reg = make_pipeline(PolynomialFeatures(degree), Ridge())
             reg.fit(X, Y)
@@ -151,13 +152,14 @@ class PairWiseVisualizer(Visualizer):
             ax_scatter.plot(x, y_predict, c='black', linewidth=3)
             x_med = (x_max + x_min) / 2
             y_med = (y_max + y_min) / 2
-            ax_scatter.annotate("R^2=%.2f" % r2, xy=(x_med, y_med), xytext=(x_med, y_med + 0.5), rotation=slope + 5, fontsize=12)
+            ax_scatter.annotate("R^2=%.2f" % r2, xy=(x_med, y_med), xytext=(x_med, y_med + 0.5), rotation=slope + 5,
+                                fontsize=12)
         ax_scatter.set_xlabel(df.columns.values[0])
         ax_scatter.set_ylabel(df.columns.values[1])
         ax_scatter.legend(title=class_col, handles=[mpatches.Patch(color=cmap(kls), label=kls) for kls in classes],
                           shadow=True, fancybox=True, loc=1)
-        ax_histx.hist(df[[0]].values, bins=60)
-        ax_histy.hist(df[[1]].values, bins=60, orientation='horizontal')
+        ax_histx.hist(df[df.columns[0]].values, bins=60)
+        ax_histy.hist(df[df.columns[1]].values, bins=60, orientation='horizontal')
 
         ax_histx.set_xlim(ax_scatter.get_xlim())
         ax_histy.set_ylim(ax_scatter.get_ylim())
